@@ -19,7 +19,7 @@ Given a design matrix `X` and a response vector `y`, the package:
    - Selective **point estimates**
    - Naive (unadjusted) counterparts for comparison
 
-This procedure ensures **valid inference** conditional on rejection of the overall null hypothesis.
+This procedure ensures **valid inference** conditional on rejection of the overall null hypothesis. To install the `lmFScreen` package from GitHub, run the following in your R console: `devtools::install_github("mcgougho/lmFScreen")`.
 
 ---
 
