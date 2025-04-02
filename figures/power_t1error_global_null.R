@@ -80,19 +80,19 @@ pr_reject_split <- function(beta1,n,p,alpha_ov,prop_train=0.5,sigma=1){
     X <- matrix(rnorm(n*p),ncol=p) # make design matrix
     y <- X%*%beta+rnorm(n)*sigma # construct y
     smp_size <- floor(prop_train * n) # make sample size
-    train_ind <- sample(seq_len(n), size = smp_size) # select train indices 
+    train_ind <- sample(seq_len(n), size = smp_size) # select train indices
     X_train <- X[train_ind,] # make X_train
     X_train <- scale(X_train, T, F)
     X_test <- X[-train_ind,] # make X_test
     X_test <- scale(X_test, T, F)
     y_train <- y[train_ind] # make y_train
     y_train <- scale(y_train, T, F)
-    y_test <- y[-train_ind] # make y_test 
+    y_test <- y[-train_ind] # make y_test
     y_test <- scale(y_test, T, F)
     mod_train <- lm(y_train~X_train+0)
     overall.F <- summary(mod_train)$fstat[1]
     if(overall.F >= qf(1-alpha_ov, p, smp_size-p-1)){ # if F-stat is significant
-      computeFstat[iter] <- TRUE 
+      computeFstat[iter] <- TRUE
       mod_test <- lm(y_test~X_test+0)
       psplit <- summary(mod_test)$coef[1,4]
       pvals.split[iter] <- psplit
@@ -113,8 +113,8 @@ pr_reject_sel <- function(beta1,n,p,alpha_ov,sigma=1,oracle=TRUE){
   cc <- p / (n - p - 1) * F.quantile
   scaling <- mean(Zs[As >= cc*Zs])
   print(scaling)
-  pvals.sel <- rep(NA, nreps) 
-  compute_F <- rep(FALSE, nreps) 
+  pvals.sel <- rep(NA, nreps)
+  compute_F <- rep(FALSE, nreps)
   sigma_est <- rep(NA, nreps)
   for(i in 1:nreps){
     X <- matrix(rnorm(n * p), ncol = p)
@@ -149,12 +149,12 @@ pr_reject_sel <- function(beta1,n,p,alpha_ov,sigma=1,oracle=TRUE){
 
 compute_psel <- function(alpha_ov, beta1_val, oracle = TRUE) {
   pr_reject <- pr_reject_sel(beta1 = beta1_val, n = 100, p = 10, alpha_ov = alpha_ov, oracle = oracle)
-  return(c(pr_reject[1], pr_reject[2])) 
+  return(c(pr_reject[1], pr_reject[2]))
 }
 
 compute_psplit <- function(alpha_ov, beta1_val) {
   pr_reject <- pr_reject_split(beta1 = beta1_val, n = 100, p = 10, alpha_ov = alpha_ov)
-  return(c(pr_reject[1], pr_reject[2]))  
+  return(c(pr_reject[1], pr_reject[2]))
 }
 
 run_simulation <- function(beta1_val) {
@@ -224,11 +224,11 @@ points(beta1, pr_reject_sel_5, ylim=c(0, 1), pch = 4, type = "b", col= "#009E73"
 legend("bottomright", pch = c(4, 1, 2, NA, NA,NA), col=c( "#009E73",  "#0072B2","#E69F00","black", "black", "black"), c(expression(p[H[0]^M*"|"*E]), expression(p[H[0]^M*"|"*E]^{tilde(sigma)^2}), bquote(p[H[0]^M]^{scriptscriptstyle("split")}), expression(alpha == 0.05), expression(alpha == 0.1), expression(alpha == 0.5)), lty = c(NA, NA, NA, 3,2,1))
 
 
-################################ save plot #########################################
+################################ final plot #########################################
 
-pdf("power_t1error_global_null.pdf", width = 8, height = 3) 
+#pdf("power_t1error_global_null.pdf", width = 8, height = 3)
 
-#par(mfrow = c(1, 3), pty = "s")
+par(mfrow = c(1, 3), pty = "s")
 
 plot(theorqs, empqs.naive, type = "l", lwd=3, xlab = "Uniform Theoretical Quantiles", ylab = "Empirical Quantiles", xlim = c(0, 1), ylim = c(0, 1), col = "black")
 lines(theorqs, empqs.oracle, lwd=3, col = "purple2")
