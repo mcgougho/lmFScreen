@@ -1,0 +1,142 @@
+---
+title: "vignette"
+output: html_document
+date: "2025-03-02"
+---
+
+```{r}
+library(lmFScreen)
+```
+
+
+```{r}
+niter = 1000
+n = 100
+p <- 10 
+alpha = 0.05
+beta <- rep(0, p)
+sigma <- 0.5
+psel_DB <- psel_oracle <- rep(NA, niter)
+for (i in 1:niter){
+  repeat {
+    X <- matrix(rnorm(n * p), ncol = p)
+    y <- X %*% beta + rnorm(n) * sigma
+    project_info <- get_Xy_centered(X, y)
+    X_proj <- project_info$X
+    y_proj <- project_info$y
+    U <- svd(X_proj)$u
+    yPy <- sum((t(U) %*% y_proj)^2)
+    rss <- sum(y_proj^2) - yPy
+    F.quantile <- qf(1-alpha, p, n-p-1) 
+    F_statistic <- (n-p-1) / p * (yPy / rss)
+    if (F_statistic >= F.quantile) {
+      break  # Exit loop if condition is satisfied
+    }
+  }
+  psel_DB[i] <- lmFScreen.fit(X_proj, y_proj, alpha = 0.05, alpha_ov = 0.05, test_cols = 1)$pvalues
+  psel_oracle[i] <- lmFScreen.fit(X_proj, y_proj, alpha = 0.05, alpha_ov = 0.05, test_cols = 1, sigma_sq = sigma^2)$pvalues
+}
+```
+
+```{r}
+qs <- seq(from = 0, to = 1, length.out = 1000)
+theorqs <- qunif(qs)
+emp.cdf.oracle <- ecdf(psel_oracle)
+empqs.oracle <- quantile(emp.cdf.oracle, qs)
+emp.cdf.DB <- ecdf(psel_DB)
+empqs.DB <- quantile(emp.cdf.DB, qs)
+
+plot(theorqs, empqs.DB, type = "l", lwd=3, xlab = "Uniform Theoretical Quantiles", ylab = "Empirical Quantiles",, xlim = c(0, 1), ylim = c(0, 1), col = "blue", main="Global null")
+lines(theorqs, empqs.oracle, lwd=3, col = "purple2")
+segments(0, 0, 1, 1, col = "red")
+```
+
+
+
+
+
+
+```{r}
+library(lmFScreen)
+set.seed(12345)
+n = 100
+p <- 10 
+alpha = 0.05
+beta <- rep(0, p)
+sigma <- 0.5
+ 
+repeat {
+  X <- matrix(rnorm(n * p), ncol = p)
+  y <- X %*% beta + rnorm(n) * sigma
+  project_info <- get_Xy_centered(X, y)
+  X_proj <- project_info$X
+  y_proj <- project_info$y
+  U <- svd(X_proj)$u
+  yPy <- sum((t(U) %*% y_proj)^2)
+  rss <- sum(y_proj^2) - yPy
+  F.quantile <- qf(1-alpha, p, n-p-1) 
+  F_statistic <- (n-p-1) / p * (yPy / rss)
+  if (F_statistic >= F.quantile) {
+    break  # Exit loop if condition is satisfied
+  }
+}
+cat("Rows in centered X: ", nrow(X_proj), "\n")
+cat("Rows in centered y: ", nrow(y_proj), "\n")
+cat("n: ",n,"\n")
+cat("p: ",p,"\n")
+```
+
+
+```{r}
+devtools::load_all()
+```
+
+```{r}
+#devtools::install() then restart R
+#library(Fscreen)
+
+output1 <- lmFScreen(y_proj~X_proj+0)
+summary(output1)
+coef(output1)
+confint(output1)
+
+# if you make changes, run devtools::document()
+```
+
+```{r}
+coef(output1)
+```
+
+
+```{r}
+output2 <- lmFScreen(y~X+1)
+names(output2)
+```
+
+```{r}
+names(summary(mod))
+mod$coefficients
+summary(mod)$coefficients
+```
+
+
+```{r}
+X <- matrix(rnorm(n * p), ncol = p)
+y <- X %*% beta + rnorm(n) * sigma
+lmFScreen(y~X)
+```
+
+```{r}
+set.seed(10)
+y <- rnorm(100)
+X <- rep(c("red", "blue", "green","orange", "black"), 20)
+fm <- aov(y~X)
+summary(fm)
+summary(lm(y~X))
+summary.lm(fm)
+```
+
+
+
+
+
