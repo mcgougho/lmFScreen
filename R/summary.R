@@ -1,29 +1,24 @@
-#' Summarize an `lmFScreen` Model
+#' Summarize an lmFScreen Model
 #'
-#' This function provides a structured summary of an `lmFScreen` model, displaying
-#' both **selective** and **naive** estimates, confidence intervals, and p-values.
+#' Displays a structured summary of an lmFScreen model, including both selective
+#' and naive estimates, confidence intervals, and p-values.
 #'
 #' The output includes:
-#' - A header summarizing the number of predictors.
-#' - A table of **selective estimates** with confidence intervals and p-values.
-#' - A table of **naive estimates** with confidence intervals and p-values.
-#' - Significance stars appended to p-values:
-#'   - `*` for p < 0.05
-#'   - `**` for p < 0.01
-#'   - `***` for p < 0.001
+#' - A header indicating the number of predictors
+#' - A table of selective estimates with confidence intervals and p-values
+#' - A table of naive estimates with confidence intervals and p-values
+#' - Significance stars are added to p-values:
+#'   * for p < 0.05
+#'   ** for p < 0.01
+#'   *** for p < 0.001
 #'
-#' @param object An object of class `"lmFScreen"`, containing model results.
-#' @param ... Additional arguments (unused).
+#' @param object An object of class lmFScreen containing model results.
+#' @param ... Additional arguments (currently unused).
 #'
 #' @return Invisibly returns a list containing:
-#' \describe{
-#'   \item{Selective}{A dataframe with selective estimates, CIs, and p-values.}
-#'   \item{Naive}{A dataframe with naive estimates, CIs, and p-values.}
-#' }
+#'   - Selective: A data frame with selective estimates, confidence intervals, and p-values
+#'   - Naive: A data frame with naive estimates, confidence intervals, and p-values
 #'
-#' @examples
-#' # Assuming `fscreen_model` is an lmFScreen object:
-#' summary(fscreen_model)
 #'
 #' @export
 summary.lmFScreen <- function(object, ...) {
@@ -80,22 +75,20 @@ summary.lmFScreen <- function(object, ...) {
   invisible(NULL)
 }
 
-#' Extract Coefficients from an `lmFScreen` Model
+
+
+
+#' Extract Coefficients from an lmFScreen Model
 #'
-#' This function returns and prints the **selective** and **naive** coefficient estimates.
+#' Displays the selective and naive coefficient estimates from an lmFScreen model.
 #'
-#' @param object An object of class `"lmFScreen"`, containing model results.
-#' @param ... Additional arguments (unused).
+#' @param object An object of class lmFScreen containing model results.
+#' @param ... Additional arguments (currently unused).
 #'
-#' @return Invisibly returns a dataframe containing:
-#' \describe{
-#'   \item{Predictor}{The predictor names.}
-#'   \item{Estimate (Selective)}{The selective model coefficient estimates.}
-#'   \item{Estimate (Naive)}{The naive model coefficient estimates.}
-#' }
-#'
-#' @examples
-#' coef(fscreen_model)
+#' @return Invisibly returns a data frame containing:
+#'   - Predictor: Names of the predictor variables
+#'   - Estimate (Selective): Selective coefficient estimates
+#'   - Estimate (Naive): Naive coefficient estimates
 #'
 #' @export
 coef.lmFScreen <- function(object, ...) {
@@ -130,18 +123,19 @@ coef.lmFScreen <- function(object, ...) {
 }
 
 
-#' Compute Confidence Intervals for an `lmFScreen` Model
+
+
+#' Compute Confidence Intervals for an lmFScreen Model
 #'
-#' This function returns and prints confidence intervals for both **selective** and **naive** estimates.
+#' Prints and returns confidence intervals for both selective and naive estimates.
+#' The confidence level is taken from the alpha value stored in the lmFScreen object.
 #'
-#' @param object An object of class `"lmFScreen"`, containing model results.
-#' @param ... Additional arguments (unused).
+#' @param object An object of class lmFScreen containing model results.
+#' @param ... Additional arguments (currently unused).
 #'
 #' @return Invisibly returns a list containing:
-#' \describe{
-#'   \item{Selective}{A dataframe with confidence intervals for selective estimates.}
-#'   \item{Naive}{A dataframe with confidence intervals for naive estimates.}
-#' }
+#'   - Selective: A data frame of confidence intervals for selective estimates
+#'   - Naive: A data frame of confidence intervals for naive estimates
 #'
 #'
 #' @export

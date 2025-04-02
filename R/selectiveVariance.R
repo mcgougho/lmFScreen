@@ -1,25 +1,27 @@
 #' Estimate Variance for Selective Inference
 #'
-#' This function computes an estimate of the variance parameter `sigma_sq`
-#' for selective inference using a rescaled residual sum of squares (RSS).
+#' Computes an estimate of the error variance to be used in selective inference,
+#' based on a rescaled residual sum of squares from a linear regression model.
 #'
-#' @param X A matrix of predictor variables.
-#' @param Y A vector of response variables.
-#' @param alpha_ov The significance level for the overall F-test.
+#' @param X A numeric matrix of predictor variables with n rows and p columns.
+#' @param Y A numeric response vector of length n.
+#' @param alpha_ov The significance level used in the overall F-test.
 #'
-#' @return A numeric value representing the estimated variance `sigma_sq`.
+#' @return A numeric value representing the estimated variance used for selective inference.
 #'
 #' @details
-#' The function follows these steps:
-#' 1. Computes a scaling factor using Monte Carlo simulation from chi-squared distributions.
-#' 2. Computes the residual sum of squares (RSS) from a linear model fit.
-#' 3. Uses the scaling factor to adjust the RSS and obtain the variance estimate.
+#' This function estimates the variance of the error term under the assumption that
+#' inference is performed conditional on rejection of the overall F-test.
 #'
-#' @examples
-#' X <- matrix(rnorm(100), nrow = 10)
-#' Y <- rnorm(10)
-#' sigma_sq_est <- get_variance_estimate(X, Y, alpha_ov = 0.05)
-#' print(sigma_sq_est)
+#' The procedure includes:
+#' 1. Simulating samples from chi-squared distributions to compute a correction factor
+#'    that accounts for the selection event.
+#' 2. Fitting a linear regression model of Y on X and computing the residual sum of squares.
+#' 3. Adjusting the residual sum of squares using the correction factor to obtain
+#'    a debiased estimate of the variance.
+#'
+#' This estimate is useful when conducting selective inference with p-values and
+#' confidence intervals that condition on the overall model selection step.
 #'
 #' @export
 get_variance_estimate <- function(X,Y,alpha_ov){

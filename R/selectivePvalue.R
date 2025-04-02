@@ -1,32 +1,26 @@
-#' Compute the Selective P-Value Function for Beta1
+#' Construct the Selective P-Value Function for a Single Coefficient
 #'
-#' This function returns a function `pselb` that computes the selective p-value
-#' for a given value of `b` (corresponding to `beta1`). The function uses
-#' a Monte Carlo approach to evaluate the probability that the estimated coefficient
-#' satisfies a selection criterion.
+#' This function returns a function that computes the selective p-value for a given value of b (the hypothesized value of beta1),
+#' conditional on rejection of the overall F-test. The p-value is estimated via Monte Carlo integration, accounting for the selection event.
 #'
-#' @param X A matrix of predictor variables.
-#' @param y A vector of response variables.
-#' @param sigma_sq The variance parameter.
-#' @param rss The residual sum of squares from a model fit (default: NULL, computed internally if missing).
-#' @param alpha_ov The significance level for the overall F-test (default: 0.05).
-#' @param B The number of Monte Carlo samples used for estimation.
-#' @param min_select The minimum number of selected samples required (default: `B`).
-#' @param seed A seed value for reproducibility (default: 123456).
+#' @param X A numeric matrix of predictors with n rows and p columns. The first column corresponds to the coefficient of interest.
+#' @param y A numeric response vector of length n.
+#' @param sigma_sq The variance of the error term. Must be specified in advance.
+#' @param yPy Optional value of the quadratic form y' P_X y. If NULL, it is computed internally.
+#' @param rss Optional residual sum of squares. If NULL, it is computed internally using y and yPy.
+#' @param alpha_ov Significance level for the overall F-test. Default is 0.05.
+#' @param B Number of Monte Carlo samples drawn per iteration. Default is 10,000.
+#' @param min_select Minimum number of selected samples required to estimate the p-value. Default is equal to B.
+#' @param B_max Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.
+#' @param seed Optional seed for reproducibility. If NULL, a random seed is generated.
+#' @param verbose Logical flag indicating whether to print progress messages during sampling.
 #'
-#' @return A function `pselb(b)` that computes the selective p-value for a given `b`.
-#' If the overall F-test fails, the function returns `NA`.
+#' @return A function that takes a numeric argument b and returns the selective p-value corresponding to that value of beta1. If the selection condition
+#' is not met by the observed data, the returned function will always return NA.
 #'
 #' @details
-#' The function performs the following steps:
-#' 1. Computes the overall F-statistic for the regression model and checks whether it
-#'    passes the selection criterion based on the quantile of an F-distribution.
-#' 2. Constructs an orthonormal basis using the singular value decomposition (SVD)
-#'    of `X` excluding the first column.
-#' 3. Defines a Monte Carlo estimation approach using random samples from normal
-#'    and chi-squared distributions to approximate the conditional probability.
-#' 4. Returns a function `pselb(b)` that evaluates the p-value for any given `b`.
-#'
+#' The returned function estimates the conditional probability that a test statistic T(b) exceeds the observed value, given that the data passes the F-test threshold.
+#' Sampling proceeds until at least min_select Monte Carlo draws satisfy the selection condition. If this cannot be achieved within the given sample limits, the function returns NA.
 #'
 #' @export
 get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B = 10000, min_select = B, B_max = 10e6, seed = NULL, verbose = FALSE) {
@@ -128,25 +122,29 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 
 
 
-#' Retrospective Selective P-Value for a Single Coefficient
+#' Retrospective Selective P-Value Based on Summary Statistics
 #'
-#' Computes the selective p-value for a linear regression coefficient from R squared, RSE
-#' and the post-hoc F-statistic of interest, conditional on having passed an overall F-test.
+#' Computes a selective p-value for a single regression coefficient using summary statistics from a linear model: R-squared, residual standard error (RSE), and an F-statistic. This function is useful in retrospective settings where the raw data is unavailable.
 #'
 #' @param n Sample size (number of observations).
-#' @param p Number of predictors of interest (non-intercept) in the model.
-#' @param R_squared R-squared value from the overall fitted model.
-#' @param RSE Residual standard error from the overall fitted model.
-#' @param Fstat Observed F-statistic for the post-hoc.
-#' @param sigma_sq Optional variance parameter. If NULL, it will be estimated using debiased estimate.
-#' @param alpha_ov Significance level for the overall F-test (default: 0.05).
-#' @param B Number of Monte Carlo samples per attempt (default: 10000).
-#' @param min_select Minimum number of selected samples required to compute the p-value (default: 100).
-#' @param max_attempts Maximum number of sampling attempts if the selection condition is rare (default: 10).
+#' @param p Number of predictors (excluding the intercept).
+#' @param R_squared R-squared from the fitted linear model.
+#' @param RSE Residual standard error from the fitted model.
+#' @param Fstat Observed F-statistic for the follow-up hypothesis test.
+#' @param sigma_sq Optional estimate of the noise variance. If NULL, it is estimated from RSE and a selection correction.
+#' @param alpha_ov Significance level for the overall F-test. Default is 0.05.
+#' @param B Number of Monte Carlo samples per iteration. Default is 1,000,000.
+#' @param min_select Minimum number of samples satisfying the selection condition. Default is 1,000.
+#' @param max_attempts Maximum number of iterations before giving up. Default is 100.
 #'
-#' @return A scalar value: the estimated selective p-value. If no selected samples are obtained
-#' after `max_attempts`, returns NA with a warning.
+#' @return A numeric value representing the estimated selective p-value. If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
 #'
+#' @details
+#' The selective p-value is estimated as the conditional probability that a test statistic W / Z exceeds the observed value,
+#' where W follows a chi-squared distribution with 1 degree of freedom, and Z follows a chi-squared distribution with n - p - 1 degrees of freedom.
+#' The selection condition is based on the rejection threshold for the overall F-test.
+#'
+#' This method can be applied in settings where only summary statistics are available, such as published studies.
 #'
 #' @export
 psel_retro <- function(n, p, R_squared, RSE, Fstat, sigma_sq = NULL, alpha_ov=0.05, B=1000000, min_select = 1000, max_attempts = 100){

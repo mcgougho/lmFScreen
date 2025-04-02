@@ -1,26 +1,26 @@
-#' Compute Selective Confidence Interval Using Root Finding with uniroot
+#' Compute a Selective Confidence Interval Using Root-Finding
 #'
-#' This function calculates the confidence interval (CI) for a selective estimate
-#' by finding the values at which the selective p-value function `pselb(b)` equals
-#' the significance level `alpha`.
+#' This function computes a selective confidence interval for a regression coefficient
+#' by identifying the values of the parameter for which the selective p-value equals
+#' the specified significance level.
 #'
-#' @param pselb A function that returns the selective p-value for a given `b`.
-#' @param point_est The point estimate of the parameter.
-#' @param naive_se_est The naive standard error estimate of the parameter.
-#' @param alpha The significance level for the confidence interval (default: 0.05).
+#' @param pselb A function that returns the selective p-value for a given value of the parameter.
+#' @param point_est The point estimate of the parameter (typically the selective MLE).
+#' @param naive_se_est The naive standard error of the estimate.
+#' @param alpha The significance level for the confidence interval (default is 0.05).
 #'
-#' @return A numeric vector of length 2 containing the lower and upper bounds of the confidence interval.
+#' @return A numeric vector of length 2 giving the lower and upper bounds of the selective confidence interval.
 #'
 #' @details
-#' The function finds the confidence interval bounds by solving for `b` where
-#' `pselb(b) = alpha`. This is done using `uniroot()`, which finds the roots
-#' of the function `p_diff(b) = pselb(b) - alpha`.
+#' This function computes the lower and upper bounds of a confidence interval by solving for values
+#' of the parameter where the selective p-value equals the significance level alpha.
 #'
-#' Debugging statements are included to check:
-#' - The p-values at key points in the search range.
-#' - The computed confidence interval bounds.
-#' - The p-values at the computed bounds.
+#' The search is performed using uniroot, which finds roots of the function
+#' defined as the difference between the selective p-value and alpha. The function
+#' expands the search range iteratively if a root is not initially found in the given interval.
 #'
+#' If the selective p-value at the point estimate is less than or equal to alpha, the interval is considered valid.
+#' If not, an empty or infinite interval may be returned, with a warning printed.
 #'
 #' @export
 get_CI <- function(pselb, point_est, naive_se_est, alpha){

@@ -1,23 +1,29 @@
-#' lmFScreen: Selective Inference for Linear Regression
+#' lmFScreen: Selective Inference for Linear Regression via F-screening
 #'
-#' This function fits a selective inference linear regression model using a specified formula and dataset.
-#' It removes the intercept if present, centers the data, and then calls `Fscreen.fit` for model fitting.
+#' Fits a selective inference linear regression model using an R formula interface.
+#' If an intercept is present in the model, the data are projected to remove the intercept
+#' before conducting inference.
 #'
-#' @param formula A formula specifying the model (e.g., `y ~ X`).
+#' @param formula A formula specifying the linear model (e.g., y ~ x1 + x2).
 #' @param data An optional data frame containing the variables in the model.
-#' @param alpha The significance level for hypothesis testing (default: 0.05).
-#' @param alpha_ov The significance level for the overall F-test (default: 0.05).
-#' @param sigma_sq The variance parameter (if NULL, estimated internally using debiased estimate).
-#' @param B The number of Monte Carlo samples used for inference (default: 100000).
-#' @param seed An optional seed for reproducibility (default: NULL).
+#' @param alpha Significance level for confidence intervals and hypothesis tests (default: 0.05).
+#' @param alpha_ov Significance level for the overall F-test used for screening (default: 0.05).
+#' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
+#' @param seed Optional seed for reproducibility.
+#' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
+#' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
+#' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
 #'
-#' @return A list containing the selective and naive estimates, confidence intervals, and p-values for the model coefficients.
+#' @return An object of class lmFScreen, which includes:
+#'   - Selective coefficients, confidence intervals, and p-values
+#'   - Naive (unadjusted) estimates, confidence intervals, and p-values
+#'   - Model-level settings such as alpha and alpha_ov
 #'
 #' @details
-#' This function follows these steps:
-#' 1. Converts the input formula into a model frame and extracts `X` and `y`.
-#' 2. Centers `X` and `y` if an intercept is detected.
-#' 3. Calls `Fscreen.fit` to compute selective inference results.
+#' This function performs the following steps:
+#' 1. Converts the formula into a model matrix and response vector.
+#' 2. Projects out the intercept if one is included in the formula.
+#' 3. Calls lmFScreen.fit to compute selective inference results for all predictors.
 #'
 #' @examples
 #' data(mtcars)
@@ -51,39 +57,38 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 }
 
 
-#' Fit linear model with F-screening Using Selective Inference
+#' Fit a Linear Model with Selective Inference After F-screening
 #'
-#' This function performs selective inference for linear regression by computing maximum likelihood estimates,
-#' confidence intervals, and p-values for each predictor variable.
+#' Performs selective inference in linear regression by estimating selective
+#' coefficients, confidence intervals, and p-values conditional on passing an overall F-test.
 #'
-#' @param X A matrix of predictor variables.
-#' @param y A vector of response variables.
-#' @param alpha The significance level for hypothesis testing (default: 0.05).
-#' @param alpha_ov The significance level for the overall F-test (default: 0.05).
-#' @param test_cols Indices of predictors to test (default: all columns of `X`).
-#' @param sigma_sq The variance parameter (if NULL, estimated internally).
-#' @param B The number of Monte Carlo samples used for inference (default: 100000).
-#' @param seed An optional seed for reproducibility (default: NULL).
+#' @param X A numeric matrix of predictors.
+#' @param y A numeric response vector.
+#' @param alpha Significance level for confidence intervals and hypothesis tests (default: 0.05).
+#' @param alpha_ov Significance level for the overall F-test used for screening (default: 0.05).
+#' @param test_cols Indices of predictors to test (default: all columns of X).
+#' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
+#' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
+#' @param seed Optional seed for reproducibility.
+#' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
+#' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
 #'
-#' @return A list containing:
-#'   \item{coefficients}{Selective estimates for each predictor.}
-#'   \item{CIs}{Confidence intervals for each coefficient.}
-#'   \item{pvalues}{Selective p-values for hypothesis testing.}
-#'   \item{naive_coefs}{Naive coefficient estimates from standard OLS.}
+#' @return A list of class lmFScreen containing:
+#'   - Selective coefficients, confidence intervals, and p-values
+#'   - Naive (OLS) coefficients, confidence intervals, and p-values
+#'   - Model settings: alpha and alpha_ov
 #'
 #' @details
-#' This function follows these steps:
-#' 1. If `sigma_sq` is not provided, estimates it using `get_variance_estimate`.
-#' 2. Computes naive estimates using OLS regression.
-#' 3. For each predictor, computes the selective MLE using `compute_MLE`.
-#' 4. Obtains confidence intervals using `get_CI`.
-#' 5. Computes p-values using `get_pselb`.
+#' The procedure follows these steps:
+#' 1. Computes the overall F-statistic and checks whether the data passes the F-screening threshold.
+#' 2. If passed, computes naive OLS estimates and standard errors.
+#' 3. For each predictor:
+#'    - Computes the selective MLE using Monte Carlo approximation
+#'    - Constructs a selective confidence interval using root-finding
+#'    - Computes a selective p-value using selective resampling
 #'
-#' @examples
-#' X <- matrix(rnorm(100), nrow = 10)
-#' y <- rnorm(10)
-#' result <- Fscreen.fit(X, y)
-#' summary(result)
+#' The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.
+#'
 #'
 #' @export
 lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, seed = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {

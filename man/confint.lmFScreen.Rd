@@ -2,22 +2,21 @@
 % Please edit documentation in R/summary.R
 \name{confint.lmFScreen}
 \alias{confint.lmFScreen}
-\title{Compute Confidence Intervals for an `lmFScreen` Model}
+\title{Compute Confidence Intervals for an lmFScreen Model}
 \usage{
 \method{confint}{lmFScreen}(object, ...)
 }
 \arguments{
-\item{object}{An object of class `"lmFScreen"`, containing model results.}
+\item{object}{An object of class lmFScreen containing model results.}
 
-\item{...}{Additional arguments (unused).}
+\item{...}{Additional arguments (currently unused).}
 }
 \value{
 Invisibly returns a list containing:
-\describe{
-  \item{Selective}{A dataframe with confidence intervals for selective estimates.}
-  \item{Naive}{A dataframe with confidence intervals for naive estimates.}
-}
+  - Selective: A data frame of confidence intervals for selective estimates
+  - Naive: A data frame of confidence intervals for naive estimates
 }
 \description{
-This function returns and prints confidence intervals for both **selective** and **naive** estimates.
+Prints and returns confidence intervals for both selective and naive estimates.
+The confidence level is taken from the alpha value stored in the lmFScreen object.
 }

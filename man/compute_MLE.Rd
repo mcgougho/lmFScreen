@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectiveMLE.R
 \name{compute_MLE}
 \alias{compute_MLE}
-\title{Optimize Beta1 Parameter via Maximum Likelihood}
+\title{Compute the Selective Maximum Likelihood Estimate for beta1}
 \usage{
 compute_MLE(
   X,
@@ -15,26 +15,29 @@ compute_MLE(
 )
 }
 \arguments{
-\item{X}{A matrix of predictor variables.}
+\item{X}{A numeric matrix of predictor variables (n x p), with the first column corresponding to `beta1`.}
 
-\item{y}{A vector of response variables.}
+\item{y}{A numeric response vector of length n.}
 
-\item{sigma_sq}{The variance parameter.}
+\item{sigma_sq}{The noise variance. If unknown, it should be estimated beforehand.}
 
-\item{alpha_ov}{A parameter used in the likelihood calculation.}
+\item{alpha_ov}{The significance level for the overall F-test (used in defining the selection region).}
 
-\item{interval}{A numeric vector of length 2 specifying the range for `beta1` optimization (default: `c(-10, 10)`).}
+\item{interval}{A numeric vector of length 2 giving the search interval for `beta1` (default: `c(-10, 10)`).}
 
-\item{B}{The number of Monte Carlo samples (default: `1000000`).}
+\item{B}{The number of Monte Carlo samples used to approximate the likelihood (default: `1e6`).}
 
-\item{seed}{A seed value for reproducibility (default: `12345`).}
+\item{seed}{A seed for reproducibility (default: `12345`).}
 }
 \value{
 A list containing:
-  \item{beta1}{The optimal value of `beta1` that maximizes the likelihood.}
-  \item{max_likelihood}{The maximum likelihood value computed at `beta1`.}
+\describe{
+  \item{beta1}{The MLE of `beta1` under the selective likelihood.}
+  \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
+}
 }
 \description{
-This function finds the maximum likelihood estimate (MLE) of `beta1` by optimizing
-the likelihood function computed via Monte Carlo integration.
+This function computes the maximum likelihood estimate (MLE) of a single regression
+coefficient (`beta1`) using a Monte Carlo approximation to the selective likelihood,
+conditional on passing the overall F-test.
 }

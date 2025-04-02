@@ -2,38 +2,31 @@
 % Please edit documentation in R/summary.R
 \name{summary.lmFScreen}
 \alias{summary.lmFScreen}
-\title{Summarize an `lmFScreen` Model}
+\title{Summarize an lmFScreen Model}
 \usage{
 \method{summary}{lmFScreen}(object, ...)
 }
 \arguments{
-\item{object}{An object of class `"lmFScreen"`, containing model results.}
+\item{object}{An object of class lmFScreen containing model results.}
 
-\item{...}{Additional arguments (unused).}
+\item{...}{Additional arguments (currently unused).}
 }
 \value{
 Invisibly returns a list containing:
-\describe{
-  \item{Selective}{A dataframe with selective estimates, CIs, and p-values.}
-  \item{Naive}{A dataframe with naive estimates, CIs, and p-values.}
-}
+  - Selective: A data frame with selective estimates, confidence intervals, and p-values
+  - Naive: A data frame with naive estimates, confidence intervals, and p-values
 }
 \description{
-This function provides a structured summary of an `lmFScreen` model, displaying
-both **selective** and **naive** estimates, confidence intervals, and p-values.
+Displays a structured summary of an lmFScreen model, including both selective
+and naive estimates, confidence intervals, and p-values.
 }
 \details{
 The output includes:
-- A header summarizing the number of predictors.
-- A table of **selective estimates** with confidence intervals and p-values.
-- A table of **naive estimates** with confidence intervals and p-values.
-- Significance stars appended to p-values:
-  - `*` for p < 0.05
-  - `**` for p < 0.01
-  - `***` for p < 0.001
-}
-\examples{
-# Assuming `fscreen_model` is an lmFScreen object:
-summary(fscreen_model)
-
+- A header indicating the number of predictors
+- A table of selective estimates with confidence intervals and p-values
+- A table of naive estimates with confidence intervals and p-values
+- Significance stars are added to p-values:
+  * for p < 0.05
+  ** for p < 0.01
+  *** for p < 0.001
 }

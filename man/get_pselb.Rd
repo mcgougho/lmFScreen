@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectivePvalue.R
 \name{get_pselb}
 \alias{get_pselb}
-\title{Compute the Selective P-Value Function for Beta1}
+\title{Construct the Selective P-Value Function for a Single Coefficient}
 \usage{
 get_pselb(
   X,
@@ -19,39 +19,37 @@ get_pselb(
 )
 }
 \arguments{
-\item{X}{A matrix of predictor variables.}
+\item{X}{A numeric matrix of predictors with n rows and p columns. The first column corresponds to the coefficient of interest.}
 
-\item{y}{A vector of response variables.}
+\item{y}{A numeric response vector of length n.}
 
-\item{sigma_sq}{The variance parameter.}
+\item{sigma_sq}{The variance of the error term. Must be specified in advance.}
 
-\item{rss}{The residual sum of squares from a model fit (default: NULL, computed internally if missing).}
+\item{yPy}{Optional value of the quadratic form y' P_X y. If NULL, it is computed internally.}
 
-\item{alpha_ov}{The significance level for the overall F-test (default: 0.05).}
+\item{rss}{Optional residual sum of squares. If NULL, it is computed internally using y and yPy.}
 
-\item{B}{The number of Monte Carlo samples used for estimation.}
+\item{alpha_ov}{Significance level for the overall F-test. Default is 0.05.}
 
-\item{min_select}{The minimum number of selected samples required (default: `B`).}
+\item{B}{Number of Monte Carlo samples drawn per iteration. Default is 10,000.}
 
-\item{seed}{A seed value for reproducibility (default: 123456).}
+\item{min_select}{Minimum number of selected samples required to estimate the p-value. Default is equal to B.}
+
+\item{B_max}{Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.}
+
+\item{seed}{Optional seed for reproducibility. If NULL, a random seed is generated.}
+
+\item{verbose}{Logical flag indicating whether to print progress messages during sampling.}
 }
 \value{
-A function `pselb(b)` that computes the selective p-value for a given `b`.
-If the overall F-test fails, the function returns `NA`.
+A function that takes a numeric argument b and returns the selective p-value corresponding to that value of beta1. If the selection condition
+is not met by the observed data, the returned function will always return NA.
 }
 \description{
-This function returns a function `pselb` that computes the selective p-value
-for a given value of `b` (corresponding to `beta1`). The function uses
-a Monte Carlo approach to evaluate the probability that the estimated coefficient
-satisfies a selection criterion.
+This function returns a function that computes the selective p-value for a given value of b (the hypothesized value of beta1),
+conditional on rejection of the overall F-test. The p-value is estimated via Monte Carlo integration, accounting for the selection event.
 }
 \details{
-The function performs the following steps:
-1. Computes the overall F-statistic for the regression model and checks whether it
-   passes the selection criterion based on the quantile of an F-distribution.
-2. Constructs an orthonormal basis using the singular value decomposition (SVD)
-   of `X` excluding the first column.
-3. Defines a Monte Carlo estimation approach using random samples from normal
-   and chi-squared distributions to approximate the conditional probability.
-4. Returns a function `pselb(b)` that evaluates the p-value for any given `b`.
+The returned function estimates the conditional probability that a test statistic T(b) exceeds the observed value, given that the data passes the F-test threshold.
+Sampling proceeds until at least min_select Monte Carlo draws satisfy the selection condition. If this cannot be achieved within the given sample limits, the function returns NA.
 }

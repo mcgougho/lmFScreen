@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectiveMLE.R
 \name{compute_likelihood_function}
 \alias{compute_likelihood_function}
-\title{Compute the Likelihood Function for Beta1 Optimization}
+\title{Construct the Selective Log-Likelihood Function for beta1}
 \usage{
 compute_likelihood_function(
   X,
@@ -14,23 +14,34 @@ compute_likelihood_function(
 )
 }
 \arguments{
-\item{X}{A matrix of predictor variables.}
+\item{X}{A numeric matrix of predictors (n x p), with `beta1` corresponding to the first column.}
 
-\item{y}{A vector of response variables.}
+\item{y}{A numeric response vector of length n.}
 
-\item{sigma_sq}{The variance parameter.}
+\item{sigma_sq}{The noise variance.}
 
-\item{alpha_ov}{The significance level of the overall F-test.}
+\item{alpha_ov}{The significance level for the overall F-test (default: `0.05`).}
 
-\item{B}{The number of Monte Carlo samples (default is 100000).}
+\item{B}{The number of Monte Carlo samples (default: `1e6`).}
 
-\item{seed}{A seed value for reproducibility (default is 12345).}
+\item{seed}{A seed for reproducibility (default: `12345`).}
 }
 \value{
-A function that computes the (log) likelihood for a given `beta1`.
+A function of one argument `beta1` that returns the approximate
+        log-likelihood (up to an additive constant), conditional on selection.
+        If the observed data fails the selection condition, the function returns `-Inf`.
 }
 \description{
-This function constructs a likelihood function (to be optimized) using the given data.
-The likelihood is computed via a Monte Carlo integration method that involves generating
-random samples from chi-squared distributions.
+This function constructs a log-likelihood function for a single regression
+coefficient (`beta1`), conditional on selection via the overall F-test.
+The log-likelihood is approximated using Monte Carlo integration.
+}
+\details{
+The likelihood is proportional to the conditional density of a test statistic
+(a linear projection of `y`) given that the observed F-statistic exceeds its
+critical value under the null. The selection region is defined using the
+F-test threshold and the orthogonal projection structure of the regression.
+
+Internally, the function generates samples from a noncentral and central chi-squared
+distribution to approximate the conditional probability of selection.
 }

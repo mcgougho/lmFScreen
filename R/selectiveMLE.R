@@ -1,19 +1,22 @@
-#' Optimize Beta1 Parameter via Maximum Likelihood
+#' Compute the Selective Maximum Likelihood Estimate for beta1
 #'
-#' This function finds the maximum likelihood estimate (MLE) of `beta1` by optimizing
-#' the likelihood function computed via Monte Carlo integration.
+#' This function computes the maximum likelihood estimate (MLE) of a single regression
+#' coefficient (`beta1`) using a Monte Carlo approximation to the selective likelihood,
+#' conditional on passing the overall F-test.
 #'
-#' @param X A matrix of predictor variables.
-#' @param y A vector of response variables.
-#' @param sigma_sq The variance parameter.
-#' @param alpha_ov A parameter used in the likelihood calculation.
-#' @param interval A numeric vector of length 2 specifying the range for `beta1` optimization (default: `c(-10, 10)`).
-#' @param B The number of Monte Carlo samples (default: `1000000`).
-#' @param seed A seed value for reproducibility (default: `12345`).
+#' @param X A numeric matrix of predictor variables (n x p), with the first column corresponding to `beta1`.
+#' @param y A numeric response vector of length n.
+#' @param sigma_sq The noise variance. If unknown, it should be estimated beforehand.
+#' @param alpha_ov The significance level for the overall F-test (used in defining the selection region).
+#' @param interval A numeric vector of length 2 giving the search interval for `beta1` (default: `c(-10, 10)`).
+#' @param B The number of Monte Carlo samples used to approximate the likelihood (default: `1e6`).
+#' @param seed A seed for reproducibility (default: `12345`).
 #'
 #' @return A list containing:
-#'   \item{beta1}{The optimal value of `beta1` that maximizes the likelihood.}
-#'   \item{max_likelihood}{The maximum likelihood value computed at `beta1`.}
+#' \describe{
+#'   \item{beta1}{The MLE of `beta1` under the selective likelihood.}
+#'   \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
+#' }
 #'
 #' @export
 compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 1000000, seed = 12345) {
@@ -40,20 +43,31 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 }
 
 
-#' Compute the Likelihood Function for Beta1 Optimization
+#' Construct the Selective Log-Likelihood Function for beta1
 #'
-#' This function constructs a likelihood function (to be optimized) using the given data.
-#' The likelihood is computed via a Monte Carlo integration method that involves generating
-#' random samples from chi-squared distributions.
+#' This function constructs a log-likelihood function for a single regression
+#' coefficient (`beta1`), conditional on selection via the overall F-test.
+#' The log-likelihood is approximated using Monte Carlo integration.
 #'
-#' @param X A matrix of predictor variables.
-#' @param y A vector of response variables.
-#' @param sigma_sq The variance parameter.
-#' @param alpha_ov The significance level of the overall F-test.
-#' @param B The number of Monte Carlo samples (default is 100000).
-#' @param seed A seed value for reproducibility (default is 12345).
+#' @param X A numeric matrix of predictors (n x p), with `beta1` corresponding to the first column.
+#' @param y A numeric response vector of length n.
+#' @param sigma_sq The noise variance.
+#' @param alpha_ov The significance level for the overall F-test (default: `0.05`).
+#' @param B The number of Monte Carlo samples (default: `1e6`).
+#' @param seed A seed for reproducibility (default: `12345`).
 #'
-#' @return A function that computes the (log) likelihood for a given `beta1`.
+#' @return A function of one argument `beta1` that returns the approximate
+#'         log-likelihood (up to an additive constant), conditional on selection.
+#'         If the observed data fails the selection condition, the function returns `-Inf`.
+#'
+#' @details
+#' The likelihood is proportional to the conditional density of a test statistic
+#' (a linear projection of `y`) given that the observed F-statistic exceeds its
+#' critical value under the null. The selection region is defined using the
+#' F-test threshold and the orthogonal projection structure of the regression.
+#'
+#' Internally, the function generates samples from a noncentral and central chi-squared
+#' distribution to approximate the conditional probability of selection.
 #'
 #' @export
 compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000, seed = 12345) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectivePvalue.R
 \name{psel_retro}
 \alias{psel_retro}
-\title{Retrospective Selective P-Value for a Single Coefficient}
+\title{Retrospective Selective P-Value Based on Summary Statistics}
 \usage{
 psel_retro(
   n,
@@ -12,7 +12,7 @@ psel_retro(
   Fstat,
   sigma_sq = NULL,
   alpha_ov = 0.05,
-  B = 10000,
+  B = 1e+06,
   min_select = 1000,
   max_attempts = 100
 )
@@ -20,29 +20,34 @@ psel_retro(
 \arguments{
 \item{n}{Sample size (number of observations).}
 
-\item{p}{Number of predictors of interest (non-intercept) in the model.}
+\item{p}{Number of predictors (excluding the intercept).}
 
-\item{R_squared}{R-squared value from the overall fitted model.}
+\item{R_squared}{R-squared from the fitted linear model.}
 
-\item{RSE}{Residual standard error from the overall fitted model.}
+\item{RSE}{Residual standard error from the fitted model.}
 
-\item{Fstat}{Observed F-statistic for the post-hoc.}
+\item{Fstat}{Observed F-statistic for the follow-up hypothesis test.}
 
-\item{sigma_sq}{Optional variance parameter. If NULL, it will be estimated using debiased estimate.}
+\item{sigma_sq}{Optional estimate of the noise variance. If NULL, it is estimated from RSE and a selection correction.}
 
-\item{alpha_ov}{Significance level for the overall F-test (default: 0.05).}
+\item{alpha_ov}{Significance level for the overall F-test. Default is 0.05.}
 
-\item{B}{Number of Monte Carlo samples per attempt (default: 10000).}
+\item{B}{Number of Monte Carlo samples per iteration. Default is 1,000,000.}
 
-\item{min_select}{Minimum number of selected samples required to compute the p-value (default: 100).}
+\item{min_select}{Minimum number of samples satisfying the selection condition. Default is 1,000.}
 
-\item{max_attempts}{Maximum number of sampling attempts if the selection condition is rare (default: 10).}
+\item{max_attempts}{Maximum number of iterations before giving up. Default is 100.}
 }
 \value{
-A scalar value: the estimated selective p-value. If no selected samples are obtained
-after `max_attempts`, returns NA with a warning.
+A numeric value representing the estimated selective p-value. If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
 }
 \description{
-Computes the selective p-value for a linear regression coefficient from R squared, RSE
-and the post-hoc F-statistic of interest, conditional on having passed an overall F-test.
+Computes a selective p-value for a single regression coefficient using summary statistics from a linear model: R-squared, residual standard error (RSE), and an F-statistic. This function is useful in retrospective settings where the raw data is unavailable.
+}
+\details{
+The selective p-value is estimated as the conditional probability that a test statistic W / Z exceeds the observed value,
+where W follows a chi-squared distribution with 1 degree of freedom, and Z follows a chi-squared distribution with n - p - 1 degrees of freedom.
+The selection condition is based on the rejection threshold for the overall F-test.
+
+This method can be applied in settings where only summary statistics are available, such as published studies.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmFScreen.R
 \name{lmFScreen}
 \alias{lmFScreen}
-\title{lmFScreen: Selective Inference for Linear Regression}
+\title{lmFScreen: Selective Inference for Linear Regression via F-screening}
 \usage{
 lmFScreen(
   formula,
@@ -17,32 +17,40 @@ lmFScreen(
 )
 }
 \arguments{
-\item{formula}{A formula specifying the model (e.g., `y ~ X`).}
+\item{formula}{A formula specifying the linear model (e.g., y ~ x1 + x2).}
 
 \item{data}{An optional data frame containing the variables in the model.}
 
-\item{alpha}{The significance level for hypothesis testing (default: 0.05).}
+\item{alpha}{Significance level for confidence intervals and hypothesis tests (default: 0.05).}
 
-\item{alpha_ov}{The significance level for the overall F-test (default: 0.05).}
+\item{alpha_ov}{Significance level for the overall F-test used for screening (default: 0.05).}
 
-\item{sigma_sq}{The variance parameter (if NULL, estimated internally using debiased estimate).}
+\item{sigma_sq}{Optional noise variance. If NULL, it is estimated using a corrected residual variance.}
 
-\item{seed}{An optional seed for reproducibility (default: NULL).}
+\item{seed}{Optional seed for reproducibility.}
 
-\item{B}{The number of Monte Carlo samples used for inference (default: 100000).}
+\item{compute_CI}{Logical; whether to compute selective confidence intervals (default: TRUE).}
+
+\item{compute_est}{Logical; whether to compute selective point estimates (default: TRUE).}
+
+\item{B}{Number of Monte Carlo samples used for selective inference (default: 100000).}
 }
 \value{
-A list containing the selective and naive estimates, confidence intervals, and p-values for the model coefficients.
+An object of class lmFScreen, which includes:
+  - Selective coefficients, confidence intervals, and p-values
+  - Naive (unadjusted) estimates, confidence intervals, and p-values
+  - Model-level settings such as alpha and alpha_ov
 }
 \description{
-This function fits a selective inference linear regression model using a specified formula and dataset.
-It removes the intercept if present, centers the data, and then calls `Fscreen.fit` for model fitting.
+Fits a selective inference linear regression model using an R formula interface.
+If an intercept is present in the model, the data are projected to remove the intercept
+before conducting inference.
 }
 \details{
-This function follows these steps:
-1. Converts the input formula into a model frame and extracts `X` and `y`.
-2. Centers `X` and `y` if an intercept is detected.
-3. Calls `Fscreen.fit` to compute selective inference results.
+This function performs the following steps:
+1. Converts the formula into a model matrix and response vector.
+2. Projects out the intercept if one is included in the formula.
+3. Calls lmFScreen.fit to compute selective inference results for all predictors.
 }
 \examples{
 data(mtcars)

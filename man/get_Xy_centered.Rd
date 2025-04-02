@@ -2,30 +2,36 @@
 % Please edit documentation in R/projection.R
 \name{get_Xy_centered}
 \alias{get_Xy_centered}
-\title{Center X and y by Removing the Intercept}
+\title{Project Out the Intercept from X and y}
 \usage{
 get_Xy_centered(X, y)
 }
 \arguments{
-\item{X}{A numeric matrix of predictors (dimensions: n x p).}
+\item{X}{A numeric matrix of predictors with dimensions (n x p).}
 
 \item{y}{A numeric response vector of length n.}
 }
 \value{
 A list containing:
 \describe{
-  \item{X}{The transformed predictor matrix with the intercept projected out.}
-  \item{y}{The transformed response vector with the intercept projected out.}
+  \item{X}{The predictor matrix after projection (dimensions: (n - 1) x p).}
+  \item{y}{The response vector after projection (length: n - 1).}
 }
 }
 \description{
-This function centers the predictor matrix `X` and response vector `y` by
-projecting out the intercept. It ensures that the transformed data does not
-include a mean shift component.
+This function projects the predictor matrix `X` and response vector `y` onto the
+orthogonal complement of the intercept (constant) vector. This removes any component
+of the data explained by the intercept, effectively centering the data in the
+sense of removing the mean direction.
 }
 \details{
-This function uses singular value decomposition (SVD) to project out
-the intercept and return a centered version of `X` and `y`.
+This function uses the singular value decomposition (SVD) of the intercept vector
+to construct an orthonormal basis for the space orthogonal to the intercept.
+It then projects `X` and `y` onto that space, effectively removing any contribution
+from the intercept.
+
+This approach is more general than simply subtracting column means, and ensures
+numerical stability and orthogonality in the transformed space.
 }
 \examples{
 X <- matrix(rnorm(100), nrow = 10)

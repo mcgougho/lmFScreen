@@ -2,27 +2,21 @@
 % Please edit documentation in R/summary.R
 \name{coef.lmFScreen}
 \alias{coef.lmFScreen}
-\title{Extract Coefficients from an `lmFScreen` Model}
+\title{Extract Coefficients from an lmFScreen Model}
 \usage{
 \method{coef}{lmFScreen}(object, ...)
 }
 \arguments{
-\item{object}{An object of class `"lmFScreen"`, containing model results.}
+\item{object}{An object of class lmFScreen containing model results.}
 
-\item{...}{Additional arguments (unused).}
+\item{...}{Additional arguments (currently unused).}
 }
 \value{
-Invisibly returns a dataframe containing:
-\describe{
-  \item{Predictor}{The predictor names.}
-  \item{Estimate (Selective)}{The selective model coefficient estimates.}
-  \item{Estimate (Naive)}{The naive model coefficient estimates.}
-}
+Invisibly returns a data frame containing:
+  - Predictor: Names of the predictor variables
+  - Estimate (Selective): Selective coefficient estimates
+  - Estimate (Naive): Naive coefficient estimates
 }
 \description{
-This function returns and prints the **selective** and **naive** coefficient estimates.
-}
-\examples{
-coef(fscreen_model)
-
+Displays the selective and naive coefficient estimates from an lmFScreen model.
 }

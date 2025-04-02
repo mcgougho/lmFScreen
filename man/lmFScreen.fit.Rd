@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmFScreen.R
 \name{lmFScreen.fit}
 \alias{lmFScreen.fit}
-\title{Fit linear model with F-screening Using Selective Inference}
+\title{Fit a Linear Model with Selective Inference After F-screening}
 \usage{
 lmFScreen.fit(
   X,
@@ -18,45 +18,44 @@ lmFScreen.fit(
 )
 }
 \arguments{
-\item{X}{A matrix of predictor variables.}
+\item{X}{A numeric matrix of predictors.}
 
-\item{y}{A vector of response variables.}
+\item{y}{A numeric response vector.}
 
-\item{alpha}{The significance level for hypothesis testing (default: 0.05).}
+\item{alpha}{Significance level for confidence intervals and hypothesis tests (default: 0.05).}
 
-\item{alpha_ov}{The significance level for the overall F-test (default: 0.05).}
+\item{alpha_ov}{Significance level for the overall F-test used for screening (default: 0.05).}
 
-\item{test_cols}{Indices of predictors to test (default: all columns of `X`).}
+\item{test_cols}{Indices of predictors to test (default: all columns of X).}
 
-\item{sigma_sq}{The variance parameter (if NULL, estimated internally).}
+\item{sigma_sq}{Optional noise variance. If NULL, it is estimated using a corrected residual variance.}
 
-\item{seed}{An optional seed for reproducibility (default: NULL).}
+\item{seed}{Optional seed for reproducibility.}
 
-\item{B}{The number of Monte Carlo samples used for inference (default: 100000).}
+\item{compute_CI}{Logical; whether to compute selective confidence intervals (default: TRUE).}
+
+\item{compute_est}{Logical; whether to compute selective point estimates (default: TRUE).}
+
+\item{B}{Number of Monte Carlo samples used for selective inference (default: 100000).}
 }
 \value{
-A list containing:
-  \item{coefficients}{Selective estimates for each predictor.}
-  \item{CIs}{Confidence intervals for each coefficient.}
-  \item{pvalues}{Selective p-values for hypothesis testing.}
-  \item{naive_coefs}{Naive coefficient estimates from standard OLS.}
+A list of class lmFScreen containing:
+  - Selective coefficients, confidence intervals, and p-values
+  - Naive (OLS) coefficients, confidence intervals, and p-values
+  - Model settings: alpha and alpha_ov
 }
 \description{
-This function performs selective inference for linear regression by computing maximum likelihood estimates,
-confidence intervals, and p-values for each predictor variable.
+Performs selective inference in linear regression by estimating selective
+coefficients, confidence intervals, and p-values conditional on passing an overall F-test.
 }
 \details{
-This function follows these steps:
-1. If `sigma_sq` is not provided, estimates it using `get_variance_estimate`.
-2. Computes naive estimates using OLS regression.
-3. For each predictor, computes the selective MLE using `compute_MLE`.
-4. Obtains confidence intervals using `get_CI`.
-5. Computes p-values using `get_pselb`.
-}
-\examples{
-X <- matrix(rnorm(100), nrow = 10)
-y <- rnorm(10)
-result <- Fscreen.fit(X, y)
-summary(result)
+The procedure follows these steps:
+1. Computes the overall F-statistic and checks whether the data passes the F-screening threshold.
+2. If passed, computes naive OLS estimates and standard errors.
+3. For each predictor:
+   - Computes the selective MLE using Monte Carlo approximation
+   - Constructs a selective confidence interval using root-finding
+   - Computes a selective p-value using selective resampling
 
+The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.
 }
