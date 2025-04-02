@@ -11,7 +11,7 @@ The `lmFScreen` package enables valid post-selection inference following an over
 Given a design matrix `X` and a response vector `y`, the package:
 
 1. Performs an **overall F-test** of the global null hypothesis  
-   $$ H_0: \beta_1 = \beta_2 = \dots = \beta_p = 0 $$
+   H₀: β₁ = β₂ = ... = βₚ = 0
 2. **If (and only if)** this test is rejected, conducts follow-up tests on specified coefficients (`test_cols`)
 3. Returns:
    - Selective **p-values**
@@ -39,7 +39,7 @@ The `figures/` directory contains R scripts to reproduce all plots from the pape
 - **Description:**  
   Compares the selective confidence intervals to naive intervals in terms of:
   - Coverage (selective vs. non-selective)
-  - Width (selective intervals are wider but valid)
+  - Width (one plot with the value of the true coefficient on the horizontal axis and one plot with the number of observations as the horizontal axis)
 
 ---
 
