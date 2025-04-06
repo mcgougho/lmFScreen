@@ -18,7 +18,7 @@ p.1b3 <- rep(NA, nreps)      # Bonferroni-adjusted (×3)
 p.1s <- rep(NA, nreps)       # Scheffé-adjusted
 psel.1 <- rep(NA, nreps)     # Selection-adjusted
 
-# make design matrix 
+# make design matrix
 group <- factor(rep(letters[1:n_group], each = n_per_group))
 X <- model.matrix(~ group)
 X.1 <- X[,-1, drop = FALSE]
@@ -27,26 +27,26 @@ beta <- rep(0, n_group)
 for (i in 1:nreps) {
   # Generate the group factor and design matrix X (baseline is group A)
   y <- X %*% beta + rnorm(n_group * n_per_group) * sigma
-  
+
   # Fit the linear model using lm:
   lm_model <- lm(y ~ X + 0)
-  
+
   # Overall test: compare the full model to the null model (only intercept)
   lm_null <- lm(y ~ 1)
   anova_out <- anova(lm_null, lm_model)
   # Extract the p-value for the additional predictors (i.e. the group effect)
   p.overall[i] <- anova_out$`Pr(>F)`[2]
-  
+
   # Extract the summary to get the coefficient for groupB
   lm_summary <- summary(lm_model)
   # The coefficient named "XgroupB" compares group B vs. baseline A.
   p_raw <- lm_summary$coefficients["Xgroupb", "Pr(>|t|)"]
   p.1n[i] <- p_raw
-  
+
   # Bonferroni correction for 2 and 3 tests (overall and pairwise)
   p.1b[i] <- ifelse(p_raw <= 1/2, 2 * p_raw, 1)
   p.1b3[i] <- ifelse(p_raw <= 1/3, 3 * p_raw, 1)
-  
+
   # Scheffé adjustment:
   # 1. Extract the t-statistic for the groupB coefficient.
   t_stat <- lm_summary$coefficients["Xgroupb", "t value"]
@@ -56,12 +56,12 @@ for (i in 1:nreps) {
   df_error <- n_per_group * n_group - ncol(X)
   # 4. Compute the Scheffé p-value from the F distribution:
   p.1s[i] <- 1 - pf(F_stat, df1 = n_group - 1, df2 = df_error)
-  
+
   # Compute the Selective p-value:
-  Xy_centered <- get_Xy_centered(X.1,y)
+  Xy_centered <- lmFScreen:::get_Xy_centered(X.1,y)
   X_centered <- Xy_centered$X
   y_centered <- Xy_centered$y
-  pselb <- get_pselb(X=X_centered,y=y_centered,sigma_sq=sigma^2,alpha_ov=0.05,B=100000,min_select=10000, seed = 123*i )
+  pselb <- lmFScreen:::get_pselb(X=X_centered,y=y_centered,sigma_sq=sigma^2,alpha_ov=0.05,B=100000,min_select=10000, seed = 123*i )
   psel.1[i] <- pselb(0)
 }
 
@@ -140,8 +140,8 @@ colors <- c(
 # Base theme modifications
 base_theme <- theme_minimal() +
   theme(
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     panel.border = element_rect(color = "black", fill = NA, size = 1),  # Box around plot
     legend.position = "none",  # Remove legend from individual plots
     aspect.ratio = 1,  # Ensure square plots
@@ -166,8 +166,8 @@ p2 <- ggplot(df_conditional, aes(x = Theoretical, y = Empirical, color = Method)
   base_theme
 
 # Arrange side-by-side with a single common legend
-final_plot <- p1 + p2 + 
-  plot_layout(guides = "collect") & 
+final_plot <- p1 + p2 +
+  plot_layout(guides = "collect") &
   theme(
     legend.position = "bottom",
     legend.background = element_rect(color = "black", fill = "white", size = 0.8),  # Box around legend

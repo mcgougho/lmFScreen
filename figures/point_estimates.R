@@ -3,10 +3,10 @@ library(ggplot2)
 library(ggExtra)
 
 # set parameters
-seed <- 112233     
+seed <- 112233
 n <- 10
 p <- 2
-b_true <- 0       
+b_true <- 0
 sigma <- 2
 beta <- rep(0, p)
 beta[1] <- b_true
@@ -28,7 +28,7 @@ for (rep_idx in 1:B) {
     X <- matrix(rnorm(n * p), ncol = p)
     y <- X %*% beta + rnorm(n) * sigma
     # Project out the intercept
-    Xy_info <- get_Xy_centered(X,y)
+    Xy_info <- lmFScreen:::get_Xy_centered(X,y)
     X <- Xy_info$X
     y <- Xy_info$y
     # Compute test statistic
@@ -42,18 +42,18 @@ for (rep_idx in 1:B) {
     }
     # Otherwise, generate a new (X, y)
   }
-  
+
   # get unconditional MLE (closed-form)
   naive_lm_coefs <- summary(lm(y ~ X + 0))$coefficients[test_cols, , drop = FALSE]
   naive_point_est <- naive_lm_coefs[1, 1]
   beta_mle_vals_uncond[rep_idx] <- naive_point_est
-  
+
   # get interval to search for conditional MLE in
   naive_se_est <- naive_lm_coefs[1, 2]
   interval <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
-  
+
   # get conditional MLE
-  point_est <- as.numeric(compute_MLE(X, y, sigma_sq = sigma^2, interval = interval, seed = seed*rep_idx, alpha_ov = alpha_ov, B = B)[[1]])
+  point_est <- as.numeric(lmFScreen:::compute_MLE(X, y, sigma_sq = sigma^2, interval = interval, seed = seed*rep_idx, alpha_ov = alpha_ov, B = B)[[1]])
   beta_mle_vals_cond[rep_idx] <- point_est
 }
 
@@ -63,10 +63,10 @@ ylim_range <- range(beta_mle_vals_cond)
 max_range <- range(c(xlim_range, ylim_range))  # Get common range
 
 # Create scatter plot
-scatter_plot <- ggplot(data = data.frame(beta_mle_vals_cond, beta_mle_vals_uncond), 
+scatter_plot <- ggplot(data = data.frame(beta_mle_vals_cond, beta_mle_vals_uncond),
                        aes(x = beta_mle_vals_uncond, y = beta_mle_vals_cond)) +
   geom_point(color = "blue", alpha = 0.1, size = 1) +
-  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed", linewidth = 1) + 
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed", linewidth = 1) +
   labs(x = "Unconditional MLE", y = "Conditional MLE", title = " ") +
   coord_fixed(ratio = 1, xlim = max_range, ylim = max_range)  # Set equal limits
 
@@ -85,7 +85,7 @@ for (rep_idx in 1:B) {
     X <- matrix(rnorm(n * p), ncol = p)
     y <- X %*% beta + rnorm(n) * sigma
     # Project out the intercept
-    Xy_info <- get_Xy_centered(X,y)
+    Xy_info <- lmFScreen:::get_Xy_centered(X,y)
     X <- Xy_info$X
     y <- Xy_info$y
     # Compute test statistic
@@ -99,21 +99,21 @@ for (rep_idx in 1:B) {
     }
     # Otherwise, generate a new (X, y)
   }
-  
+
   # get unconditional MLE (closed-form)
   naive_lm_coefs <- summary(lm(y ~ X + 0))$coefficients[test_cols, , drop = FALSE]
   naive_point_est <- naive_lm_coefs[1, 1]
   beta_mle_vals_uncond2[rep_idx] <- naive_point_est
-  
-  # get variance estimate 
-  sigma_sq <- get_variance_estimate(X,y,alpha_ov)
-  
+
+  # get variance estimate
+  sigma_sq <- lmFScreen:::get_variance_estimate(X,y,alpha_ov)
+
   # get interval to search for conditional MLE in
   naive_se_est <- naive_lm_coefs[1, 2]
   interval <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
-  
+
   # get conditional MLE
-  point_est <- as.numeric(compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, seed = seed*rep_idx, alpha_ov = alpha_ov, B = B)[[1]])
+  point_est <- as.numeric(lmFScreen:::compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, seed = seed*rep_idx, alpha_ov = alpha_ov, B = B)[[1]])
   beta_mle_vals_cond2[rep_idx] <- point_est
 }
 
@@ -123,10 +123,10 @@ ylim_range <- range(beta_mle_vals_cond2)
 max_range <- range(c(xlim_range, ylim_range))  # Get common range
 
 # Create scatter plot
-scatter_plot <- ggplot(data = data.frame(beta_mle_vals_cond2, beta_mle_vals_uncond2), 
+scatter_plot <- ggplot(data = data.frame(beta_mle_vals_cond2, beta_mle_vals_uncond2),
                        aes(x = beta_mle_vals_uncond2, y = beta_mle_vals_cond2)) +
   geom_point(color = "blue", alpha = 0.1, size = 1) +
-  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed", linewidth = 1) + 
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed", linewidth = 1) +
   labs(x = "Unconditional MLE", y = "Conditional MLE", title = " ") +
   coord_fixed(ratio = 1, xlim = max_range, ylim = max_range)  # Set equal limits
 
@@ -143,10 +143,10 @@ max_range <- range(c(xlim_range, ylim_range))  # Ensure common scale for both ax
 
 # Function to create scatter plot (without `ggMarginal`)
 create_scatter <- function(mle_vals_uncond, mle_vals_cond) {
-  ggplot(data = data.frame(mle_vals_uncond, mle_vals_cond), 
+  ggplot(data = data.frame(mle_vals_uncond, mle_vals_cond),
          aes(x = mle_vals_uncond, y = mle_vals_cond)) +
     geom_point(color = "blue", alpha = 0.1, size = 1) +
-    geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed", linewidth = 1) + 
+    geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed", linewidth = 1) +
     labs(x = "Unconditional MLE", y = "Conditional MLE", title = " ") +
     coord_fixed(ratio = 1, xlim = max_range, ylim = max_range)  # Set same limits
 }

@@ -116,6 +116,7 @@ pr_reject_sel <- function(beta1,n,p,alpha_ov,sigma=1,oracle=TRUE){
   pvals.sel <- rep(NA, nreps)
   compute_F <- rep(FALSE, nreps)
   sigma_est <- rep(NA, nreps)
+  set.seed(round(runif(1,0,1000)))
   for(i in 1:nreps){
     X <- matrix(rnorm(n * p), ncol = p)
     y  <- X %*%beta+rnorm(n)*sigma^2

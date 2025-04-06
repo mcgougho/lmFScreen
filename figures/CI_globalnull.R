@@ -16,9 +16,9 @@ test_col <- 1
 B <- 10000
 alpha_ov <- 0.05
 colors <- c(
-  "Selective CI (oracle)" = "#E69F00",   
-  "Selective CI (debiased)" = "#0072B2",  
-  "Naïve CI" = "#CC79A7"                        
+  "Selective CI (oracle)" = "#E69F00",
+  "Selective CI (debiased)" = "#0072B2",
+  "Naïve CI" = "#CC79A7"
 )
 
 
@@ -36,59 +36,59 @@ CIs_naive_list <- vector("list", length(alpha_seq))  # Naïve CI storage
 for (a in seq_along(alpha_seq)) {
   current_alpha <- alpha_seq[a]
   cat("Running for alpha =", current_alpha, "\n")
-  
+
   # Create matrices to store CIs for the current alpha value
   CIs_DB <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_oracle <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_naive <- matrix(NA, nrow = n_iter, ncol = 2)  # Naïve CI storage
-  
+
   # Run iterations for the current alpha value
   for (iter in 1:n_iter) {
     if(iter %% 100 == 0) cat("Iteration:", iter, "\n")
-    
+
     repeat {
       X <- matrix(rnorm(n * p), ncol = p)
       y <- X %*% beta + rnorm(n) * sigma
-      
+
       # Project out the intercept
-      Xy_info <- get_Xy_centered(X,y)
+      Xy_info <- lmFScreen:::get_Xy_centered(X,y)
       X <- Xy_info$X
       y <- Xy_info$y
-      
+
       # Compute test statistic
       U <- svd(X)$u
       yPy <- sum((t(U) %*% y)^2)
       rss <- sum(y^2) - yPy
       F_statistic <- (yPy / rss)
-      
+
       # Check if we pass the F-test threshold
       cc <- p/(n-p-1) * qf(1 - alpha_ov, p, (n - p - 1))
       if (F_statistic >= cc) {
         break
       }
     }
-    
+
     # Get confidence intervals using the DB method
     out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, B = B)$CIs
     CIs_DB[iter, 1] <- out_DB[test_col, 1]
     CIs_DB[iter, 2] <- out_DB[test_col, 2]
-    
+
     # Get confidence intervals using the oracle method (with known sigma^2)
     out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)$CIs
     CIs_oracle[iter, 1] <- out_oracle[test_col, 1]
     CIs_oracle[iter, 2] <- out_oracle[test_col, 2]
-    
+
     # Compute Naïve 95% Confidence Interval
     lm_naive <- lm(y ~ X + 0)  # Fit linear model without intercept
     beta_hat <- coef(lm_naive)[test_col]
     se_beta <- summary(lm_naive)$coefficients[test_col, 2]  # Standard error
-    z_crit <- qnorm(1 - current_alpha / 2)  
-    
+    z_crit <- qnorm(1 - current_alpha / 2)
+
     # Store Naïve CI
     CIs_naive[iter, 1] <- beta_hat - z_crit * se_beta
     CIs_naive[iter, 2] <- beta_hat + z_crit * se_beta
   }
-  
+
   # Save the results for this alpha
   CIs_DB_list[[a]] <- CIs_DB
   CIs_oracle_list[[a]] <- CIs_oracle
@@ -159,63 +159,63 @@ compute_CI_width <- function(CI_matrix) {
 # Loop over each true beta1 value
 for (b in seq_along(beta1_values)) {
   beta1 <- beta1_values[b]
-  
+
   cat("Running for beta1 =", beta1, "\n")
-  
+
   # Set up beta vector for Global Null case
   beta_globalnull <- rep(0, p)
   beta_globalnull[1] <- beta1
-  
+
   # Create matrices to store CIs
   CIs_naive_globalnull <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_globalnull <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_oracle_globalnull <- matrix(NA, nrow = n_iter, ncol = 2)  # New for oracle method
-  
+
   # Run iterations
   for (iter in 1:n_iter) {
     if (iter %% 100 == 0) cat("Iteration:", iter, "\n")
-    
+
     repeat {
       X <- matrix(rnorm(n * p), ncol = p)
       y_globalnull <- X %*% beta_globalnull + rnorm(n) * sigma
-      
+
       # Project out the intercept
-      Xy_info <- get_Xy_centered(X,y_globalnull)
+      Xy_info <- lmFScreen:::get_Xy_centered(X,y_globalnull)
       X <- Xy_info$X
       y_globalnull <- Xy_info$y
-      
+
       # Compute test statistic
       U <- svd(X)$u
       yPy <- sum((t(U) %*% y_globalnull)^2)
       rss <- sum(y_globalnull^2) - yPy
       F_statistic <- (yPy / rss)
-      
+
       # Check if we pass the F-test threshold
       cc <- p / (n - p - 1) * qf(1 - alpha_ov, p, (n - p - 1))
       if (F_statistic >= cc) {
         break
       }
     }
-    
+
     # Naïve CI (usual least squares method)
     naive_fit_globalnull <- lm(y_globalnull ~ X)
     naive_se_globalnull <- summary(naive_fit_globalnull)$coefficients[test_col + 1, 2]
     CIs_naive_globalnull[iter, ] <- coef(naive_fit_globalnull)[test_col + 1] +
       c(-1, 1) * qt(1 - alpha_ci / 2, df = n - p - 1) * naive_se_globalnull
-    
+
     # lmFScreen CI (default)
-    CIs_lmfscreen_globalnull[iter, ] <- lmFScreen.fit(X, y_globalnull, test_cols = test_col, 
+    CIs_lmfscreen_globalnull[iter, ] <- lmFScreen.fit(X, y_globalnull, test_cols = test_col,
                                                       alpha = alpha_ci, alpha_ov = alpha_ov, B = B)$CIs[test_col, ]
-    
+
     # lmFScreen CI with known sigma^2 (oracle method)
-    CIs_lmfscreen_oracle_globalnull[iter, ] <- lmFScreen.fit(X, y_globalnull, test_cols = test_col, 
+    CIs_lmfscreen_oracle_globalnull[iter, ] <- lmFScreen.fit(X, y_globalnull, test_cols = test_col,
                                                              alpha = alpha_ci, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)$CIs[test_col, ]
   }
-  
+
   # Compute average CI widths
   widths_naive_globalnull[b] <- compute_CI_width(CIs_naive_globalnull)
   widths_lmfscreen_globalnull[b] <- compute_CI_width(CIs_lmfscreen_globalnull)
-  widths_lmfscreen_oracle_globalnull[b] <- compute_CI_width(CIs_lmfscreen_oracle_globalnull) 
+  widths_lmfscreen_oracle_globalnull[b] <- compute_CI_width(CIs_lmfscreen_oracle_globalnull)
 }
 
 
@@ -263,58 +263,58 @@ widths_lmfscreen_oracle_n <- numeric(length(n_values))
 # Loop over each sample size
 for (i in seq_along(n_values)) {
   n <- n_values[i]
-  
+
   cat("Running for sample size n =", n, "\n")
-  
+
   # Set up beta vector for Global Null case
   beta_null <- rep(0, p)
-  
+
   # Create matrices to store CIs
   CIs_naive_n <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_n <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_oracle_n <- matrix(NA, nrow = n_iter, ncol = 2)
-  
+
   # Run iterations
   for (iter in 1:n_iter) {
     if (iter %% 100 == 0) cat("Iteration:", iter, "\n")
-    
+
     repeat {
       X <- matrix(rnorm(n * p), ncol = p)
       y <- X %*% beta_null + rnorm(n) * sigma  # Under the global null
-      
+
       # Project out the intercept
-      Xy_info <- get_Xy_centered(X,y)
+      Xy_info <- lmFScreen:::get_Xy_centered(X,y)
       X <- Xy_info$X
       y <- Xy_info$y
-      
+
       # Compute test statistic
       U <- svd(X)$u
       yPy <- sum((t(U) %*% y)^2)
       rss <- sum(y^2) - yPy
       F_statistic <- (yPy / rss)
-      
+
       # Check if we pass the F-test threshold
       cc <- p / (n - p - 1) * qf(1 - alpha_ov, p, (n - p - 1))
       if (F_statistic >= cc) {
         break
       }
     }
-    
+
     # Naïve CI
     naive_fit <- lm(y ~ X)
     naive_se <- summary(naive_fit)$coefficients[test_col + 1, 2]
     CIs_naive_n[iter, ] <- coef(naive_fit)[test_col + 1] +
       c(-1, 1) * qt(1 - alpha_ci / 2, df = n - p - 1) * naive_se
-    
+
     # lmFScreen CI (default)
-    CIs_lmfscreen_n[iter, ] <- lmFScreen.fit(X, y, test_cols = test_col, 
+    CIs_lmfscreen_n[iter, ] <- lmFScreen.fit(X, y, test_cols = test_col,
                                              alpha = alpha_ci, alpha_ov = alpha_ov, B = B)$CIs[test_col, ]
-    
+
     # lmFScreen CI with known sigma^2 (oracle method)
-    CIs_lmfscreen_oracle_n[iter, ] <- lmFScreen.fit(X, y, test_cols = test_col, 
+    CIs_lmfscreen_oracle_n[iter, ] <- lmFScreen.fit(X, y, test_cols = test_col,
                                                     alpha = alpha_ci, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)$CIs[test_col, ]
   }
-  
+
   # Compute average CI widths
   widths_naive_n[i] <- compute_CI_width(CIs_naive_n)
   widths_lmfscreen_n[i] <- compute_CI_width(CIs_lmfscreen_n)
@@ -353,8 +353,8 @@ p3 <- ggplot(widths_n_renamed, aes(x = n, y = Width, color = Method)) +
 ################################ final plot ######################################
 
 # Combine plots into one figure with a shared legend
-final_plot <- p1 + p2 + p3 + 
-  plot_layout(guides = "collect") & 
+final_plot <- p1 + p2 + p3 +
+  plot_layout(guides = "collect") &
   theme(
     legend.position = "bottom",
     legend.background = element_rect(color = "black", fill = "white", size = 0.8),
