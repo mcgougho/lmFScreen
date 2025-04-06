@@ -13,8 +13,11 @@
 }
 \value{
 Invisibly returns a data frame containing:
+
   - Predictor: Names of the predictor variables
+
   - Estimate (Selective): Selective coefficient estimates
+
   - Estimate (Naive): Naive coefficient estimates
 }
 \description{

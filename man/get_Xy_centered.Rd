@@ -29,14 +29,11 @@ This function uses the singular value decomposition (SVD) of the intercept vecto
 to construct an orthonormal basis for the space orthogonal to the intercept.
 It then projects `X` and `y` onto that space, effectively removing any contribution
 from the intercept.
-
-This approach is more general than simply subtracting column means, and ensures
-numerical stability and orthogonality in the transformed space.
 }
 \examples{
 X <- matrix(rnorm(100), nrow = 10)
 y <- rnorm(10)
-centered_data <- get_Xy_centered(X, y)
+centered_data <- lmFScreen:::get_Xy_centered(X, y)
 X_centered <- centered_data$X
 y_centered <- centered_data$y
 

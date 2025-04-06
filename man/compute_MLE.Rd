@@ -37,7 +37,7 @@ A list containing:
 }
 }
 \description{
-This function computes the maximum likelihood estimate (MLE) of a single regression
+This function numerically approximates the conditional maximum likelihood estimate (MLE) of a single regression
 coefficient (`beta1`) using a Monte Carlo approximation to the selective likelihood,
 conditional on passing the overall F-test.
 }

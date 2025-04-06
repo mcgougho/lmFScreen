@@ -28,7 +28,7 @@ compute_likelihood_function(
 }
 \value{
 A function of one argument `beta1` that returns the approximate
-        log-likelihood (up to an additive constant), conditional on selection.
+        log-likelihood, conditional on selection.
         If the observed data fails the selection condition, the function returns `-Inf`.
 }
 \description{

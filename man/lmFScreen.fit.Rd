@@ -40,8 +40,11 @@ lmFScreen.fit(
 }
 \value{
 A list of class lmFScreen containing:
+
   - Selective coefficients, confidence intervals, and p-values
+
   - Naive (OLS) coefficients, confidence intervals, and p-values
+
   - Model settings: alpha and alpha_ov
 }
 \description{
@@ -50,11 +53,17 @@ coefficients, confidence intervals, and p-values conditional on passing an overa
 }
 \details{
 The procedure follows these steps:
+
 1. Computes the overall F-statistic and checks whether the data passes the F-screening threshold.
+
 2. If passed, computes naive OLS estimates and standard errors.
+
 3. For each predictor:
+
    - Computes the selective MLE using Monte Carlo approximation
+
    - Constructs a selective confidence interval using root-finding
+
    - Computes a selective p-value using selective resampling
 
 The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.

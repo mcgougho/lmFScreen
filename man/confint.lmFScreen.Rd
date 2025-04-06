@@ -13,7 +13,9 @@
 }
 \value{
 Invisibly returns a list containing:
+
   - Selective: A data frame of confidence intervals for selective estimates
+
   - Naive: A data frame of confidence intervals for naive estimates
 }
 \description{
