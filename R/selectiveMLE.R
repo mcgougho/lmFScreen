@@ -1,6 +1,6 @@
 #' Compute the Selective Maximum Likelihood Estimate for beta1
 #'
-#' This function computes the maximum likelihood estimate (MLE) of a single regression
+#' This function numerically approximates the conditional maximum likelihood estimate (MLE) of a single regression
 #' coefficient (`beta1`) using a Monte Carlo approximation to the selective likelihood,
 #' conditional on passing the overall F-test.
 #'
@@ -56,7 +56,7 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #' @param seed A seed for reproducibility (default: `12345`).
 #'
 #' @return A function of one argument `beta1` that returns the approximate
-#'         log-likelihood (up to an additive constant), conditional on selection.
+#'         log-likelihood, conditional on selection.
 #'         If the observed data fails the selection condition, the function returns `-Inf`.
 #'
 #' @details

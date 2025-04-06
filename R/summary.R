@@ -4,9 +4,13 @@
 #' and naive estimates, confidence intervals, and p-values.
 #'
 #' The output includes:
+#'
 #' - A header indicating the number of predictors
+#'
 #' - A table of selective estimates with confidence intervals and p-values
+#'
 #' - A table of naive estimates with confidence intervals and p-values
+#'
 #' - Significance stars are added to p-values:
 #'   * for p < 0.05
 #'   ** for p < 0.01
@@ -16,7 +20,9 @@
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return Invisibly returns a list containing:
+#'
 #'   - Selective: A data frame with selective estimates, confidence intervals, and p-values
+#'
 #'   - Naive: A data frame with naive estimates, confidence intervals, and p-values
 #'
 #' @examples
@@ -90,8 +96,11 @@ summary.lmFScreen <- function(object, ...) {
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return Invisibly returns a data frame containing:
+#'
 #'   - Predictor: Names of the predictor variables
+#'
 #'   - Estimate (Selective): Selective coefficient estimates
+#'
 #'   - Estimate (Naive): Naive coefficient estimates
 #'
 #' @examples
@@ -143,7 +152,9 @@ coef.lmFScreen <- function(object, ...) {
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return Invisibly returns a list containing:
+#'
 #'   - Selective: A data frame of confidence intervals for selective estimates
+#'
 #'   - Naive: A data frame of confidence intervals for naive estimates
 #'
 #'
