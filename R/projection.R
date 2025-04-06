@@ -30,8 +30,6 @@
 #' X_centered <- centered_data$X
 #' y_centered <- centered_data$y
 #'
-#' @export
-
 get_Xy_centered <- function(X, y) {
   n <- length(y)
   project_out <- cbind(rep(1, n))  # Intercept projection matrix

@@ -30,3 +30,9 @@ The output includes:
   ** for p < 0.01
   *** for p < 0.001
 }
+\examples{
+data(mtcars)
+result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+summary(result)
+
+}

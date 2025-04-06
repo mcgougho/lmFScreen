@@ -56,5 +56,7 @@ This function performs the following steps:
 data(mtcars)
 result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
 summary(result)
+coef(result)
+confint(result)
 
 }

@@ -19,6 +19,10 @@
 #'   - Selective: A data frame with selective estimates, confidence intervals, and p-values
 #'   - Naive: A data frame with naive estimates, confidence intervals, and p-values
 #'
+#' @examples
+#' data(mtcars)
+#' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+#' summary(result)
 #'
 #' @export
 summary.lmFScreen <- function(object, ...) {
@@ -90,6 +94,11 @@ summary.lmFScreen <- function(object, ...) {
 #'   - Estimate (Selective): Selective coefficient estimates
 #'   - Estimate (Naive): Naive coefficient estimates
 #'
+#' @examples
+#' data(mtcars)
+#' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+#' coef(result)
+#'
 #' @export
 coef.lmFScreen <- function(object, ...) {
   if (!inherits(object, "lmFScreen")) {
@@ -137,6 +146,11 @@ coef.lmFScreen <- function(object, ...) {
 #'   - Selective: A data frame of confidence intervals for selective estimates
 #'   - Naive: A data frame of confidence intervals for naive estimates
 #'
+#'
+#' @examples
+#' data(mtcars)
+#' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+#' confint(result)
 #'
 #' @export
 confint.lmFScreen <- function(object, ...) {

@@ -20,3 +20,9 @@ Invisibly returns a data frame containing:
 \description{
 Displays the selective and naive coefficient estimates from an lmFScreen model.
 }
+\examples{
+data(mtcars)
+result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+coef(result)
+
+}

@@ -22,7 +22,6 @@
 #' If the selective p-value at the point estimate is less than or equal to alpha, the interval is considered valid.
 #' If not, an empty or infinite interval may be returned, with a warning printed.
 #'
-#' @export
 get_CI <- function(pselb, point_est, naive_se_est, alpha){
 
   pselb_deterministic <- memoise::memoise(pselb) # rerunning psel(b) with same b will give same output

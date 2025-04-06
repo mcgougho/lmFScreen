@@ -23,7 +23,6 @@
 #' This estimate is useful when conducting selective inference with p-values and
 #' confidence intervals that condition on the overall model selection step.
 #'
-#' @export
 get_variance_estimate <- function(X,Y,alpha_ov){
   n <- dim(X)[1]
   p <- dim(X)[2]

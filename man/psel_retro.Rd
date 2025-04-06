@@ -51,3 +51,12 @@ The selection condition is based on the rejection threshold for the overall F-te
 
 This method can be applied in settings where only summary statistics are available, such as published studies.
 }
+\examples{
+data(mtcars)
+mod <- lm(mpg ~ wt + hp, data = mtcars)
+rse <- summary(mod)$sigma
+r2 <- summary(mod)$r.squared
+t_wt <- summary(mod)$coefficients["wt", "t value"]
+psel_retro(n=nrow(mtcars), p=2, R_squared=r2, RSE=rse, Fstat=t_wt^2)
+
+}

@@ -22,7 +22,6 @@
 #' The returned function estimates the conditional probability that a test statistic T(b) exceeds the observed value, given that the data passes the F-test threshold.
 #' Sampling proceeds until at least min_select Monte Carlo draws satisfy the selection condition. If this cannot be achieved within the given sample limits, the function returns NA.
 #'
-#' @export
 get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B = 10000, min_select = B, B_max = 10e6, seed = NULL, verbose = FALSE) {
 
   if(is.null(seed)) {
@@ -145,6 +144,14 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 #' The selection condition is based on the rejection threshold for the overall F-test.
 #'
 #' This method can be applied in settings where only summary statistics are available, such as published studies.
+#'
+#' @examples
+#' data(mtcars)
+#' mod <- lm(mpg ~ wt + hp, data = mtcars)
+#' rse <- summary(mod)$sigma
+#' r2 <- summary(mod)$r.squared
+#' t_wt <- summary(mod)$coefficients["wt", "t value"]
+#' psel_retro(n=nrow(mtcars), p=2, R_squared=r2, RSE=rse, Fstat=t_wt^2)
 #'
 #' @export
 psel_retro <- function(n, p, R_squared, RSE, Fstat, sigma_sq = NULL, alpha_ov=0.05, B=1000000, min_select = 1000, max_attempts = 100){

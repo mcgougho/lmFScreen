@@ -20,3 +20,9 @@ Invisibly returns a list containing:
 Prints and returns confidence intervals for both selective and naive estimates.
 The confidence level is taken from the alpha value stored in the lmFScreen object.
 }
+\examples{
+data(mtcars)
+result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+confint(result)
+
+}

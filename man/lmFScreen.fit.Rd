@@ -59,3 +59,20 @@ The procedure follows these steps:
 
 The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.
 }
+\examples{
+data(mtcars)
+X <- cbind(mtcars$wt, mtcars$hp)
+y <- mtcars$mpg
+svdP <- svd(rep(1,nrow(mtcars)), nu = nrow(mtcars))
+tol <- nrow(mtcars) * max(svdP$d) * .Machine$double.eps
+r <- sum(svdP$d > tol)
+U_full <- svdP$u
+U_perp <- U_full[, (r+1):ncol(U_full)]
+X <- t(U_perp) \%*\% X
+y <- t(U_perp) \%*\% y
+result <- lmFScreen.fit(X,y)
+summary(result)
+coef(result)
+confint(result)
+
+}

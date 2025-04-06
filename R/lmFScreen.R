@@ -29,6 +29,8 @@
 #' data(mtcars)
 #' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
 #' summary(result)
+#' coef(result)
+#' confint(result)
 #'
 #' @export
 lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = NULL, seed = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
@@ -89,6 +91,21 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 #'
 #' The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.
 #'
+#' @examples
+#' data(mtcars)
+#' X <- cbind(mtcars$wt, mtcars$hp)
+#' y <- mtcars$mpg
+#' svdP <- svd(rep(1,nrow(mtcars)), nu = nrow(mtcars))
+#' tol <- nrow(mtcars) * max(svdP$d) * .Machine$double.eps
+#' r <- sum(svdP$d > tol)
+#' U_full <- svdP$u
+#' U_perp <- U_full[, (r+1):ncol(U_full)]
+#' X <- t(U_perp) %*% X
+#' y <- t(U_perp) %*% y
+#' result <- lmFScreen.fit(X,y)
+#' summary(result)
+#' coef(result)
+#' confint(result)
 #'
 #' @export
 lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, seed = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {

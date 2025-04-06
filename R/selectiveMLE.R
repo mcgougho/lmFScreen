@@ -18,7 +18,6 @@
 #'   \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
 #' }
 #'
-#' @export
 compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 1000000, seed = 12345) {
   # Create the likelihood function based on the current data and parameters.
   # Note: compute_likelihood_function returns a function that computes the likelihood for a given beta1.
@@ -69,7 +68,6 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #' Internally, the function generates samples from a noncentral and central chi-squared
 #' distribution to approximate the conditional probability of selection.
 #'
-#' @export
 compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000, seed = 12345) {
   n <- dim(X)[1]
   p <- dim(X)[2]
