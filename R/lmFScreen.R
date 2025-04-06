@@ -15,15 +15,22 @@
 #' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
 #'
 #' @return An object of class lmFScreen, which includes:
+#'
 #'   - Selective coefficients, confidence intervals, and p-values
+#'
 #'   - Naive (unadjusted) estimates, confidence intervals, and p-values
+#'
 #'   - Model-level settings such as alpha and alpha_ov
 #'
 #' @details
 #' This function performs the following steps:
+#'
 #' 1. Converts the formula into a model matrix and response vector.
+#'
 #' 2. Projects out the intercept if one is included in the formula.
+#'
 #' 3. Calls lmFScreen.fit to compute selective inference results for all predictors.
+#'
 #'
 #' @examples
 #' data(mtcars)

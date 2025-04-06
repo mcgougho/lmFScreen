@@ -37,8 +37,11 @@ lmFScreen(
 }
 \value{
 An object of class lmFScreen, which includes:
+
   - Selective coefficients, confidence intervals, and p-values
+
   - Naive (unadjusted) estimates, confidence intervals, and p-values
+
   - Model-level settings such as alpha and alpha_ov
 }
 \description{
@@ -48,8 +51,11 @@ before conducting inference.
 }
 \details{
 This function performs the following steps:
+
 1. Converts the formula into a model matrix and response vector.
+
 2. Projects out the intercept if one is included in the formula.
+
 3. Calls lmFScreen.fit to compute selective inference results for all predictors.
 }
 \examples{
