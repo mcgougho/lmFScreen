@@ -20,15 +20,15 @@ psel_retro(
 \arguments{
 \item{n}{Sample size (number of observations).}
 
-\item{p}{Number of predictors (excluding the intercept).}
+\item{p}{Number of predictors used in F-screening (excluding the intercept).}
 
 \item{R_squared}{R-squared from the fitted linear model.}
 
 \item{RSE}{Residual standard error from the fitted model.}
 
-\item{Fstat}{Observed F-statistic for the follow-up hypothesis test.}
+\item{Fstat}{Observed F-statistic for the follow-up hypothesis test of beta_i.}
 
-\item{sigma_sq}{Optional estimate of the noise variance. If NULL, it is estimated from RSE and a selection correction.}
+\item{sigma_sq}{Optional estimate of the noise variance. If NULL, uses debiased estimate that accounts for selection.}
 
 \item{alpha_ov}{Significance level for the overall F-test. Default is 0.05.}
 
@@ -36,13 +36,16 @@ psel_retro(
 
 \item{min_select}{Minimum number of samples satisfying the selection condition. Default is 1,000.}
 
-\item{max_attempts}{Maximum number of iterations before giving up. Default is 100.}
+\item{max_attempts}{Maximum number of iterations for passing selection criterion before giving up. Default is 100.}
 }
 \value{
-A numeric value representing the estimated selective p-value. If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
+A numeric value representing the estimated selective p-value.
+If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
 }
 \description{
-Computes a selective p-value for a single regression coefficient using summary statistics from a linear model: R-squared, residual standard error (RSE), and an F-statistic. This function is useful in retrospective settings where the raw data is unavailable.
+Computes a selective p-value for a single regression coefficient (beta_i) using summary statistics from a linear model:
+R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_i.
+This function is useful in retrospective settings where the raw data is unavailable.
 }
 \details{
 The selective p-value is estimated as the conditional probability that a test statistic W / Z exceeds the observed value,

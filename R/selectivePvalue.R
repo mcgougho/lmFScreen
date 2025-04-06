@@ -123,20 +123,23 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 
 #' Retrospective Selective P-Value Based on Summary Statistics
 #'
-#' Computes a selective p-value for a single regression coefficient using summary statistics from a linear model: R-squared, residual standard error (RSE), and an F-statistic. This function is useful in retrospective settings where the raw data is unavailable.
+#' Computes a selective p-value for a single regression coefficient (beta_i) using summary statistics from a linear model:
+#' R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_i.
+#' This function is useful in retrospective settings where the raw data is unavailable.
 #'
 #' @param n Sample size (number of observations).
-#' @param p Number of predictors (excluding the intercept).
+#' @param p Number of predictors used in F-screening (excluding the intercept).
 #' @param R_squared R-squared from the fitted linear model.
 #' @param RSE Residual standard error from the fitted model.
-#' @param Fstat Observed F-statistic for the follow-up hypothesis test.
-#' @param sigma_sq Optional estimate of the noise variance. If NULL, it is estimated from RSE and a selection correction.
+#' @param Fstat Observed F-statistic for the follow-up hypothesis test of beta_i.
+#' @param sigma_sq Optional estimate of the noise variance. If NULL, uses debiased estimate that accounts for selection.
 #' @param alpha_ov Significance level for the overall F-test. Default is 0.05.
 #' @param B Number of Monte Carlo samples per iteration. Default is 1,000,000.
 #' @param min_select Minimum number of samples satisfying the selection condition. Default is 1,000.
-#' @param max_attempts Maximum number of iterations before giving up. Default is 100.
+#' @param max_attempts Maximum number of iterations for passing selection criterion before giving up. Default is 100.
 #'
-#' @return A numeric value representing the estimated selective p-value. If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
+#' @return A numeric value representing the estimated selective p-value.
+#' If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
 #'
 #' @details
 #' The selective p-value is estimated as the conditional probability that a test statistic W / Z exceeds the observed value,
