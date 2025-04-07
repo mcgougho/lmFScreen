@@ -1,0 +1,149 @@
+---
+title: "Selective Inference on Age Groups"
+output: html_document
+---
+
+*Data used in this analysis was extracted from Table 1 of the paper ["Longitudinal Sleep Patterns and Cognitive Impairment in Older Adults"](https://jamanetwork-com.offcampus.lib.washington.edu/journals/jamanetworkopen/fullarticle/2812521).* This table reported means, standard deviations, and sample sizes for several variables across age groups. We use the `psel_retro()` function from the **lmFScreen** package to compute selective p-values for each pairwise comparison, conditional on rejection of the overall F-test (i.e., the omnibus ANOVA), since the table reports significant omnibus p-values for all outcomes.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(lmFScreen)
+```
+
+```{r helper-function}
+# Function to calculate SE, t-statistic, and p-value for pairwise comparisons
+calculate_t_and_p <- function(mean1, mean2, n1, n2, mse, df_within) {
+  se <- sqrt(mse * (1/n1 + 1/n2))
+  t_stat <- (mean1 - mean2) / se
+  p_val <- 2 * pt(-abs(t_stat), df_within)  # two-tailed p-value
+  sidak <- 1 - (1 - p_val)^3
+  return(list(t_stat = t_stat, p_val = p_val, sidak = sidak))
+}
+```
+
+---
+
+## CES-D Analysis
+
+```{r}
+means <- c(9.33, 7.60, 8.79)
+sds <- c(7.16, 5.84, 5.68)
+ns <- c(150, 449, 227)
+n <- sum(ns); p <- 3
+r_squared <- sum(ns * (means - mean(means))^2) / (sum(ns * (means - mean(means))^2) + sum((ns - 1) * sds^2))
+mse <- sum((ns - 1) * sds^2) / (n - p)
+rse <- sqrt(mse)
+df_within <- n - p
+
+results_1_2 <- calculate_t_and_p(means[1], means[2], ns[1], ns[2], mse, df_within)
+results_1_3 <- calculate_t_and_p(means[1], means[3], ns[1], ns[3], mse, df_within)
+results_2_3 <- calculate_t_and_p(means[2], means[3], ns[2], ns[3], mse, df_within)
+
+cat("\nCES-D Naive p-values (with Sidak correction):\n")
+cat("<65 vs 65–84: p =", results_1_2$p_val, ", sidak =", results_1_2$sidak, "\n")
+cat("<65 vs ≥85: p =", results_1_3$p_val, ", sidak =", results_1_3$sidak, "\n")
+cat("65–84 vs ≥85: p =", results_2_3$p_val, ", sidak =", results_2_3$sidak, "\n")
+
+cat("\nCES-D Selective p-values:\n")
+cat("<65 vs 65–84:", psel_retro(n, p, r_squared, rse, (results_1_2$t_stat)^2), "\n")
+cat("<65 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_1_3$t_stat)^2), "\n")
+cat("65–84 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_2_3$t_stat)^2), "\n")
+```
+
+---
+
+## Sleep Analysis
+
+```{r}
+means <- c(6.65, 6.93, 7.07)
+sds <- c(0.87, 0.87, 1.02)
+ns <- c(150, 449, 227)
+n <- sum(ns); p <- 3
+r_squared <- sum(ns * (means - mean(means))^2) / (sum(ns * (means - mean(means))^2) + sum((ns - 1) * sds^2))
+mse <- sum((ns - 1) * sds^2) / (n - p)
+rse <- sqrt(mse)
+df_within <- n - p
+
+results_1_2 <- calculate_t_and_p(means[1], means[2], ns[1], ns[2], mse, df_within)
+results_1_3 <- calculate_t_and_p(means[1], means[3], ns[1], ns[3], mse, df_within)
+results_2_3 <- calculate_t_and_p(means[2], means[3], ns[2], ns[3], mse, df_within)
+
+cat("\nSleep Naive p-values (with Sidak correction):\n")
+cat("<65 vs 65–84: p =", results_1_2$p_val, ", sidak =", results_1_2$sidak, "\n")
+cat("<65 vs ≥85: p =", results_1_3$p_val, ", sidak =", results_1_3$sidak, "\n")
+cat("65–84 vs ≥85: p =", results_2_3$p_val, ", sidak =", results_2_3$sidak, "\n")
+
+cat("\nSleep Selective p-values:\n")
+cat("<65 vs 65–84:", psel_retro(n, p, r_squared, rse, (results_1_2$t_stat)^2), "\n")
+cat("<65 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_1_3$t_stat)^2), "\n")
+cat("65–84 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_2_3$t_stat)^2), "\n")
+```
+
+---
+
+## MMSES Analysis
+
+```{r}
+means <- c(29.31, 28.12, 26.14)
+sds <- c(1.19, 2.42, 4.15)
+ns <- c(150, 449, 227)
+n <- sum(ns); p <- 3
+r_squared <- sum(ns * (means - mean(means))^2) / (sum(ns * (means - mean(means))^2) + sum((ns - 1) * sds^2))
+mse <- sum((ns - 1) * sds^2) / (n - p)
+rse <- sqrt(mse)
+df_within <- n - p
+
+results_1_2 <- calculate_t_and_p(means[1], means[2], ns[1], ns[2], mse, df_within)
+results_1_3 <- calculate_t_and_p(means[1], means[3], ns[1], ns[3], mse, df_within)
+results_2_3 <- calculate_t_and_p(means[2], means[3], ns[2], ns[3], mse, df_within)
+
+cat("\nMMSES Naive p-values (with Sidak correction):\n")
+cat("<65 vs 65–84: p =", results_1_2$p_val, ", sidak =", results_1_2$sidak, "\n")
+cat("<65 vs ≥85: p =", results_1_3$p_val, ", sidak =", results_1_3$sidak, "\n")
+cat("65–84 vs ≥85: p =", results_2_3$p_val, ", sidak =", results_2_3$sidak, "\n")
+
+cat("\nMMSES Selective p-values:\n")
+cat("<65 vs 65–84:", psel_retro(n, p, r_squared, rse, (results_1_2$t_stat)^2), "\n")
+cat("<65 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_1_3$t_stat)^2), "\n")
+cat("65–84 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_2_3$t_stat)^2), "\n")
+```
+
+---
+
+## MDRS Analysis
+
+```{r}
+means <- c(141.5, 139.0, 131.6)
+sds <- c(2.57, 5.85, 14.89)
+ns <- c(150, 449, 227)
+n <- sum(ns); p <- 3
+r_squared <- sum(ns * (means - mean(means))^2) / (sum(ns * (means - mean(means))^2) + sum((ns - 1) * sds^2))
+mse <- sum((ns - 1) * sds^2) / (n - p)
+rse <- sqrt(mse)
+df_within <- n - p
+
+results_1_2 <- calculate_t_and_p(means[1], means[2], ns[1], ns[2], mse, df_within)
+results_1_3 <- calculate_t_and_p(means[1], means[3], ns[1], ns[3], mse, df_within)
+results_2_3 <- calculate_t_and_p(means[2], means[3], ns[2], ns[3], mse, df_within)
+
+cat("\nMDRS Naive p-values (with Sidak correction):\n")
+cat("<65 vs 65–84: p =", results_1_2$p_val, ", sidak =", results_1_2$sidak, "\n")
+cat("<65 vs ≥85: p =", results_1_3$p_val, ", sidak =", results_1_3$sidak, "\n")
+cat("65–84 vs ≥85: p =", results_2_3$p_val, ", sidak =", results_2_3$sidak, "\n")
+
+cat("\nMDRS Selective p-values:\n")
+cat("<65 vs 65–84:", psel_retro(n, p, r_squared, rse, (results_1_2$t_stat)^2), "\n")
+cat("<65 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_1_3$t_stat)^2), "\n")
+cat("65–84 vs ≥85:", psel_retro(n, p, r_squared, rse, (results_2_3$t_stat)^2), "\n")
+```
+
+
+---
+
+## Summary
+
+In this analysis, we used selective inference techniques to revisit pairwise comparisons across age groups for four outcomes reported in the JAMA Network Open paper. While some selective p-values differ meaningfully from their naive counterparts (in the case of the CES-D outcome), others remain similar. The Sidak-corrected p-values reported in the original paper align with the Sidak-corrected naive p-values shown here.
+
+By conditioning on rejection of the overall F-test, the selective p-values provide a more principled post-hoc analysis while guarding against inflated Type I error.
+

@@ -1,0 +1,143 @@
+---
+title: "Selective Inference Across NHANES Cycles"
+author: "Olivia McGough"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Introduction
+
+In this analysis, we apply **selective inference** using the `lmFScreen` package to compare femur neck bone mineral density (BMD) across NHANES cycles for men over age 30. Selective inference methods adjust for the fact that inference is conditioned on passing a model selection step — in our case, an overall F-test.
+
+## Load Required Libraries
+
+```{r}
+library(haven)    # For reading NHANES XPT files
+library(dplyr)    # For data manipulation
+library(lmFScreen) # For selective inference via F-screening
+```
+
+## Load and Merge NHANES Data
+
+We load both BMD and demographic data from four NHANES cycles and merge by participant ID (`SEQN`).
+
+```{r}
+read_nhanes_cycle <- function(year) {
+  BMD <- read_xpt(paste0("DXXFEM_", year, ".xpt"))
+  DEMO <- read_xpt(paste0("DEMO_", year, ".xpt"))
+  merge(BMD, DEMO, by = "SEQN")
+}
+
+merged_2005_2006 <- read_nhanes_cycle("2005_2006")
+merged_2007_2008 <- read_nhanes_cycle("2007_2008")
+merged_2009_2010 <- read_nhanes_cycle("2009_2010")
+merged_2013_2014 <- read_nhanes_cycle("2013_2014")
+```
+
+## Clean and Prepare Data
+
+We retain only age, gender, and femur neck BMD, rename the columns, remove missing values, and restrict to men older than 30.
+
+```{r}
+prep_bmd_data <- function(df) {
+  df <- df[, c("RIDAGEYR", "DXXNKBMD", "RIAGENDR")]
+  colnames(df) <- c("Age", "Femur_Neck_BMD", "Gender")
+  df <- na.omit(df)
+  df %>% filter(Age > 30)
+}
+
+bmd_men <- bind_rows(
+  prep_bmd_data(merged_2005_2006) %>% filter(Gender == 1) %>% mutate(Year = "2005-2006"),
+  prep_bmd_data(merged_2007_2008) %>% filter(Gender == 1) %>% mutate(Year = "2007-2008"),
+  prep_bmd_data(merged_2009_2010) %>% filter(Gender == 1) %>% mutate(Year = "2009-2010"),
+  prep_bmd_data(merged_2013_2014) %>% filter(Gender == 1) %>% mutate(Year = "2013-2014")
+)
+```
+
+## Construct Design Matrix
+
+We create indicator variables for each NHANES cycle.
+
+```{r}
+bmd_men <- bmd_men %>% mutate(
+  Year = factor(Year, levels = c("2005-2006", "2007-2008", "2009-2010", "2013-2014")),
+  Year_2005_2006 = as.integer(Year == "2005-2006"),
+  Year_2007_2008 = as.integer(Year == "2007-2008"),
+  Year_2009_2010 = as.integer(Year == "2009-2010"),
+  Year_2013_2014 = as.integer(Year == "2013-2014")
+)
+```
+
+## Define a Selective Inference Function for Pairwise Year Comparisons
+
+We now define a function that:
+
+- Constructs a contrast
+
+- Projects out age and intercept
+
+- Runs `lmFScreen.fit` on the resulting matrix
+
+```{r}
+do_year_comparison <- function(X, test_col, seed_val) {
+  set.seed(seed_val)
+  n <- nrow(X)
+  Y <- bmd_men$Femur_Neck_BMD
+  project_out <- cbind(1, bmd_men$Age)
+  svdP <- svd(project_out, nu = nrow(project_out))
+  U_perp <- svdP$u[, (sum(svdP$d > .Machine$double.eps) + 1):ncol(svdP$u)]
+  X <- t(U_perp) %*% X
+  Y <- t(U_perp) %*% Y
+  result <- lmFScreen.fit(X, Y, test_cols = test_col, alpha = 0.05, alpha_ov = 0.05)
+  summary(result)
+}
+```
+
+## Run Pairwise Year Comparisons
+
+```{r}
+# Compare 2005-2006 vs 2007-2008
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2007_2008,
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010),
+                   test_col = 2, seed_val = 5678)
+
+# Compare 2005-2006 vs 2009-2010
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2009_2010,
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010),
+                   test_col = 3, seed_val = 56910)
+
+# Compare 2005-2006 vs 2013-2014
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2013_2014,
+                           bmd_men$Year_2007_2008, bmd_men$Year_2013_2014),
+                   test_col = 3, seed_val = 561314)
+
+# Compare 2007-2008 vs 2009-2010
+do_year_comparison(X=cbind(bmd_men$Year_2007_2008+bmd_men$Year_2009_2010,
+                           bmd_men$Year_2009_2010, bmd_men$Year_2013_2014),
+                   test_col = 2, seed_val = 78910)
+
+# Compare 2007-2008 vs 2013-2014
+do_year_comparison(X=cbind(bmd_men$Year_2007_2008+bmd_men$Year_2013_2014,
+                           bmd_men$Year_2009_2010, bmd_men$Year_2013_2014),
+                   test_col = 3, seed_val = 781314)
+
+# Compare 2009-2010 vs 2013-2014
+do_year_comparison(X=cbind(bmd_men$Year_2007_2008,
+                           bmd_men$Year_2009_2010+bmd_men$Year_2013_2014,
+                           bmd_men$Year_2013_2014),
+                   test_col = 3, seed_val = 9101314)
+```
+
+## Interpretation
+
+These analyses provide valid inference **conditional on passing the overall F-test**. The selective p-values and intervals are corrected for the selection step, avoiding overconfident inference that can arise from standard (naive) linear regression output.
+
+Use this approach to interpret post-hoc comparisons more reliably in data exploration or confirmatory re-analysis.
