@@ -90,55 +90,50 @@ summary.lmFScreen <- function(object, ...) {
 
 #' Extract Coefficients from an lmFScreen Model
 #'
-#' Displays the selective and naive coefficient estimates from an lmFScreen model.
+#' This S3 method prints and returns the selective and naive coefficient estimates
+#' from an lmFScreen model.
 #'
-#' @param object An object of class lmFScreen containing model results.
-#' @param ... Additional arguments (currently unused).
+#' @param object An object of class lmFScreen.
+#' @param ... Currently unused.
 #'
 #' @return Invisibly returns a data frame containing:
 #'
-#'   - Predictor: Names of the predictor variables
+#' - Predictor: Names of the predictor variables
 #'
-#'   - Estimate (Selective): Selective coefficient estimates
+#' - Estimate (Selective): Selective coefficient estimates
 #'
-#'   - Estimate (Naive): Naive coefficient estimates
+#' - Estimate (Naive): Naive coefficient estimates
+#'
 #'
 #' @examples
 #' data(mtcars)
-#' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
-#' coef(result)
+#' mod <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+#' coef(mod)
+#'
 #'
 #' @export
+#' @method coef lmFScreen
 coef.lmFScreen <- function(object, ...) {
   if (!inherits(object, "lmFScreen")) {
     stop("coef.lmFScreen can only be used with objects of class 'lmFScreen'")
   }
 
-  # Extract coefficients
   selective_est <- object[["selective coefficients"]]
   naive_est <- object[["naive coefficients"]]
 
-  # Print header
-  cat("\nlmFScreen Model Coefficients\n")
-  cat("--------------------------------------------------\n")
-  cat(sprintf("Number of predictors: %d\n", length(selective_est)))
-  cat("--------------------------------------------------\n\n")
+  out <- data.frame(
+    Predictor = names(selective_est),
+    Selective.Est = as.numeric(selective_est),
+    Naive.Est = as.numeric(naive_est),
+    row.names = NULL
+  )
 
-  # Print table header
-  cat("Predictor       Selective.Est   Naive.Est\n")
-  cat("---------------------------------------------\n")
+  cat("\nCoefficients from lmFScreen\n----------------------------\n")
+  print(out)
 
-  # Print each row formatted
-  for (i in seq_along(selective_est)) {
-    cat(sprintf(" %-14s %14.6f %12.6f\n",
-                names(selective_est)[i],
-                selective_est[i],
-                naive_est[i]))
-  }
-
-  cat("\n")
-  invisible(NULL)
+  invisible(out)
 }
+
 
 
 

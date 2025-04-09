@@ -13,10 +13,10 @@
 }
 \value{
 Invisibly returns a list containing:
-
-  - Selective: A data frame of confidence intervals for selective estimates
-
-  - Naive: A data frame of confidence intervals for naive estimates
+\itemize{
+\item Selective: A data frame of confidence intervals for selective estimates
+\item Naive: A data frame of confidence intervals for naive estimates
+}
 }
 \description{
 Prints and returns confidence intervals for both selective and naive estimates.

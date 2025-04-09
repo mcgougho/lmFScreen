@@ -7,25 +7,26 @@
 \method{coef}{lmFScreen}(object, ...)
 }
 \arguments{
-\item{object}{An object of class lmFScreen containing model results.}
+\item{object}{An object of class lmFScreen.}
 
-\item{...}{Additional arguments (currently unused).}
+\item{...}{Currently unused.}
 }
 \value{
 Invisibly returns a data frame containing:
-
-  - Predictor: Names of the predictor variables
-
-  - Estimate (Selective): Selective coefficient estimates
-
-  - Estimate (Naive): Naive coefficient estimates
+\itemize{
+\item Predictor: Names of the predictor variables
+\item Estimate (Selective): Selective coefficient estimates
+\item Estimate (Naive): Naive coefficient estimates
+}
 }
 \description{
-Displays the selective and naive coefficient estimates from an lmFScreen model.
+This S3 method prints and returns the selective and naive coefficient estimates
+from an lmFScreen model.
 }
 \examples{
 data(mtcars)
-result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
-coef(result)
+mod <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+coef(mod)
+
 
 }

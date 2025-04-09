@@ -14,12 +14,12 @@ get_Xy_centered(X, y)
 \value{
 A list containing:
 \describe{
-  \item{X}{The predictor matrix after projection (dimensions: (n - 1) x p).}
-  \item{y}{The response vector after projection (length: n - 1).}
+\item{X}{The predictor matrix after projection (dimensions: (n - 1) x p).}
+\item{y}{The response vector after projection (length: n - 1).}
 }
 }
 \description{
-This function projects the predictor matrix `X` and response vector `y` onto the
+This function projects the predictor matrix \code{X} and response vector \code{y} onto the
 orthogonal complement of the intercept (constant) vector. This removes any component
 of the data explained by the intercept, effectively centering the data in the
 sense of removing the mean direction.
@@ -27,7 +27,7 @@ sense of removing the mean direction.
 \details{
 This function uses the singular value decomposition (SVD) of the intercept vector
 to construct an orthonormal basis for the space orthogonal to the intercept.
-It then projects `X` and `y` onto that space, effectively removing any contribution
+It then projects \code{X} and \code{y} onto that space, effectively removing any contribution
 from the intercept.
 }
 \examples{

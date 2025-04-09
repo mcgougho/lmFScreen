@@ -15,7 +15,7 @@ compute_MLE(
 )
 }
 \arguments{
-\item{X}{A numeric matrix of predictor variables (n x p), with the first column corresponding to `beta1`.}
+\item{X}{A numeric matrix of predictor variables (n x p), with the first column corresponding to \code{beta1}.}
 
 \item{y}{A numeric response vector of length n.}
 
@@ -23,21 +23,21 @@ compute_MLE(
 
 \item{alpha_ov}{The significance level for the overall F-test (used in defining the selection region).}
 
-\item{interval}{A numeric vector of length 2 giving the search interval for `beta1` (default: `c(-10, 10)`).}
+\item{interval}{A numeric vector of length 2 giving the search interval for \code{beta1} (default: \code{c(-10, 10)}).}
 
-\item{B}{The number of Monte Carlo samples used to approximate the likelihood (default: `1e6`).}
+\item{B}{The number of Monte Carlo samples used to approximate the likelihood (default: \code{1e6}).}
 
-\item{seed}{A seed for reproducibility (default: `12345`).}
+\item{seed}{A seed for reproducibility (default: \code{12345}).}
 }
 \value{
 A list containing:
 \describe{
-  \item{beta1}{The MLE of `beta1` under the selective likelihood.}
-  \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
+\item{beta1}{The MLE of \code{beta1} under the selective likelihood.}
+\item{max_likelihood}{The maximum log-likelihood value achieved at the optimal \code{beta1}.}
 }
 }
 \description{
 This function numerically approximates the conditional maximum likelihood estimate (MLE) of a single regression
-coefficient (`beta1`) using a Monte Carlo approximation to the selective likelihood,
+coefficient (\code{beta1}) using a Monte Carlo approximation to the selective likelihood,
 conditional on passing the overall F-test.
 }

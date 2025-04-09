@@ -25,11 +25,13 @@ This function estimates the variance of the error term under the assumption that
 inference is performed conditional on rejection of the overall F-test.
 
 The procedure includes:
-1. Simulating samples from chi-squared distributions to compute a correction factor
-   that accounts for the selection event.
-2. Fitting a linear regression model of Y on X and computing the residual sum of squares.
-3. Adjusting the residual sum of squares using the correction factor to obtain
-   a debiased estimate of the variance.
+\enumerate{
+\item Simulating samples from chi-squared distributions to compute a correction factor
+that accounts for the selection event.
+\item Fitting a linear regression model of Y on X and computing the residual sum of squares.
+\item Adjusting the residual sum of squares using the correction factor to obtain
+a debiased estimate of the variance.
+}
 
 This estimate is useful when conducting selective inference with p-values and
 confidence intervals that condition on the overall model selection step.

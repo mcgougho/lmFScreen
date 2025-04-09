@@ -37,12 +37,11 @@ lmFScreen(
 }
 \value{
 An object of class lmFScreen, which includes:
-
-  - Selective coefficients, confidence intervals, and p-values
-
-  - Naive (unadjusted) estimates, confidence intervals, and p-values
-
-  - Model-level settings such as alpha and alpha_ov
+\itemize{
+\item Selective coefficients, confidence intervals, and p-values
+\item Naive (unadjusted) estimates, confidence intervals, and p-values
+\item Model-level settings such as alpha and alpha_ov
+}
 }
 \description{
 Fits a selective inference linear regression model using an R formula interface.
@@ -51,12 +50,11 @@ before conducting inference.
 }
 \details{
 This function performs the following steps:
-
-1. Converts the formula into a model matrix and response vector.
-
-2. Projects out the intercept if one is included in the formula.
-
-3. Calls lmFScreen.fit to compute selective inference results for all predictors.
+\enumerate{
+\item Converts the formula into a model matrix and response vector.
+\item Projects out the intercept if one is included in the formula.
+\item Calls lmFScreen.fit to compute selective inference results for all predictors.
+}
 }
 \examples{
 data(mtcars)

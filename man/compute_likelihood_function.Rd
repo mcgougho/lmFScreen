@@ -14,31 +14,31 @@ compute_likelihood_function(
 )
 }
 \arguments{
-\item{X}{A numeric matrix of predictors (n x p), with `beta1` corresponding to the first column.}
+\item{X}{A numeric matrix of predictors (n x p), with \code{beta1} corresponding to the first column.}
 
 \item{y}{A numeric response vector of length n.}
 
 \item{sigma_sq}{The noise variance.}
 
-\item{alpha_ov}{The significance level for the overall F-test (default: `0.05`).}
+\item{alpha_ov}{The significance level for the overall F-test (default: \code{0.05}).}
 
-\item{B}{The number of Monte Carlo samples (default: `1e6`).}
+\item{B}{The number of Monte Carlo samples (default: \code{1e6}).}
 
-\item{seed}{A seed for reproducibility (default: `12345`).}
+\item{seed}{A seed for reproducibility (default: \code{12345}).}
 }
 \value{
-A function of one argument `beta1` that returns the approximate
-        log-likelihood, conditional on selection.
-        If the observed data fails the selection condition, the function returns `-Inf`.
+A function of one argument \code{beta1} that returns the approximate
+log-likelihood, conditional on selection.
+If the observed data fails the selection condition, the function returns \code{-Inf}.
 }
 \description{
 This function constructs a log-likelihood function for a single regression
-coefficient (`beta1`), conditional on selection via the overall F-test.
+coefficient (\code{beta1}), conditional on selection via the overall F-test.
 The log-likelihood is approximated using Monte Carlo integration.
 }
 \details{
 The likelihood is proportional to the conditional density of a test statistic
-(a linear projection of `y`) given that the observed F-statistic exceeds its
+(a linear projection of \code{y}) given that the observed F-statistic exceeds its
 critical value under the null. The selection region is defined using the
 F-test threshold and the orthogonal projection structure of the regression.
 
