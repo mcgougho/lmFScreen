@@ -13,6 +13,8 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
+*This analysis is meant to mimic the analysis in the paper ["Decreasing Trend of Bone Mineral Density in US Multiethnic Population: Analysis of Continuous NHANES 2005 - 2014"](https://pubmed.ncbi.nlm.nih.gov/30091065/).* 
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)

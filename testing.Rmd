@@ -114,6 +114,7 @@ names(output2)
 ```
 
 ```{r}
+mod <- lm(y_proj~X_proj)
 names(summary(mod))
 mod$coefficients
 summary(mod)$coefficients
@@ -126,15 +127,7 @@ y <- X %*% beta + rnorm(n) * sigma
 lmFScreen(y~X)
 ```
 
-```{r}
-set.seed(10)
-y <- rnorm(100)
-X <- rep(c("red", "blue", "green","orange", "black"), 20)
-fm <- aov(y~X)
-summary(fm)
-summary(lm(y~X))
-summary.lm(fm)
-```
+
 
 
 

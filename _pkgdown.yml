@@ -1,4 +1,5 @@
 url: https://mcgougho.github.io/lmFScreen
+
 template:
   bootstrap: 5
   bootswatch: flatly
@@ -12,9 +13,22 @@ home:
 
 navbar:
   structure:
-    left: [home, reference, articles]
+    left:
+      - home
+      - tutorial_lmfscreen
+      - tutorial_pselretro
+      - reference
     right: [github]
   components:
+    tutorial_lmfscreen:
+      text: "Using lmFScreen"
+      href: articles/lmFScreen.html
+    tutorial_pselretro:
+      text: "Using psel_retro"
+      href: articles/psel_retro.html
+    reference:
+      text: "Reference"
+      href: reference/index.html
     github:
       icon: fab fa-github
       href: https://github.com/mcgougho/lmFScreen
@@ -37,7 +51,7 @@ reference:
     examples: false
 
 articles:
-  - title: "Selective Inference Examples"
+  - title: "Tutorials"
     contents:
       - lmFScreen
       - psel_retro
