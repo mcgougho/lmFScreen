@@ -1,5 +1,5 @@
 ---
-title: "Selective Inference Across NHANES Cycles"
+title: "Selective inference across NHANES cycles: lmFScreen example"
 author: "Olivia McGough"
 date: "`r Sys.Date()`"
 output:
@@ -7,7 +7,12 @@ output:
     toc: true
     toc_depth: 2
     number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Selective inference across NHANES cycles: lmFScreen example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)

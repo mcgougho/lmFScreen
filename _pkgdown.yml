@@ -1,0 +1,43 @@
+url: https://mcgougho.github.io/lmFScreen
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: "lmFScreen"
+  tagline: "Selective Inference After F-screening in Linear Regression"
+  links:
+    - text: GitHub
+      href: https://github.com/mcgougho/lmFScreen
+
+navbar:
+  structure:
+    left: [home, reference, articles]
+    right: [github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/mcgougho/lmFScreen
+
+reference:
+  - title: "Main Functions"
+    contents:
+      - lmFScreen
+      - lmFScreen.fit
+      - coef.lmFScreen
+      - confint.lmFScreen
+      - summary.lmFScreen
+      - compute_MLE
+      - compute_likelihood_function
+      - get_CI
+      - get_Xy_centered
+      - get_pselb
+      - get_variance_estimate
+      - psel_retro
+    examples: false
+
+articles:
+  - title: "Selective Inference Examples"
+    contents:
+      - lmFScreen
+      - psel_retro

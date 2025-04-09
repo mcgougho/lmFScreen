@@ -1,6 +1,10 @@
 ---
-title: "Selective Inference on Age Groups"
-output: html_document
+title: "Selective inference across age groups: psel_retro Example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Selective inference across age groups: psel_retro Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[UTF-8]{inputenc}
 ---
 
 *Data used in this analysis was extracted from Table 1 of the paper ["Longitudinal Sleep Patterns and Cognitive Impairment in Older Adults"](https://jamanetwork-com.offcampus.lib.washington.edu/journals/jamanetworkopen/fullarticle/2812521).* This table reported means, standard deviations, and sample sizes for several variables across age groups. We use the `psel_retro()` function from the **lmFScreen** package to compute selective p-values for each pairwise comparison, conditional on rejection of the overall F-test (i.e., the omnibus ANOVA), since the table reports significant omnibus p-values for all outcomes.
