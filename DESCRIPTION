@@ -1,7 +1,7 @@
 Package: lmFScreen
 Type: Package
 Title: Selective Inference for Linear Regression with F-Screening
-Version: 0.1.0
+Version: 0.1.1
 Author: Olivia McGough
 Maintainer: Olivia McGough <mcgougho@uw.edu>
 Description: Implements selective inference for least squares linear regression
