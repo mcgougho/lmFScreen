@@ -26,8 +26,8 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 
   if(is.null(seed)) {
     seed <- rnorm(1, 0, 10000)
-    set.seed(seed)
   }
+  set.seed(seed)
 
   n <- dim(X)[1]
   p <- dim(X)[2]
