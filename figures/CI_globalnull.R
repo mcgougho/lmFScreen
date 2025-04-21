@@ -18,7 +18,12 @@ alpha_ov <- 0.05
 colors <- c(
   "Selective CI (oracle)" = "#E69F00",
   "Selective CI (debiased)" = "#0072B2",
-  "Naïve CI" = "#CC79A7"
+  "Standard CI" = "#CC79A7"
+)
+labels <- c(
+  "Selective CI (oracle)" = "Selective~CI~(sigma^2)",
+  "Selective CI (debiased)" = "Selective~CI~(tilde(sigma)^2)",
+  "Standard CI" = "Standard~CI"
 )
 
 
@@ -69,12 +74,12 @@ for (a in seq_along(alpha_seq)) {
     }
 
     # Get confidence intervals using the DB method
-    out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, B = B)$CIs
+    out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, B = B)[["selective CIs"]]
     CIs_DB[iter, 1] <- out_DB[test_col, 1]
     CIs_DB[iter, 2] <- out_DB[test_col, 2]
 
     # Get confidence intervals using the oracle method (with known sigma^2)
-    out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)$CIs
+    out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)[["selective CIs"]]
     CIs_oracle[iter, 1] <- out_oracle[test_col, 1]
     CIs_oracle[iter, 2] <- out_oracle[test_col, 2]
 
@@ -120,7 +125,7 @@ coverage_results_renamed <- coverage_results %>%
   rename(
     "Selective CI (oracle)" = coverage_oracle,
     "Selective CI (debiased)" = coverage_DB,
-    "Naïve CI" = coverage_naive
+    "Standard CI" = coverage_naive
   ) %>%
   pivot_longer(-nominal_coverage, names_to = "Method", values_to = "Coverage")
 
@@ -134,11 +139,12 @@ p1 <- ggplot(coverage_results_renamed, aes(x = nominal_coverage, y = Coverage, c
   ) +
   theme_minimal() +
   theme(
+    text = element_text(family = "Helvetica"),
     aspect.ratio = 1,
-    legend.position = "none",  # Remove legend from this plot
+    legend.position = "none",
     panel.border = element_rect(color = "black", fill = NA, size = 1)  # Box around plot
   ) +
-  scale_color_manual(values = colors)
+  scale_color_manual(values = colors, labels = parse(text = labels))
 
 
 ########################## widths, changing beta1 #########################
@@ -147,9 +153,8 @@ beta1_values <- seq(-1, 1, length.out = 40)  # True beta1 values
 alpha_ci <- 0.05  # Only compute 95% CIs
 
 # Prepare lists to store CI widths for each beta1 value
-widths_naive_globalnull <- numeric(length(beta1_values))
 widths_lmfscreen_globalnull <- numeric(length(beta1_values))
-widths_lmfscreen_oracle_globalnull <- numeric(length(beta1_values))  # New for oracle method
+widths_lmfscreen_oracle_globalnull <- numeric(length(beta1_values))
 
 # Function to compute CI width
 compute_CI_width <- function(CI_matrix) {
@@ -167,7 +172,6 @@ for (b in seq_along(beta1_values)) {
   beta_globalnull[1] <- beta1
 
   # Create matrices to store CIs
-  CIs_naive_globalnull <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_globalnull <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_oracle_globalnull <- matrix(NA, nrow = n_iter, ncol = 2)  # New for oracle method
 
@@ -197,23 +201,16 @@ for (b in seq_along(beta1_values)) {
       }
     }
 
-    # Naïve CI (usual least squares method)
-    naive_fit_globalnull <- lm(y_globalnull ~ X)
-    naive_se_globalnull <- summary(naive_fit_globalnull)$coefficients[test_col + 1, 2]
-    CIs_naive_globalnull[iter, ] <- coef(naive_fit_globalnull)[test_col + 1] +
-      c(-1, 1) * qt(1 - alpha_ci / 2, df = n - p - 1) * naive_se_globalnull
-
     # lmFScreen CI (default)
     CIs_lmfscreen_globalnull[iter, ] <- lmFScreen.fit(X, y_globalnull, test_cols = test_col,
-                                                      alpha = alpha_ci, alpha_ov = alpha_ov, B = B)$CIs[test_col, ]
+                                                      alpha = alpha_ci, alpha_ov = alpha_ov, B = B)[["selective CIs"]][test_col, ]
 
     # lmFScreen CI with known sigma^2 (oracle method)
     CIs_lmfscreen_oracle_globalnull[iter, ] <- lmFScreen.fit(X, y_globalnull, test_cols = test_col,
-                                                             alpha = alpha_ci, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)$CIs[test_col, ]
+                                                             alpha = alpha_ci, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)[["selective CIs"]][test_col, ]
   }
 
   # Compute average CI widths
-  widths_naive_globalnull[b] <- compute_CI_width(CIs_naive_globalnull)
   widths_lmfscreen_globalnull[b] <- compute_CI_width(CIs_lmfscreen_globalnull)
   widths_lmfscreen_oracle_globalnull[b] <- compute_CI_width(CIs_lmfscreen_oracle_globalnull)
 }
@@ -222,16 +219,16 @@ for (b in seq_along(beta1_values)) {
 # Prepare data
 widths_globalnull <- data.frame(
   beta1 = beta1_values,
-  naive = widths_naive_globalnull,
   lmfscreen = widths_lmfscreen_globalnull,
-  lmfscreen_oracle = widths_lmfscreen_oracle_globalnull  # Include oracle method in dataframe
+  lmfscreen_oracle = widths_lmfscreen_oracle_globalnull,
+  naive = NA
 )
 
 widths_globalnull_renamed <- widths_globalnull %>%
   rename(
     "Selective CI (oracle)" = lmfscreen_oracle,
     "Selective CI (debiased)" = lmfscreen,
-    "Naïve CI" = naive
+    "Standard CI" = naive
   ) %>%
   pivot_longer(-beta1, names_to = "Method", values_to = "Width")
 
@@ -243,11 +240,12 @@ p2 <- ggplot(widths_globalnull_renamed, aes(x = beta1, y = Width, color = Method
   ) +
   theme_minimal() +
   theme(
+    text = element_text(family = "Helvetica"),
     aspect.ratio = 1,
-    legend.position = "bottom",  # Keep legend only in this plot
+    legend.position = "none",  # Keep legend only in this plot
     panel.border = element_rect(color = "black", fill = NA, size = 1)
   ) +
-  scale_color_manual(values = colors)
+  scale_color_manual(values = colors, labels = parse(text = labels))
 
 
 
@@ -256,7 +254,6 @@ p2 <- ggplot(widths_globalnull_renamed, aes(x = beta1, y = Width, color = Method
 n_values <- seq(50, 500, length.out = 10)
 
 # Prepare lists to store CI widths for each sample size
-widths_naive_n <- numeric(length(n_values))
 widths_lmfscreen_n <- numeric(length(n_values))
 widths_lmfscreen_oracle_n <- numeric(length(n_values))
 
@@ -270,7 +267,6 @@ for (i in seq_along(n_values)) {
   beta_null <- rep(0, p)
 
   # Create matrices to store CIs
-  CIs_naive_n <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_n <- matrix(NA, nrow = n_iter, ncol = 2)
   CIs_lmfscreen_oracle_n <- matrix(NA, nrow = n_iter, ncol = 2)
 
@@ -300,39 +296,32 @@ for (i in seq_along(n_values)) {
       }
     }
 
-    # Naïve CI
-    naive_fit <- lm(y ~ X)
-    naive_se <- summary(naive_fit)$coefficients[test_col + 1, 2]
-    CIs_naive_n[iter, ] <- coef(naive_fit)[test_col + 1] +
-      c(-1, 1) * qt(1 - alpha_ci / 2, df = n - p - 1) * naive_se
-
     # lmFScreen CI (default)
     CIs_lmfscreen_n[iter, ] <- lmFScreen.fit(X, y, test_cols = test_col,
-                                             alpha = alpha_ci, alpha_ov = alpha_ov, B = B)$CIs[test_col, ]
+                                             alpha = alpha_ci, alpha_ov = alpha_ov, B = B)[["selective CIs"]][test_col, ]
 
     # lmFScreen CI with known sigma^2 (oracle method)
     CIs_lmfscreen_oracle_n[iter, ] <- lmFScreen.fit(X, y, test_cols = test_col,
-                                                    alpha = alpha_ci, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)$CIs[test_col, ]
+                                                    alpha = alpha_ci, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)[["selective CIs"]][test_col, ]
   }
 
   # Compute average CI widths
-  widths_naive_n[i] <- compute_CI_width(CIs_naive_n)
   widths_lmfscreen_n[i] <- compute_CI_width(CIs_lmfscreen_n)
   widths_lmfscreen_oracle_n[i] <- compute_CI_width(CIs_lmfscreen_oracle_n)
 }
 
 widths_n <- data.frame(
   n = n_values,
-  naive = widths_naive_n,
   lmfscreen = widths_lmfscreen_n,
-  lmfscreen_oracle = widths_lmfscreen_oracle_n
+  lmfscreen_oracle = widths_lmfscreen_oracle_n,
+  naive = NA
 )
 
 widths_n_renamed <- widths_n %>%
   rename(
-    "Naïve CI" = naive,
     "Selective CI (debiased)" = lmfscreen,
-    "Selective CI (oracle)" = lmfscreen_oracle
+    "Selective CI (oracle)" = lmfscreen_oracle,
+    "Standard CI" = naive
   ) %>%
   pivot_longer(-n, names_to = "Method", values_to = "Width")
 
@@ -344,10 +333,12 @@ p3 <- ggplot(widths_n_renamed, aes(x = n, y = Width, color = Method)) +
   ) +
   theme_minimal() +
   theme(
+    text = element_text(family = "Helvetica"),
+    legend.position = "none",
     panel.border = element_rect(color = "black", fill = NA, size = 1),  # Box around plot
     aspect.ratio = 1  # Make plot square
   ) +
-  scale_color_manual(values = colors)
+  scale_color_manual(values = colors, labels = parse(text = labels))
 
 
 ################################ final plot ######################################
@@ -356,6 +347,8 @@ p3 <- ggplot(widths_n_renamed, aes(x = n, y = Width, color = Method)) +
 final_plot <- p1 + p2 + p3 +
   plot_layout(guides = "collect") &
   theme(
+    text = element_text(family = "Helvetica"),
+    labels = parse(text = labels),
     legend.position = "bottom",
     legend.background = element_rect(color = "black", fill = "white", size = 0.8),
     legend.key = element_rect(fill = "white"),
@@ -367,9 +360,9 @@ final_plot <- p1 + p2 + p3 +
 # Display final plot
 print(final_plot)
 
-
-
-
+pdf("CI_globalnull.pdf", width = 8, height = 3)
+print(final_plot)
+dev.off()
 
 
 

@@ -128,14 +128,22 @@ df_conditional <- data.frame(
   pivot_longer(cols = -Theoretical, names_to = "Method", values_to = "Empirical") %>%
   mutate(Method = factor(Method, levels = c("No_Correction", "Bonferroni_2", "Bonferroni_3", "Scheffe", "Selective")))
 
-# Define a color-blind-friendly palette
 colors <- c(
-  "No_Correction" = "#000000",   # Black
-  "Bonferroni_2" = "#E69F00",    # Orange
-  "Bonferroni_3" = "#009E73",    # Teal/Green
-  "Scheffe" = "#0072B2",         # Blue
-  "Selective" = "#CC79A7"        # Purple/Magenta
+  "No_Correction" = "#000000",    # Black
+  "Bonferroni_2" = "#E69F00",     # Orange
+  "Bonferroni_3" = "#009E73",     # Teal/Green
+  "Scheffe" = "#0072B2",          # Blue
+  "Selective" = "#CC79A7"         # Purple/Magenta
 )
+
+labels <- c(
+  "No_Correction" = expression(p[H[0]^M] ~ "in (5)"),
+  "Bonferroni_2" = expression(2 * p[H[0]^M]),
+  "Bonferroni_3" = expression(3 * p[H[0]^M]),
+  "Scheffe" = "Scheffé",
+  "Selective" = "Selective"
+)
+
 
 # Base theme modifications
 base_theme <- theme_minimal() +
@@ -153,7 +161,7 @@ base_theme <- theme_minimal() +
 p1 <- ggplot(df_unconditional, aes(x = Theoretical, y = Empirical, color = Method)) +
   geom_point(size = 0.5) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray40") +
-  scale_color_manual(values = colors) +
+  scale_color_manual(values = colors, labels = labels) +
   labs(x = "Theoretical Quantiles", y = "Empirical Quantiles") +
   base_theme
 
@@ -161,7 +169,7 @@ p1 <- ggplot(df_unconditional, aes(x = Theoretical, y = Empirical, color = Metho
 p2 <- ggplot(df_conditional, aes(x = Theoretical, y = Empirical, color = Method)) +
   geom_point(size = 0.5) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray40") +
-  scale_color_manual(values = colors) +
+  scale_color_manual(values = colors, labels = labels) +
   labs(x = "Theoretical Quantiles", y = "Empirical Quantiles") +
   base_theme
 
@@ -185,5 +193,7 @@ final_plot <- p1 + p2 +
 # Display the final plot
 print(final_plot)
 
-
+pdf("multiple_corrections.pdf", width = 8, height = 4)
+print(final_plot)
+dev.off()
 
