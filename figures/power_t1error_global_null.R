@@ -37,13 +37,13 @@ for(iter in 1:niter){
   mod <- lm(y~X+0)
   p_naive[iter] <- summary(mod)$coef[1,4]
   sigma_sq <- sigma^2
-  psel <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=niter,alpha_ov=0.05,min_select=100)
+  psel <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=iter,alpha_ov=0.05,min_select=100)
   psel_oracle[iter] <- psel(0)
   sigma_sq <- rss/scaling
-  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=niter,alpha_ov=0.05,min_select=100)
+  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=iter,alpha_ov=0.05,min_select=100)
   psel_DB[iter] <- pselb(0)
   sigma_sq <- rss/(n-p-1)
-  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=niter,alpha_ov=0.05,min_select=100)
+  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=iter,alpha_ov=0.05,min_select=100)
   psel_plugin[iter] <- pselb(0)
 }
 
@@ -112,14 +112,12 @@ pr_reject_sel <- function(beta1,n,p,alpha_ov,sigma=1,oracle=TRUE){
   F.quantile <- qf(1 - alpha_ov, p, (n - p - 1))
   cc <- p / (n - p - 1) * F.quantile
   scaling <- mean(Zs[As >= cc*Zs])
-  print(scaling)
   pvals.sel <- rep(NA, nreps)
   compute_F <- rep(FALSE, nreps)
   sigma_est <- rep(NA, nreps)
-  set.seed(round(runif(1,0,1000)))
   for(i in 1:nreps){
     X <- matrix(rnorm(n * p), ncol = p)
-    y  <- X %*%beta+rnorm(n)*sigma^2
+    y  <- X %*%beta+rnorm(n)*sigma
     Xy_info <- lmFScreen:::get_Xy_centered(X,y) # from lmFScreen package
     X <- Xy_info$X
     y <- Xy_info$y
@@ -136,11 +134,11 @@ pr_reject_sel <- function(beta1,n,p,alpha_ov,sigma=1,oracle=TRUE){
     if(F_overall >= F.quantile){
       compute_F[i] = TRUE
       sigma_est[i] <- sigma_sq
-      pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,alpha_ov=alpha_ov,min_select=50)
+      pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,
+                                     alpha_ov=alpha_ov,min_select=50,seed=i) # from lmFScreen package
       pvals.sel[i] <- pselb(0)
     }
   }
-  if(oracle == FALSE){cat("sigma est: ", mean(sigma_est[compute_F]),"\n") }
   pvals.sel.noNA <- pvals.sel[compute_F]
   pr_reject_sel <- mean(pvals.sel.noNA <= 0.05)
   pr_reject_overall <- mean(compute_F)
@@ -210,7 +208,7 @@ points(beta1, pr_reject_train_5, ylim=c(0, 1), pch=2,type = "b", col="#E69F00")
 points(beta1, pr_reject_overall_05, ylim=c(0, 1), pch = 4, type = "b",lty = 3, col="#009E73")
 points(beta1, pr_reject_overall_1, ylim=c(0, 1), pch = 4, type = "b",lty = 2, col="#009E73")
 points(beta1, pr_reject_overall_5, ylim=c(0, 1), pch = 4, type = "b", col="#009E73")
-legend("bottomright", pch = c(4, 2, NA, NA,NA), col=c("#009E73","#E69F00","black", "black", "black"), c(expression(F[H[0]^{1:p}]), bquote(F[H[0]^{1:p}]^{scriptscriptstyle("split")}),expression(alpha == 0.05), expression(alpha == 0.1), expression(alpha == 0.5)), lty = c(NA, NA, 3,2,1))
+legend("bottomright", pch = c(4, 2, NA, NA,NA), col=c("#009E73","#E69F00","black", "black", "black"), c(expression(F[H[0]^{1:p}]), bquote(F[H[0]^{1:p}]^{scriptscriptstyle("train")}),expression(alpha[0] == 0.05), expression(alpha[0] == 0.1), expression(alpha[0] == 0.5)), lty = c(NA, NA, 3,2,1))
 
 plot(beta1, pr_reject_split_05, ylim=c(0, 1),pch=2, type = "b",xlab=expression("Values of " ~ beta[1]), ylab=expression("Conditional probability of rejecting " ~ H[0] * ": " ~ beta[1] == 0), lty = 3,col="#E69F00")
 abline(h=0.05, col="darkgrey", lty=2)
@@ -222,12 +220,12 @@ points(beta1, pr_reject_sel_hat_5, ylim=c(0, 1), type = "b", col="#0072B2")
 points(beta1, pr_reject_sel_05, ylim=c(0, 1),pch = 4, type = "b", lty = 3, col= "#009E73")
 points(beta1, pr_reject_sel_1, ylim=c(0, 1), pch = 4, type = "b", lty = 2, col= "#009E73")
 points(beta1, pr_reject_sel_5, ylim=c(0, 1), pch = 4, type = "b", col= "#009E73")
-legend("bottomright", pch = c(4, 1, 2, NA, NA,NA), col=c( "#009E73",  "#0072B2","#E69F00","black", "black", "black"), c(expression(p[H[0]^M*"|"*E]), expression(p[H[0]^M*"|"*E]^{tilde(sigma)^2}), bquote(p[H[0]^M]^{scriptscriptstyle("split")}), expression(alpha == 0.05), expression(alpha == 0.1), expression(alpha == 0.5)), lty = c(NA, NA, NA, 3,2,1))
+legend("bottomright", pch = c(4, 1, 2, NA, NA,NA), col=c( "#009E73",  "#0072B2","#E69F00","black", "black", "black"), c(expression(p[H[0]^M*"|"*E]), expression(p[H[0]^M*"|"*E]^{tilde(sigma)^2}), bquote(p[H[0]^M]^{scriptscriptstyle("test")}), expression(alpha[0] == 0.05), expression(alpha[0] == 0.1), expression(alpha[0] == 0.5)), lty = c(NA, NA, NA, 3,2,1))
 
 
 ################################ final plot #########################################
 
-#pdf("power_t1error_global_null.pdf", width = 8, height = 3)
+pdf("power_t1error_global_null.pdf", width = 8, height = 3)
 
 par(mfrow = c(1, 3), pty = "s")
 
@@ -245,7 +243,7 @@ points(beta1, pr_reject_train_5, ylim=c(0, 1), pch=2,type = "b", col="#E69F00")
 points(beta1, pr_reject_overall_05, ylim=c(0, 1), pch = 4, type = "b",lty = 3, col="#009E73")
 points(beta1, pr_reject_overall_1, ylim=c(0, 1), pch = 4, type = "b",lty = 2, col="#009E73")
 points(beta1, pr_reject_overall_5, ylim=c(0, 1), pch = 4, type = "b", col="#009E73")
-legend("bottomright", pch = c(4, 2, NA, NA,NA), col=c("#009E73","#E69F00","black", "black", "black"), c(expression(F[H[0]^{1:p}]), bquote(F[H[0]^{1:p}]^{scriptscriptstyle("split")}),expression(alpha == 0.05), expression(alpha == 0.1), expression(alpha == 0.5)), lty = c(NA, NA, 3,2,1))
+legend("bottomright", pch = c(4, 2, NA, NA,NA), col=c("#009E73","#E69F00","black", "black", "black"), c(expression(F[H[0]^{1:p}]), bquote(F[H[0]^{1:p}]^{scriptscriptstyle("train")}),expression(alpha[0] == 0.05), expression(alpha[0] == 0.1), expression(alpha[0] == 0.5)), lty = c(NA, NA, 3,2,1))
 
 plot(beta1, pr_reject_split_05, ylim=c(0, 1),pch=2, type = "b",xlab=expression("Values of " ~ beta[1]), ylab=expression("Conditional probability of rejecting " ~ H[0] * ": " ~ beta[1] == 0), lty = 3,col="#E69F00")
 abline(h=0.05, col="darkgrey", lty=2)
@@ -257,10 +255,10 @@ points(beta1, pr_reject_sel_hat_5, ylim=c(0, 1), type = "b", col="#0072B2")
 points(beta1, pr_reject_sel_05, ylim=c(0, 1),pch = 4, type = "b", lty = 3, col= "#009E73")
 points(beta1, pr_reject_sel_1, ylim=c(0, 1), pch = 4, type = "b", lty = 2, col= "#009E73")
 points(beta1, pr_reject_sel_5, ylim=c(0, 1), pch = 4, type = "b", col= "#009E73")
-legend("bottomright", pch = c(4, 1, 2, NA, NA,NA), col=c( "#009E73",  "#0072B2","#E69F00","black", "black", "black"), c(expression(p[H[0]^M*"|"*E]), expression(p[H[0]^M*"|"*E]^{tilde(sigma)^2}), bquote(p[H[0]^M]^{scriptscriptstyle("split")}), expression(alpha == 0.05), expression(alpha == 0.1), expression(alpha == 0.5)), lty = c(NA, NA, NA, 3,2,1),bg = "white")
+legend("bottomright", pch = c(4, 1, 2, NA, NA,NA), col=c( "#009E73",  "#0072B2","#E69F00","black", "black", "black"), c(expression(p[H[0]^M*"|"*E]), expression(p[H[0]^M*"|"*E]^{tilde(sigma)^2}), bquote(p[H[0]^M]^{scriptscriptstyle("test")}), expression(alpha[0] == 0.05), expression(alpha[0] == 0.1), expression(alpha[0] == 0.5)), lty = c(NA, NA, NA, 3,2,1),bg = "white")
 
 
-#dev.off()
+dev.off()
 
 
 
