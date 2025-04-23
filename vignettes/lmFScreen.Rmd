@@ -89,7 +89,7 @@ We now define a function that:
 
 - Constructs a contrast
 
-- Projects out age and intercept
+- Projects out age 
 
 - Runs `lmFScreen.fit` on the resulting matrix
 
