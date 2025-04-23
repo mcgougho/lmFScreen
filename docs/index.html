@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,8 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level2">
+  <main id="main" class="col-md-9"><p>** If you are viewing this on GitHub, see to the following website for a more readable version ** <a href="https://mcgougho.github.io/lmFScreen/"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="pkgdown"></a></p>
+<div class="section level2">
 <h2 id="what-is-f-screening">What is F-screening?<a class="anchor" aria-label="anchor" href="#what-is-f-screening"></a>
 </h2>
 <p>F-screening refers to a two-step procedure in linear regression where:</p>
@@ -94,68 +95,6 @@
 <p>This is particularly useful when analyzing published results (e.g., from an applied paper’s Table 1) where individual-level data is unavailable.</p>
 <p>See the tutorial for how to use it: <a href="articles/psel_retro.html">Using psel_retro</a></p>
 <hr>
-</div>
-<div class="section level2">
-<h2 id="figures">Figures<a class="anchor" aria-label="anchor" href="#figures"></a>
-</h2>
-<p>The <code>figures/</code> directory contains R scripts to reproduce all plots from the paper.</p>
-<div class="section level3">
-<h3 id="id_1-power-and-type-i-error-global-and-local-null">1. Power and Type I Error (Global and Local Null)<a class="anchor" aria-label="anchor" href="#id_1-power-and-type-i-error-global-and-local-null"></a>
-</h3>
-<ul>
-<li>
-<strong>Files:</strong> <code>power_t1error_global_null.R</code>, <code>power_t1error_local_null.R</code>
-</li>
-<li>
-<strong>Description:</strong><br>
-Demonstrates Type I error control of the selective p-value under the null and compares the power of the selective procedure with a sample-splitting approach.</li>
-</ul>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_2-confidence-interval-coverage-and-width">2. Confidence Interval Coverage and Width<a class="anchor" aria-label="anchor" href="#id_2-confidence-interval-coverage-and-width"></a>
-</h3>
-<ul>
-<li>
-<strong>Files:</strong> <code>CI_globalnull.R</code>, <code>CI_localnull.R</code>
-</li>
-<li>
-<strong>Description:</strong><br>
-Compares the selective confidence intervals to naive intervals in terms of:
-<ul>
-<li>Coverage (selective vs. non-selective)</li>
-<li>Width (one plot with the value of the true coefficient on the horizontal axis and one plot with the number of observations as the horizontal axis)</li>
-</ul>
-</li>
-</ul>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_3-multiple-testing-adjustments">3. Multiple Testing Adjustments<a class="anchor" aria-label="anchor" href="#id_3-multiple-testing-adjustments"></a>
-</h3>
-<ul>
-<li>
-<strong>File:</strong> <code>multiple_corrections.R</code>
-</li>
-<li>
-<strong>Description:</strong><br>
-Shows that traditional multiple testing corrections (Bonferroni, Scheffé) do <strong>not</strong> control Type I error after F-screening.</li>
-</ul>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_4-selective-vs-naive-point-estimates">4. Selective vs. Naive Point Estimates<a class="anchor" aria-label="anchor" href="#id_4-selective-vs-naive-point-estimates"></a>
-</h3>
-<ul>
-<li>
-<strong>File:</strong> <code>point_estimates.R</code>
-</li>
-<li>
-<strong>Description:</strong><br>
-Plots the selective vs. non-selective point estimates for the first coefficient, under the global null.</li>
-</ul>
-<hr>
-</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
