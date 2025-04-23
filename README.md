@@ -1,4 +1,11 @@
 
+
+** If you are viewing this on GitHub, see to the following website for a more readable version **
+[![pkgdown](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://mcgougho.github.io/lmFScreen/)
+
+
+
+
 ## What is F-screening?
 
 F-screening refers to a two-step procedure in linear regression where:
