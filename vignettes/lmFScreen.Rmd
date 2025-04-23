@@ -98,7 +98,7 @@ do_year_comparison <- function(X, test_col, seed_val) {
   set.seed(seed_val)
   n <- nrow(X)
   Y <- bmd_men$Femur_Neck_BMD
-  project_out <- cbind(1, bmd_men$Age)
+  project_out <- cbind(bmd_men$Age)
   svdP <- svd(project_out, nu = nrow(project_out))
   U_perp <- svdP$u[, (sum(svdP$d > .Machine$double.eps) + 1):ncol(svdP$u)]
   X <- t(U_perp) %*% X
@@ -113,38 +113,42 @@ do_year_comparison <- function(X, test_col, seed_val) {
 ```{r}
 # Compare 2005-2006 vs 2007-2008
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2007_2008,
-                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010),
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010,
+                           bmd_men$Year_2013_2014),
                    test_col = 2, seed_val = 5678)
 
 # Compare 2005-2006 vs 2009-2010
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2009_2010,
-                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010),
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010,
+                           bmd_men$Year_2013_2014),
                    test_col = 3, seed_val = 56910)
 
 # Compare 2005-2006 vs 2013-2014
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2013_2014,
-                           bmd_men$Year_2007_2008, bmd_men$Year_2013_2014),
-                   test_col = 3, seed_val = 561314)
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010,
+                           bmd_men$Year_2013_2014),
+                   test_col = 4, seed_val = 561314)
 
 # Compare 2007-2008 vs 2009-2010
-do_year_comparison(X=cbind(bmd_men$Year_2007_2008+bmd_men$Year_2009_2010,
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006,
+                           bmd_men$Year_2007_2008+bmd_men$Year_2009_2010,
                            bmd_men$Year_2009_2010, bmd_men$Year_2013_2014),
-                   test_col = 2, seed_val = 78910)
+                   test_col = 3, seed_val = 78910)
 
 # Compare 2007-2008 vs 2013-2014
-do_year_comparison(X=cbind(bmd_men$Year_2007_2008+bmd_men$Year_2013_2014,
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006,
+                           bmd_men$Year_2007_2008+bmd_men$Year_2013_2014,
                            bmd_men$Year_2009_2010, bmd_men$Year_2013_2014),
-                   test_col = 3, seed_val = 781314)
+                   test_col = 4, seed_val = 781314)
 
 # Compare 2009-2010 vs 2013-2014
-do_year_comparison(X=cbind(bmd_men$Year_2007_2008,
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006,bmd_men$Year_2007_2008,
                            bmd_men$Year_2009_2010+bmd_men$Year_2013_2014,
                            bmd_men$Year_2013_2014),
-                   test_col = 3, seed_val = 9101314)
+                   test_col = 4, seed_val = 9101314)
 ```
 
 ## Interpretation
 
-These analyses provide valid inference **conditional on passing the overall F-test**. The selective p-values and intervals are corrected for the selection step, avoiding overconfident inference that can arise from standard (naive) linear regression output.
+These analyses provide valid inference **conditional on passing the overall F-test**. The selective p-values and intervals are corrected for the selection step, avoiding overconfident inference that can arise from standard (naive) linear regression output. However, in this particular case, the selective p-values, estimates, and confidence intervals tend to coincide with their standard counterparts, indicating that selection did not have a large impact on the analysis. 
 
-Use this approach to interpret post-hoc comparisons more reliably in data exploration or confirmatory re-analysis.
