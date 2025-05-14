@@ -7,7 +7,6 @@ library(patchwork)
 set.seed(1)
 
 # Set parameters
-n_iter <- 1000
 n <- 100
 p <- 5
 beta <- rep(0.1,p)
@@ -29,6 +28,8 @@ labels <- c(
 
 
 ############################# coverage ###################################
+
+n_iter <- 5000
 
 # Sequence of alpha values to test
 alpha_seq <- seq(0.01, 0.95, length.out = 10)
@@ -75,12 +76,12 @@ for (a in seq_along(alpha_seq)) {
     }
 
     # Get confidence intervals using the DB method
-    out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, B = B)[["selective CIs"]]
+    out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, seed = iter, B = B)[["selective CIs"]]
     CIs_DB[iter, 1] <- out_DB[test_col, 1]
     CIs_DB[iter, 2] <- out_DB[test_col, 2]
 
     # Get confidence intervals using the oracle method (with known sigma^2)
-    out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)[["selective CIs"]]
+    out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, seed = iter, B = B)[["selective CIs"]]
     CIs_oracle[iter, 1] <- out_oracle[test_col, 1]
     CIs_oracle[iter, 2] <- out_oracle[test_col, 2]
 
@@ -150,6 +151,8 @@ p1 <- ggplot(coverage_results_renamed, aes(x = nominal_coverage, y = Coverage, c
 
 
 ########################## widths, changing beta1 #########################
+
+n_iter <- 1000
 
 beta1_values <- seq(-1, 1, length.out = 40)  # True beta1 values
 alpha_ci <- 0.05  # Only compute 95% CIs
