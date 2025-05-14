@@ -57,7 +57,7 @@ summary.lmFScreen <- function(object, ...) {
   # Print summary
   cat("\n", "lmFScreen Model Summary", "\n")
   cat("--------------------------------------\n")
-  cat(sprintf("Number of predictors: %d\n", length(beta)))
+  cat(sprintf("Number of post hoc tests: %d\n", length(beta)))
   cat("--------------------------------------\n\n")
 
   # Print Selective Estimates
