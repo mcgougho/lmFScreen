@@ -214,33 +214,3 @@ confint.lmFScreen <- function(object, ...) {
 
 
 
-#' Print an lmFScreen Fit
-#'
-#' @description
-#' A concise print method for \code{lmFScreen} objects,
-#' mirroring the style of \code{\link[stats]{print.lm}}.
-#'
-#' @param x   An object of class \code{lmFScreen}.
-#'
-#' @export
-print.lmFScreen <- function(x, ...) {
-  ## 1) show the call
-  cat("Call:\n")
-  print(x$call)
-
-  ## 2) grab the two coefficient sets
-  sel <- x[["selective coefficients"]]
-  nai <- x[["naive coefficients"]]
-
-  ## 3) combine into a matrix
-  coefs <- cbind(Selective = sel, Standard = nai)
-
-  ## 4) print it just like print.lm()
-  cat("\nCoefficients:\n")
-  print.default(format(coefs, digits = max(getOption("digits") - 2, 3)),
-                print.gap = 2, quote = FALSE)
-
-  invisible(x)
-}
-
-
