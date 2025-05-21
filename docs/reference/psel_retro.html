@@ -49,7 +49,7 @@ This function is useful in retrospective settings where the raw data is unavaila
 <span>  <span class="va">p</span>,</span>
 <span>  <span class="va">R_squared</span>,</span>
 <span>  <span class="va">RSE</span>,</span>
-<span>  <span class="va">Fstat</span>,</span>
+<span>  <span class="va">tstat</span>,</span>
 <span>  sigma_sq <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  alpha_ov <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">1e+06</span>,</span>
@@ -78,8 +78,8 @@ This function is useful in retrospective settings where the raw data is unavaila
 <dd><p>Residual standard error from the fitted model.</p></dd>
 
 
-<dt id="arg-fstat">Fstat<a class="anchor" aria-label="anchor" href="#arg-fstat"></a></dt>
-<dd><p>Observed F-statistic for the follow-up hypothesis test of beta_i.</p></dd>
+<dt id="arg-tstat">tstat<a class="anchor" aria-label="anchor" href="#arg-tstat"></a></dt>
+<dd><p>Observed t-statistic for the follow-up hypothesis test of beta_j.</p></dd>
 
 
 <dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
@@ -123,7 +123,7 @@ The selection condition is based on the rejection threshold for the overall F-te
 <span class="r-in"><span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></span>
 <span class="r-in"><span><span class="va">t_wt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="st">"wt"</span>, <span class="st">"t value"</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu">psel_retro</span><span class="op">(</span>n<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span>, p<span class="op">=</span><span class="fl">2</span>, R_squared<span class="op">=</span><span class="va">r2</span>, RSE<span class="op">=</span><span class="va">rse</span>, Fstat<span class="op">=</span><span class="va">t_wt</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in psel_retro(n = nrow(mtcars), p = 2, R_squared = r2, RSE = rse,     Fstat = t_wt^2):</span> unused argument (Fstat = t_wt^2)</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -131,7 +131,7 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 #' @param p Number of predictors used in F-screening (excluding the intercept).
 #' @param R_squared R-squared from the fitted linear model.
 #' @param RSE Residual standard error from the fitted model.
-#' @param Fstat Observed F-statistic for the follow-up hypothesis test of beta_i.
+#' @param tstat Observed t-statistic for the follow-up hypothesis test of beta_j.
 #' @param sigma_sq Optional estimate of the noise variance. If NULL, uses debiased estimate that accounts for selection.
 #' @param alpha_ov Significance level for the overall F-test. Default is 0.05.
 #' @param B Number of Monte Carlo samples per iteration. Default is 1,000,000.
@@ -157,8 +157,9 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 #' psel_retro(n=nrow(mtcars), p=2, R_squared=r2, RSE=rse, Fstat=t_wt^2)
 #'
 #' @export
-psel_retro <- function(n, p, R_squared, RSE, Fstat, sigma_sq = NULL, alpha_ov=0.05, B=1000000, min_select = 1000, max_attempts = 100){
+psel_retro <- function(n, p, R_squared, RSE, tstat, sigma_sq = NULL, alpha_ov=0.05, B=1000000, min_select = 1000, max_attempts = 100){
   # compute needed quantities
+  Fstat <- tstat^2
   a <- Fstat/(n-p-1)
   F.quantile <- qf(1-alpha_ov, p, (n-p-1))
   d <- RSE^2 * Fstat - RSE^2 * (n-p-1) * R_squared / (1-R_squared)

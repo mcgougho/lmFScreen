@@ -9,7 +9,7 @@ psel_retro(
   p,
   R_squared,
   RSE,
-  Fstat,
+  tstat,
   sigma_sq = NULL,
   alpha_ov = 0.05,
   B = 1e+06,
@@ -26,7 +26,7 @@ psel_retro(
 
 \item{RSE}{Residual standard error from the fitted model.}
 
-\item{Fstat}{Observed F-statistic for the follow-up hypothesis test of beta_i.}
+\item{tstat}{Observed t-statistic for the follow-up hypothesis test of beta_j.}
 
 \item{sigma_sq}{Optional estimate of the noise variance. If NULL, uses debiased estimate that accounts for selection.}
 
