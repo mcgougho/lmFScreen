@@ -11,7 +11,6 @@ lmFScreen.fit(
   alpha_ov = 0.05,
   test_cols = 1:ncol(X),
   sigma_sq = NULL,
-  seed = NULL,
   compute_CI = TRUE,
   compute_est = TRUE,
   B = 1e+05
@@ -29,8 +28,6 @@ lmFScreen.fit(
 \item{test_cols}{Indices of predictors to test (default: all columns of X).}
 
 \item{sigma_sq}{Optional noise variance. If NULL, it is estimated using a corrected residual variance.}
-
-\item{seed}{Optional seed for reproducibility.}
 
 \item{compute_CI}{Logical; whether to compute selective confidence intervals (default: TRUE).}
 

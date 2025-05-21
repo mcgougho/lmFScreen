@@ -53,7 +53,7 @@ for (rep_idx in 1:B) {
   interval <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
 
   # get conditional MLE
-  point_est <- as.numeric(lmFScreen:::compute_MLE(X, y, sigma_sq = sigma^2, interval = interval, seed = seed*rep_idx, alpha_ov = alpha_ov, B = B)[[1]])
+  point_est <- as.numeric(lmFScreen:::compute_MLE(X, y, sigma_sq = sigma^2, interval = interval, alpha_ov = alpha_ov, B = B)[[1]])
   beta_mle_vals_cond[rep_idx] <- point_est
 }
 
@@ -113,7 +113,7 @@ for (rep_idx in 1:B) {
   interval <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
 
   # get conditional MLE
-  point_est <- as.numeric(lmFScreen:::compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, seed = seed*rep_idx, alpha_ov = alpha_ov, B = B)[[1]])
+  point_est <- as.numeric(lmFScreen:::compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, alpha_ov = alpha_ov, B = B)[[1]])
   beta_mle_vals_cond2[rep_idx] <- point_est
 }
 

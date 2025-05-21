@@ -36,13 +36,15 @@ summary.lmFScreen <- function(object, ...) {
     stop("summary.lmFScreen can only be used with objects of class 'lmFScreen'")
   }
 
+  overall_Fstat <- object[["overall F-stat"]]
 
+  # Extract selective values
   beta <- object[["selective coefficients"]]
   CIs <- object[["selective CIs"]]
   pvalues <- object[["selective pvalues"]]
   alpha <- object$alpha
 
-  # Extract naive values
+  # Extract standard values
   naive_estimates <- object[["naive coefficients"]]
   naive_CIs <- object[["naive CIs"]]
   naive_pvalues <- object[["naive pvalues"]]
@@ -55,8 +57,10 @@ summary.lmFScreen <- function(object, ...) {
   }
 
   # Print summary
-  cat("\n", "lmFScreen Model Summary", "\n")
+  cat("lmFScreen Model Summary", "\n")
   cat("--------------------------------------\n")
+  cat(sprintf("Overall F-statistic:   %8.4f\n", overall_Fstat))
+  cat("--------------------------------------\n\n")
   cat(sprintf("Number of post hoc tests: %d\n", length(beta)))
   cat("--------------------------------------\n\n")
 
@@ -71,7 +75,7 @@ summary.lmFScreen <- function(object, ...) {
   cat("\n")
 
   # Print Naive Estimates
-  cat("Naive Estimates:\n")
+  cat("Standard Estimates:\n")
   cat("Predictor       Estimate     Lower.CI    Upper.CI    P-value\n")
   cat("-------------------------------------------------------------\n")
   for (i in seq_along(beta)) {
@@ -206,3 +210,37 @@ confint.lmFScreen <- function(object, ...) {
 
   invisible(list(Selective = CIs_selective, Naive = naive_CIs))
 }
+
+
+
+
+#' Print an lmFScreen Fit
+#'
+#' @description
+#' A concise print method for \code{lmFScreen} objects,
+#' mirroring the style of \code{\link[stats]{print.lm}}.
+#'
+#' @param x   An object of class \code{lmFScreen}.
+#'
+#' @export
+print.lmFScreen <- function(x, ...) {
+  ## 1) show the call
+  cat("Call:\n")
+  print(x$call)
+
+  ## 2) grab the two coefficient sets
+  sel <- x[["selective coefficients"]]
+  nai <- x[["naive coefficients"]]
+
+  ## 3) combine into a matrix
+  coefs <- cbind(Selective = sel, Standard = nai)
+
+  ## 4) print it just like print.lm()
+  cat("\nCoefficients:\n")
+  print.default(format(coefs, digits = max(getOption("digits") - 2, 3)),
+                print.gap = 2, quote = FALSE)
+
+  invisible(x)
+}
+
+

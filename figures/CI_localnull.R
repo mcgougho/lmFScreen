@@ -76,12 +76,12 @@ for (a in seq_along(alpha_seq)) {
     }
 
     # Get confidence intervals using the DB method
-    out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, seed = iter, B = B)[["selective CIs"]]
+    out_DB <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, B = B)[["selective CIs"]]
     CIs_DB[iter, 1] <- out_DB[test_col, 1]
     CIs_DB[iter, 2] <- out_DB[test_col, 2]
 
     # Get confidence intervals using the oracle method (with known sigma^2)
-    out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, seed = iter, B = B)[["selective CIs"]]
+    out_oracle <- lmFScreen.fit(X, y, test_cols = test_col, alpha = current_alpha, alpha_ov = alpha_ov, sigma_sq = sigma^2, B = B)[["selective CIs"]]
     CIs_oracle[iter, 1] <- out_oracle[test_col, 1]
     CIs_oracle[iter, 2] <- out_oracle[test_col, 2]
 

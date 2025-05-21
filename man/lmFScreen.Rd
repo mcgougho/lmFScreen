@@ -10,7 +10,6 @@ lmFScreen(
   alpha = 0.05,
   alpha_ov = 0.05,
   sigma_sq = NULL,
-  seed = NULL,
   compute_CI = TRUE,
   compute_est = TRUE,
   B = 1e+05
@@ -27,8 +26,6 @@ lmFScreen(
 
 \item{sigma_sq}{Optional noise variance. If NULL, it is estimated using a corrected residual variance.}
 
-\item{seed}{Optional seed for reproducibility.}
-
 \item{compute_CI}{Logical; whether to compute selective confidence intervals (default: TRUE).}
 
 \item{compute_est}{Logical; whether to compute selective point estimates (default: TRUE).}
@@ -39,12 +36,15 @@ lmFScreen(
 An object of class lmFScreen, which includes:
 \itemize{
 \item Selective coefficients, confidence intervals, and p-values
-\item Naive (unadjusted) estimates, confidence intervals, and p-values
+\item Standard (unadjusted) estimates, confidence intervals, and p-values
 \item Model-level settings such as alpha and alpha_ov
 }
 }
 \description{
-Fits a selective inference linear regression model using an R formula interface.
+This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening:
+(1) it first tests the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
+(2) if this overall test is rejected it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+If the overall test is not not rejected, it returns the overall F-statistic and indicates that it is not significant.
 If an intercept is present in the model, the data are projected to remove the intercept
 before conducting inference.
 }
@@ -57,10 +57,31 @@ This function performs the following steps:
 }
 }
 \examples{
+
+# EXAMPLE 1
 data(mtcars)
 result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
 summary(result)
 coef(result)
 confint(result)
+# in example 1 the overall F-test has a p-value close to zero, so there is essentially no need to account for selection
+
+# EXAMPLE 2
+set.seed(50)
+X <- matrix(rnorm(100), ncol = 5)
+y <- rnorm(20)
+result <- lmFScreen(y ~ X)
+# in example 2, the overall F-test is not rejected
+
+# EXAMPLE 3
+set.seed(100)
+X <- matrix(rnorm(100), ncol = 5)
+beta <- c(.5,.4,.3,.2,.1)
+y <- X \%*\% beta + rnorm(20)
+result <- lmFScreen(y ~ X)
+summary(result)
+coef(result)
+confint(result)
+# in Example 3, the selective p-values change significantly from the standard p-values
 
 }

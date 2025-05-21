@@ -38,13 +38,13 @@ for(iter in 1:niter){
   mod <- lm(y~X+0)
   p_naive[iter] <- summary(mod)$coef[1,4]
   sigma_sq <- sigma^2
-  psel <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=iter,alpha_ov=0.05,min_select=100)
+  psel <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,alpha_ov=0.05,min_select=100)
   psel_oracle[iter] <- psel(0)
   sigma_sq <- rss/scaling
-  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=iter,alpha_ov=0.05,min_select=100)
+  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,alpha_ov=0.05,min_select=100)
   psel_DB[iter] <- pselb(0)
   sigma_sq <- rss/(n-p-1)
-  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,seed=iter,alpha_ov=0.05,min_select=100)
+  pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,alpha_ov=0.05,min_select=100)
   psel_plugin[iter] <- pselb(0)
 }
 
@@ -134,7 +134,7 @@ pr_reject_sel <- function(beta1,n,p,alpha_ov,sigma=1,oracle=TRUE){
     if(F_overall >= F.quantile){
       compute_F[i] = TRUE
       sigma_est[i] <- sigma_sq
-      pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,alpha_ov=alpha_ov,min_select=50,seed=i)
+      pselb <- lmFScreen:::get_pselb(X=X,y=y,sigma_sq=sigma_sq,yPy=yPy,rss=rss,alpha_ov=alpha_ov,min_select=50)
       pvals.sel[i] <- pselb(0)
     }
   }

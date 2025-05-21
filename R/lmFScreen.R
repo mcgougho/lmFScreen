@@ -1,6 +1,9 @@
 #' lmFScreen: Selective Inference for Linear Regression via F-screening
 #'
-#' Fits a selective inference linear regression model using an R formula interface.
+#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening:
+#' (1) it first tests the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
+#' (2) if this overall test is rejected it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+#' If the overall test is not not rejected, it returns the overall F-statistic and indicates that it is not significant.
 #' If an intercept is present in the model, the data are projected to remove the intercept
 #' before conducting inference.
 #'
@@ -9,7 +12,6 @@
 #' @param alpha Significance level for confidence intervals and hypothesis tests (default: 0.05).
 #' @param alpha_ov Significance level for the overall F-test used for screening (default: 0.05).
 #' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
-#' @param seed Optional seed for reproducibility.
 #' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
 #' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
 #' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
@@ -18,7 +20,7 @@
 #'
 #'   - Selective coefficients, confidence intervals, and p-values
 #'
-#'   - Naive (unadjusted) estimates, confidence intervals, and p-values
+#'   - Standard (unadjusted) estimates, confidence intervals, and p-values
 #'
 #'   - Model-level settings such as alpha and alpha_ov
 #'
@@ -33,14 +35,35 @@
 #'
 #'
 #' @examples
+#'
+#' # EXAMPLE 1
 #' data(mtcars)
 #' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
 #' summary(result)
 #' coef(result)
 #' confint(result)
+#' # in example 1 the overall F-test has a p-value close to zero, so there is essentially no need to account for selection
+#'
+#' # EXAMPLE 2
+#' set.seed(50)
+#' X <- matrix(rnorm(100), ncol = 5)
+#' y <- rnorm(20)
+#' result <- lmFScreen(y ~ X)
+#' # in example 2, the overall F-test is not rejected
+#'
+#' # EXAMPLE 3
+#' set.seed(100)
+#' X <- matrix(rnorm(100), ncol = 5)
+#' beta <- c(.5,.4,.3,.2,.1)
+#' y <- X %*% beta + rnorm(20)
+#' result <- lmFScreen(y ~ X)
+#' summary(result)
+#' coef(result)
+#' confint(result)
+#' # in Example 3, the selective p-values change significantly from the standard p-values
 #'
 #' @export
-lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = NULL, seed = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
   # Handle missing data argument (use parent frame like lm)
   mf <- model.frame(formula, data = if (missing(data)) parent.frame() else data)
 
@@ -60,7 +83,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
     y <- Xy_centered$y
   }
 
-  output <- lmFScreen.fit(X, y, alpha = alpha, alpha_ov = alpha_ov, test_cols = 1:ncol(X), sigma_sq = sigma_sq, seed = seed, compute_CI = compute_CI, compute_est = compute_est, B = B)
+  output <- lmFScreen.fit(X, y, alpha = alpha, alpha_ov = alpha_ov, test_cols = 1:ncol(X), sigma_sq = sigma_sq, compute_CI = compute_CI, compute_est = compute_est, B = B)
 
   return(output)
 }
@@ -78,7 +101,6 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 #' @param test_cols Indices of predictors to test (default: all columns of X).
 #' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
 #' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
-#' @param seed Optional seed for reproducibility.
 #' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
 #' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
 #'
@@ -124,7 +146,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 #' confint(result)
 #'
 #' @export
-lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, seed = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
 
   n <- dim(X)[1]
   p <- dim(X)[2]
@@ -141,10 +163,6 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
     return(NA)
   }
 
-  if(is.null(seed)) {
-    seed <- rnorm(1, 0, 10000)
-    set.seed(seed)
-  }
 
   # Compute debiased estimate if estimate of sigma is not given
   if(is.null(sigma_sq)) {
@@ -197,11 +215,11 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
       # Obtain the point estimate for beta1 using maximum likelihood.
       # interval uses naive estimates to get an interval to look for conditional MLE in
       interval <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
-      point_est <- as.numeric(compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, seed = seed, alpha_ov = alpha_ov, B = B)[[1]])
+      point_est <- as.numeric(compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, alpha_ov = alpha_ov, B = B)[[1]])
       beta[i] <- point_est
 
       # Get selective confidence intervals if compute_CI == TRUE
-      pselb <- get_pselb(X, y, sigma_sq = sigma_sq, yPy = yPy, rss = rss, alpha_ov = alpha_ov, seed = seed, B = B, verbose = FALSE)
+      pselb <- get_pselb(X, y, sigma_sq = sigma_sq, yPy = yPy, rss = rss, alpha_ov = alpha_ov, B = B, verbose = FALSE)
       if (compute_CI){
         CI <- get_CI(pselb=pselb, point_est=point_est, naive_se_est=naive_se_est, alpha=alpha)
         CIs[i,1] <- CI[1]
@@ -211,12 +229,14 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
 
     # Get pvalue for test of H_0:\beta_1 = 0.
     B_max <- B * 10
-    pselb <- get_pselb(X, y, sigma_sq = sigma_sq, yPy = yPy, rss = rss, alpha_ov = alpha_ov, seed = seed, B = B_max, verbose = FALSE)
+    pselb <- get_pselb(X, y, sigma_sq = sigma_sq, yPy = yPy, rss = rss, alpha_ov = alpha_ov, B = B_max, verbose = FALSE)
     P_value <- max(pselb(0), 1/B_max) # return 1/B instead of zero
     pvalues[i] <- P_value
   }
 
   output <- list(
+    call = match.call(),
+    "overall F-stat" = overall_F_statistic * (n-p)/p,
     "selective coefficients" = beta,
     "selective CIs" = CIs,
     "selective pvalues" = pvalues,

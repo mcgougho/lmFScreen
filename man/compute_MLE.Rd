@@ -4,15 +4,7 @@
 \alias{compute_MLE}
 \title{Compute the Selective Maximum Likelihood Estimate for beta1}
 \usage{
-compute_MLE(
-  X,
-  y,
-  sigma_sq,
-  alpha_ov,
-  interval = c(-10, 10),
-  B = 1e+06,
-  seed = 12345
-)
+compute_MLE(X, y, sigma_sq, alpha_ov, interval = c(-10, 10), B = 1e+06)
 }
 \arguments{
 \item{X}{A numeric matrix of predictor variables (n x p), with the first column corresponding to \code{beta1}.}
@@ -26,8 +18,6 @@ compute_MLE(
 \item{interval}{A numeric vector of length 2 giving the search interval for \code{beta1} (default: \code{c(-10, 10)}).}
 
 \item{B}{The number of Monte Carlo samples used to approximate the likelihood (default: \code{1e6}).}
-
-\item{seed}{A seed for reproducibility (default: \code{12345}).}
 }
 \value{
 A list containing:

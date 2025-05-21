@@ -4,14 +4,7 @@
 \alias{compute_likelihood_function}
 \title{Construct the Selective Log-Likelihood Function for beta1}
 \usage{
-compute_likelihood_function(
-  X,
-  y,
-  sigma_sq,
-  alpha_ov = 0.05,
-  B = 1e+06,
-  seed = 12345
-)
+compute_likelihood_function(X, y, sigma_sq, alpha_ov = 0.05, B = 1e+06)
 }
 \arguments{
 \item{X}{A numeric matrix of predictors (n x p), with \code{beta1} corresponding to the first column.}
@@ -23,8 +16,6 @@ compute_likelihood_function(
 \item{alpha_ov}{The significance level for the overall F-test (default: \code{0.05}).}
 
 \item{B}{The number of Monte Carlo samples (default: \code{1e6}).}
-
-\item{seed}{A seed for reproducibility (default: \code{12345}).}
 }
 \value{
 A function of one argument \code{beta1} that returns the approximate

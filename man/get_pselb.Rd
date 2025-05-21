@@ -14,7 +14,6 @@ get_pselb(
   B = 10000,
   min_select = B,
   B_max = 1e+07,
-  seed = NULL,
   verbose = FALSE
 )
 }
@@ -36,8 +35,6 @@ get_pselb(
 \item{min_select}{Minimum number of selected samples required to estimate the p-value. Default is equal to B.}
 
 \item{B_max}{Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.}
-
-\item{seed}{Optional seed for reproducibility. If NULL, a random seed is generated.}
 
 \item{verbose}{Logical flag indicating whether to print progress messages during sampling.}
 }

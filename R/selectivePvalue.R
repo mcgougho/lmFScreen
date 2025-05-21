@@ -12,7 +12,6 @@
 #' @param B Number of Monte Carlo samples drawn per iteration. Default is 10,000.
 #' @param min_select Minimum number of selected samples required to estimate the p-value. Default is equal to B.
 #' @param B_max Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.
-#' @param seed Optional seed for reproducibility. If NULL, a random seed is generated.
 #' @param verbose Logical flag indicating whether to print progress messages during sampling.
 #'
 #' @return A function that takes a numeric argument b and returns the selective p-value corresponding to that value of beta1. If the selection condition
@@ -22,12 +21,7 @@
 #' The returned function estimates the conditional probability that a test statistic T(b) exceeds the observed value, given that the data passes the F-test threshold.
 #' Sampling proceeds until at least min_select Monte Carlo draws satisfy the selection condition. If this cannot be achieved within the given sample limits, the function returns NA.
 #'
-get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B = 10000, min_select = B, B_max = 10e6, seed = NULL, verbose = FALSE) {
-
-  if(is.null(seed)) {
-    seed <- rnorm(1, 0, 10000)
-  }
-  set.seed(seed)
+get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B = 10000, min_select = B, B_max = 10e6, verbose = FALSE) {
 
   n <- dim(X)[1]
   p <- dim(X)[2]

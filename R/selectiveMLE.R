@@ -10,7 +10,6 @@
 #' @param alpha_ov The significance level for the overall F-test (used in defining the selection region).
 #' @param interval A numeric vector of length 2 giving the search interval for `beta1` (default: `c(-10, 10)`).
 #' @param B The number of Monte Carlo samples used to approximate the likelihood (default: `1e6`).
-#' @param seed A seed for reproducibility (default: `12345`).
 #'
 #' @return A list containing:
 #' \describe{
@@ -18,10 +17,10 @@
 #'   \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
 #' }
 #'
-compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 1000000, seed = 12345) {
+compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 1000000) {
   # Create the likelihood function based on the current data and parameters.
   # Note: compute_likelihood_function returns a function that computes the likelihood for a given beta1.
-  lik_fun <- compute_likelihood_function(X, y, sigma_sq = sigma_sq, alpha_ov = alpha_ov, seed = seed, B = B)
+  lik_fun <- compute_likelihood_function(X, y, sigma_sq = sigma_sq, alpha_ov = alpha_ov, B = B)
 
   # Define a negative likelihood function to be minimized.
   neg_likelihood <- function(beta1) {
@@ -53,7 +52,6 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #' @param sigma_sq The noise variance.
 #' @param alpha_ov The significance level for the overall F-test (default: `0.05`).
 #' @param B The number of Monte Carlo samples (default: `1e6`).
-#' @param seed A seed for reproducibility (default: `12345`).
 #'
 #' @return A function of one argument `beta1` that returns the approximate
 #'         log-likelihood, conditional on selection.
@@ -68,7 +66,7 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #' Internally, the function generates samples from a noncentral and central chi-squared
 #' distribution to approximate the conditional probability of selection.
 #'
-compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000, seed = 12345) {
+compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000) {
   n <- dim(X)[1]
   p <- dim(X)[2]
   cc <- (p / (n - p)) * qf(1 - alpha_ov, df1 = p, df2 = (n - p))
@@ -113,7 +111,6 @@ compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 100
 
   # Define the likelihood function that depends on beta1.
   lik_fun <- function(beta1) {
-    set.seed(seed)
     # Compute the mean of the projected beta1 effect.
     mean_w <- as.vector(t(U.1) %*% (X[ , 1] * beta1))
     # Compute the numerator as the log-density under the normal distribution.
