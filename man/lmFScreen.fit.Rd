@@ -2,7 +2,10 @@
 % Please edit documentation in R/lmFScreen.R
 \name{lmFScreen.fit}
 \alias{lmFScreen.fit}
-\title{Fit a Linear Model with Selective Inference After F-screening}
+\title{This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening by
+(1) testing the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
+(2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.}
 \usage{
 lmFScreen.fit(
   X,
@@ -39,28 +42,15 @@ lmFScreen.fit(
 A list of class lmFScreen containing:
 \itemize{
 \item Selective coefficients, confidence intervals, and p-values
-\item Naive (OLS) coefficients, confidence intervals, and p-values
+\item Standard (OLS) coefficients, confidence intervals, and p-values
 \item Model settings: alpha and alpha_ov
 }
 }
 \description{
-Performs selective inference in linear regression by estimating selective
-coefficients, confidence intervals, and p-values conditional on passing an overall F-test.
-}
-\details{
-The procedure follows these steps:
-\enumerate{
-\item Computes the overall F-statistic and checks whether the data passes the F-screening threshold.
-\item If passed, computes naive OLS estimates and standard errors.
-\item For each predictor:
-\itemize{
-\item Computes the selective MLE using Monte Carlo approximation
-\item Constructs a selective confidence interval using root-finding
-\item Computes a selective p-value using selective resampling
-}
-}
-
-The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.
+This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening by
+(1) testing the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
+(2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 }
 \examples{
 data(mtcars)

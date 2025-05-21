@@ -1,6 +1,6 @@
 #' lmFScreen: Selective Inference for Linear Regression via F-screening
 #'
-#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening:
+#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening (via the function lmFScreen.fit):
 #' (1) it first tests the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
 #' (2) if this overall test is rejected it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
 #' If the overall test is not not rejected, it returns the overall F-statistic and indicates that it is not significant.
@@ -89,10 +89,11 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 }
 
 
-#' Fit a Linear Model with Selective Inference After F-screening
+#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening by
+#' (1) testing the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
+#' (2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+#' If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 #'
-#' Performs selective inference in linear regression by estimating selective
-#' coefficients, confidence intervals, and p-values conditional on passing an overall F-test.
 #'
 #' @param X A numeric matrix of predictors.
 #' @param y A numeric response vector.
@@ -108,26 +109,9 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 #'
 #'   - Selective coefficients, confidence intervals, and p-values
 #'
-#'   - Naive (OLS) coefficients, confidence intervals, and p-values
+#'   - Standard (OLS) coefficients, confidence intervals, and p-values
 #'
 #'   - Model settings: alpha and alpha_ov
-#'
-#' @details
-#' The procedure follows these steps:
-#'
-#' 1. Computes the overall F-statistic and checks whether the data passes the F-screening threshold.
-#'
-#' 2. If passed, computes naive OLS estimates and standard errors.
-#'
-#' 3. For each predictor:
-#'
-#'    - Computes the selective MLE using Monte Carlo approximation
-#'
-#'    - Constructs a selective confidence interval using root-finding
-#'
-#'    - Computes a selective p-value using selective resampling
-#'
-#' The function skips selective estimation if compute_est is FALSE, and skips confidence interval construction if compute_CI is FALSE.
 #'
 #' @examples
 #' data(mtcars)

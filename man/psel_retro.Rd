@@ -43,23 +43,21 @@ A numeric value representing the estimated selective p-value.
 If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
 }
 \description{
-Computes a selective p-value for a single regression coefficient (beta_i) using summary statistics from a linear model:
-R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_i.
-This function is useful in retrospective settings where the raw data is unavailable.
-}
-\details{
-The selective p-value is estimated as the conditional probability that a test statistic W / Z exceeds the observed value,
-where W follows a chi-squared distribution with 1 degree of freedom, and Z follows a chi-squared distribution with n - p - 1 degrees of freedom.
-The selection condition is based on the rejection threshold for the overall F-test.
-
-This method can be applied in settings where only summary statistics are available, such as published studies.
+This function is useful for conducting valid retrospective F-screening.
+In the context of a a linear regression model, if summary statistics are reported,
+and we want to test the significance of a single regression coefficient (beta_j) that accounts for the rejection of an overall F-test,
+we can use this function to get a selective p-value.
+The arguments of this function include R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_j.
+This function is especially useful in settings where the raw data is unavailable, such as published studies.
 }
 \examples{
 data(mtcars)
 mod <- lm(mpg ~ wt + hp, data = mtcars)
 rse <- summary(mod)$sigma
 r2 <- summary(mod)$r.squared
-t_wt <- summary(mod)$coefficients["wt", "t value"]
-psel_retro(n=nrow(mtcars), p=2, R_squared=r2, RSE=rse, Fstat=t_wt^2)
+t_hp <- summary(mod)$coefficients["hp", "t value"]
+psel_retro(n=nrow(mtcars), p=2, R_squared=r2, RSE=rse, tstat=t_hp)
+result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+result[["selective pvalues"]][2]
 
 }

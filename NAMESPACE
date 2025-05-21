@@ -2,7 +2,6 @@
 
 S3method(coef,lmFScreen)
 S3method(confint,lmFScreen)
-S3method(print,lmFScreen)
 S3method(summary,lmFScreen)
 export(lmFScreen)
 export(lmFScreen.fit)

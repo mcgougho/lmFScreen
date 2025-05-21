@@ -41,7 +41,7 @@ An object of class lmFScreen, which includes:
 }
 }
 \description{
-This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening:
+This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening (via the function lmFScreen.fit):
 (1) it first tests the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
 (2) if this overall test is rejected it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
 If the overall test is not not rejected, it returns the overall F-statistic and indicates that it is not significant.
