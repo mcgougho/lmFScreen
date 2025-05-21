@@ -48,13 +48,17 @@
 <div class="section level2">
 <h2 id="what-is-f-screening">What is F-screening?<a class="anchor" aria-label="anchor" href="#what-is-f-screening"></a>
 </h2>
-<p>F-screening refers to a two-step procedure in linear regression where:</p>
+<p>Suppose that we have and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>-vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> containing a quantitative response for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math> obserations and an <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">n\times p</annotation></semantics></math> design matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> containing <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math> covariates/features for each of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math> observations. Out interest lies in the linear model <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>X</mi><mi>β</mi><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">Y = X\beta +\epsilon</annotation></semantics></math>.</p>
+<p>A common data analysis pipeline, which we refer to as “F-screening” is as follows:</p>
 <ol style="list-style-type: decimal">
-<li>An <strong>overall F-test</strong> is used to evaluate the global null hypothesis: H₀: β₁ = β₂ = … = βₚ = 0</li>
+<li>Test the “overall” null hypothesis, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><msub><mi>β</mi><mn>2</mn></msub><mo>=</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>=</mo><msub><mi>β</mi><mi>p</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">H_0: \beta_1 = \beta_2 = ... = \beta_p = 0</annotation></semantics></math> using an F-test.</li>
 <li>
-<strong>if (and only if)</strong> this test is rejected, follow-up tests are performed on coefficients of interest.</li>
+<strong>if (and only if)</strong> this test is rejected, conduct inference on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math> for some coefficient <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.</li>
 </ol>
-<p>While intuitive and widely used, this approach introduces <strong>selection bias</strong> — standard inference procedures no longer guarantee valid Type I error control, confidence interval nominal coverage, or unbiased point estimates. The <code>lmFScreen</code> package addresses this by providing tools for <strong>conditional selective inference</strong>, which accounts for the conditional nature of the analysis.</p>
+<p>Typically, Steps 1 and 2 are carried out using, e.g., the command <code>lm(Y~X)</code>. (However, as will be explained in the next paragraph, this analysis pipeline is problematic.)</p>
+<p>While F-screening is intuitive and widely used, carrying out Step 2 using a “standard” approach – for instance, testing <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>H</mi><mn>0</mn><mi>j</mi></msubsup><mo>:</mo><msub><mi>β</mi><mi>j</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">H_{0}^j: \beta_j=0</annotation></semantics></math> using the t-test output by <code>lm(Y~X)</code> – is problematic, as it does not account for the fact that we conduct inference on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math> only if we rejected the “overall” null hypothesis in Step 1. Consequently, the standard t-test for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>H</mi><mn>0</mn><mi>j</mi></msubsup><mo>:</mo><msub><mi>β</mi><mi>j</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">H_{0}^j: \beta_j=0</annotation></semantics></math> will not control the Type 1 error, standard confidence intervals for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math> will not attain the nominal coverage, and even the point estimate for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math> output by <code>lm(Y~X)</code> will be biased.</p>
+<p>The <code>lmFScreen</code> package provides a valid inferential toolbox for conducting Step 2 in the F-screening procedure, by accounting for the fact that we conduct inference on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mi>e</mi><mi>t</mi><msub><mi>a</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">beta_j</annotation></semantics></math> in Step 1 only if we reject the overall null hypothesis in Step 1.</p>
+<p>This inferential toolbox falls under the larger umbrella of “conditional selective inference”, where the “selection event” that we are conditioning on is rejection of the overall null hypothesis in Step 1.</p>
 <hr>
 </div>
 <div class="section level2">
@@ -69,31 +73,32 @@
 <p>The <code>lmFScreen</code> function enables valid inference conditional on rejection of an overall F-test in linear regression, using tools from conditional selective inference.</p>
 <p>Given a design matrix <code>X</code> and a response vector <code>y</code>, the package:</p>
 <ol style="list-style-type: decimal">
-<li>Performs an overall F-test of the global null hypothesis<br>
+<li>Tests overall F-test of the overall null hypothesis <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><msub><mi>β</mi><mn>2</mn></msub><mo>=</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>=</mo><msub><mi>β</mi><mi>p</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">H_0: \beta_1 = \beta_2 = ... = \beta_p = 0</annotation></semantics></math> using <code>lm(y~x)</code>
 </li>
-<li>If this test is rejected, conducts follow-up tests on specified coefficients (<code>test_cols</code>)</li>
+<li>If this test is rejected, conduct inference on specified coefficients (<code>test_cols</code>)</li>
 <li>Returns:
 <ul>
-<li>Selective <strong>p-values</strong>
+<li>Selective <strong>p-values</strong> for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>H</mi><mn>0</mn><mi>j</mi></msubsup><mo>:</mo><msub><mi>β</mi><mi>j</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">H_0^j:\beta_j=0</annotation></semantics></math>
 </li>
-<li>Selective <strong>confidence intervals</strong>
+<li>Selective <strong>confidence intervals</strong> for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math>
 </li>
-<li>Selective <strong>point estimates</strong>
+<li>Selective <strong>point estimates</strong> for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math>
 </li>
-<li>Naive (unadjusted) counterparts for comparison</li>
+<li>Standard (unadjusted) counterparts for comparison arising from <code>lm(y~x)</code>
+</li>
 </ul>
 </li>
 </ol>
-<p>This procedure ensures <strong>valid inference</strong> conditional on rejection of the overall null hypothesis.</p>
-<p>See the tutorial: <a href="articles/lmFScreen.html">Using lmFScreen</a></p>
+<p>Unlike the standard output arising from `lm(y~x), the selective p-values, confidence intervals, and points estimates are valid <em>conditional on rejection of the overall null hypothesis.</em></p>
+<p>A tutorial for how to use this function in the vignettes section of the FScreen website <a href="https://mcgougho.github.io/lmFScreen/"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="pkgdown"></a>: <a href="articles/lmFScreen.html">Using lmFScreen</a></p>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="retrospective-inference-with-psel_retro-function">Retrospective inference with <code>psel_retro</code> function<a class="anchor" aria-label="anchor" href="#retrospective-inference-with-psel_retro-function"></a>
 </h2>
-<p>The <code><a href="reference/psel_retro.html">psel_retro()</a></code> function allows for valid selective p-values in retrospective settings, where only summary statistics (not raw data) are available. It requires: 1. Sample size n 2. Number of predictors p 3. R-squared 4. Residual standard error (RSE) 5. F-statistic for the coefficient of interest</p>
+<p>The <code><a href="reference/psel_retro.html">psel_retro()</a></code> function allows for valid selective p-values in retrospective settings, where only the output of <code>summary(lm(y~x))</code> (not the raw data <code>x</code> and <code>y</code>) are available. It requires: 1. Sample size n 2. Number of predictors p 3. R-squared (i.e <code>summary(lm(y~x))$r.squared</code>) 4. Residual standard error (RSE) (i.e. <code>summary(lm(y~x))$sigma</code>) 5. F-statistic for the coefficient of interest (i.e. <code>summary(lm(y~x))$coefficients[j, "t value"]</code>, where <code>j-1</code> is the index of the coefficient of interest)</p>
 <p>This is particularly useful when analyzing published results (e.g., from an applied paper’s Table 1) where individual-level data is unavailable.</p>
-<p>See the tutorial for how to use it: <a href="articles/psel_retro.html">Using psel_retro</a></p>
+<p>A tutorial for how to use thsi function is in vignettes section of the FScreen website <a href="https://mcgougho.github.io/lmFScreen/"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="pkgdown"></a>: <a href="articles/psel_retro.html">Using psel_retro</a></p>
 <hr>
 </div>
 
