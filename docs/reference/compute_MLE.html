@@ -44,15 +44,7 @@ conditional on passing the overall F-test.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_MLE</span><span class="op">(</span></span>
-<span>  <span class="va">X</span>,</span>
-<span>  <span class="va">y</span>,</span>
-<span>  <span class="va">sigma_sq</span>,</span>
-<span>  <span class="va">alpha_ov</span>,</span>
-<span>  interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">1e+06</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">12345</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_MLE</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">sigma_sq</span>, <span class="va">alpha_ov</span>, interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">1e+06</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -81,10 +73,6 @@ conditional on passing the overall F-test.</p>
 
 <dt id="arg-b">B<a class="anchor" aria-label="anchor" href="#arg-b"></a></dt>
 <dd><p>The number of Monte Carlo samples used to approximate the likelihood (default: <code>1e6</code>).</p></dd>
-
-
-<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>A seed for reproducibility (default: <code>12345</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">

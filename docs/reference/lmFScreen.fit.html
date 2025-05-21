@@ -48,7 +48,6 @@ coefficients, confidence intervals, and p-values conditional on passing an overa
 <span>  alpha_ov <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  test_cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
 <span>  sigma_sq <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compute_CI <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compute_est <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">1e+05</span></span>
@@ -81,10 +80,6 @@ coefficients, confidence intervals, and p-values conditional on passing an overa
 
 <dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
 <dd><p>Optional noise variance. If NULL, it is estimated using a corrected residual variance.</p></dd>
-
-
-<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>Optional seed for reproducibility.</p></dd>
 
 
 <dt id="arg-compute-ci">compute_CI<a class="anchor" aria-label="anchor" href="#arg-compute-ci"></a></dt>
@@ -130,19 +125,21 @@ coefficients, confidence intervals, and p-values conditional on passing an overa
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">U_perp</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">y</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">lmFScreen.fit</span><span class="op">(</span><span class="va">X</span>,<span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  lmFScreen Model Summary </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lmFScreen Model Summary </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Overall F-statistic:    69.2112</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of post hoc tests: 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selective Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X1            -3.877831     -5.1728     -2.5838      0.0000***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X2            -0.031773     -0.0503     -0.0134      0.0015**</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1            -3.877831     -5.1770     -2.5838      0.0000***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2            -0.031773     -0.0502     -0.0134      0.0015**</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Naive Estimates:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Standard Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  X1            -3.877831     -5.1180     -2.6377      0.0000***</span>
@@ -168,8 +165,8 @@ coefficients, confidence intervals, and p-values conditional on passing an overa
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selective Confidence Intervals:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X1                -5.1728       -2.5838</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X2                -0.0503       -0.0134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1                -5.1770       -2.5838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2                -0.0502       -0.0134</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Naive Confidence Intervals:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
