@@ -23,7 +23,7 @@
 #'
 #'   - Selective: A data frame with selective estimates, confidence intervals, and p-values
 #'
-#'   - Naive: A data frame with naive estimates, confidence intervals, and p-values
+#'   - Standard: A data frame with standard estimates, confidence intervals, and p-values
 #'
 #' @examples
 #' data(mtcars)
@@ -154,7 +154,7 @@ coef.lmFScreen <- function(object, ...) {
 #'
 #'   - Selective: A data frame of confidence intervals for selective estimates
 #'
-#'   - Naive: A data frame of confidence intervals for naive estimates
+#'   - Standard: A data frame of confidence intervals for standard estimates
 #'
 #'
 #' @examples
@@ -199,7 +199,7 @@ confint.lmFScreen <- function(object, ...) {
   cat("\n")
 
   # Print Naive Intervals
-  cat("Naive Confidence Intervals:\n")
+  cat("Standard Confidence Intervals:\n")
   cat("Predictor       Lower.CI     Upper.CI\n")
   cat("---------------------------------------------\n")
   for (i in seq_along(beta_names)) {

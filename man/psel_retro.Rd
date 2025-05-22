@@ -44,9 +44,9 @@ If no selected samples are obtained after max_attempts, the function returns NA 
 }
 \description{
 This function is useful for conducting valid retrospective F-screening.
-In the context of a a linear regression model, if summary statistics are reported,
-and we want to test the significance of a single regression coefficient (beta_j) that accounts for the rejection of an overall F-test,
-we can use this function to get a selective p-value.
+Suppose that we have access to the outputs of a least squares linear regression model, such as from the output of summary(lm(y~X)),
+and we want to conduct a test of the significance of a single regression coefficient (beta_j) that accounts for the rejection of an overall F-test.
+Then this function can provide a selective p-value for beta_j based on of only a few summary statistics.
 The arguments of this function include R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_j.
 This function is especially useful in settings where the raw data is unavailable, such as published studies.
 }
@@ -59,5 +59,6 @@ t_hp <- summary(mod)$coefficients["hp", "t value"]
 psel_retro(n=nrow(mtcars), p=2, R_squared=r2, RSE=rse, tstat=t_hp)
 result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
 result[["selective pvalues"]][2]
+# the retrospective and prospective p-values coincide (up to Monte Carlo error)
 
 }

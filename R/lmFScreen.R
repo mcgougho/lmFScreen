@@ -1,9 +1,12 @@
-#' lmFScreen: Selective Inference for Linear Regression via F-screening
+#' lmFScreen: Valid F-screening
 #'
-#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening (via the function lmFScreen.fit):
-#' (1) it first tests the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
-#' (2) if this overall test is rejected it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
-#' If the overall test is not not rejected, it returns the overall F-statistic and indicates that it is not significant.
+#' This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model. It then conducts F-screening (via the function lmFScreen.fit) as follows:
+#'
+#' (1) it first tests the overall hypothesis that all coefficients (exlcuding the intercept) in the linear regression are zero using an F-test, and
+#'
+#' (2) if (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+#'
+#' If the overall test is not not rejected, this function returns the overall F-statistic and p-value and indicates that it is not significant.
 #' If an intercept is present in the model, the data are projected to remove the intercept
 #' before conducting inference.
 #'
@@ -89,8 +92,10 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 }
 
 
+#' lmFScreen.fit: Valid F-screening
+#'
 #' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening by
-#' (1) testing the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
+#' (1) testing the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test, and
 #' (2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
 #' If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 #'
@@ -143,7 +148,8 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
   cc <- p/(n-p) * qf(1 - alpha_ov, p, (n - p))
   if (overall_F_statistic < cc) {
     cat("Did not pass Fscreening!\n")
-    cat("overall F statistic: ", overall_F_statistic * (n-p)/p, "\n" )
+    cat("overall F-statistic: ", overall_F_statistic * (n-p)/p, " on ", p, " and ", n-p, " degrees of freedom\n" )
+    cat("p-value: ", 1-pf(overall_F_statistic * (n-p)/p, n-p, p), "\n" )
     return(NA)
   }
 

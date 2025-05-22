@@ -4,14 +4,14 @@ Title: Selective Inference for Linear Regression with F-Screening
 Version: 0.1.1
 Author: Olivia McGough
 Maintainer: Olivia McGough <mcgougho@uw.edu>
-Description: F-screening a common two step procedure in least squares linear
-  regression. The first step is to conduct an overall F-test to test whether all the coefficients
-  in the linear model are zero. If this null hypothesis is rejected, the second step is to
+Description: F-screening a common two step procedure in the context of least squares linear
+  regression. The first step of F-screening is to conduct an overall F-test that tests whether all of the coefficients
+  in the linear model are zero (excluding the intercept). If this null hypothesis is rejected, the second step is to
   conduct inference on individual coefficients in the model. If instead the null hypothesis is not rejected,
   no further inference is conducted. If step 2 in F-screening is conducted without accounting for step 1, 
   statistical guarantees such as type 1 error control and nominal confidence interval coverage
   break down. As a solution, the paper "Valid F-screening in linear regression" develops p-values,
-  confidence intervals, and point estimates that condition on the rejection of the overall F-test 
+  confidence intervals, and point estimates to use in step 2 that condition on the rejection of the overall F-test 
   in step 1. This package provides functions to implement these methods.
 License: GPL-3
 Encoding: UTF-8

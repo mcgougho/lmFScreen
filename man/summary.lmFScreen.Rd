@@ -15,7 +15,7 @@
 Invisibly returns a list containing:
 \itemize{
 \item Selective: A data frame with selective estimates, confidence intervals, and p-values
-\item Naive: A data frame with naive estimates, confidence intervals, and p-values
+\item Standard: A data frame with standard estimates, confidence intervals, and p-values
 }
 }
 \description{
