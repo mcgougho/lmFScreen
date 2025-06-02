@@ -41,6 +41,7 @@ reference:
       - coef.lmFScreen
       - confint.lmFScreen
       - summary.lmFScreen
+      - print.lmFScreen
       - compute_MLE
       - compute_likelihood_function
       - get_CI

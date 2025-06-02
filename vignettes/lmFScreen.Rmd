@@ -13,7 +13,7 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
-*This analysis is meant to mimic the analysis in the paper ["Decreasing Trend of Bone Mineral Density in US Multiethnic Population: Analysis of Continuous NHANES 2005 - 2014"](https://pubmed.ncbi.nlm.nih.gov/30091065/).* 
+*This analysis is meant to mimic the analysis in the paper ["Decreasing Trend of Bone Mineral Density in US Multiethnic Population: Analysis of Continuous NHANES 2005 - 2014"](https://pubmed.ncbi.nlm.nih.gov/30091065/). The results of this analysis can be found in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113).* 
 
 
 ```{r setup, include=FALSE}
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ## Introduction
 
-In this analysis, we apply **selective inference** using the `lmFScreen` package to compare femur neck bone mineral density (BMD) across NHANES cycles for men over age 30. Selective inference methods adjust for the fact that inference is conditioned on passing a model selection step — in our case, an overall F-test.
+In this analysis we use the `lmFScreen` package to compare femur neck bone mineral density (BMD) across NHANES cycles for men over age 30. We first perform an overall F-test to test whether there is a change in BMD across all years. This test is rejected, so we conduct post-hoc tests for the individual coefficients for each year/cycle. We adjust for the fact that inference is conditioned on passing a model selection step — in our case, an overall F-test.
 
 ## Load Required Libraries
 
@@ -83,6 +83,17 @@ bmd_men <- bmd_men %>% mutate(
 )
 ```
 
+## Conduct overall F-test
+
+We run an overall F-test to check if there are significant differences in BMD across the years.
+
+```{r}
+model <- lm(Femur_Neck_BMD ~ Year + Age, data = bmd_men)
+summary(model)
+```
+
+The overall F-statistic is significant, so we proceed with inference on the individual coefficients for each year/cycle.
+
 ## Define a Selective Inference Function for Pairwise Year Comparisons
 
 We now define a function that:
@@ -91,7 +102,7 @@ We now define a function that:
 
 - Projects out age 
 
-- Runs `lmFScreen.fit` on the resulting matrix
+- Runs `lmFScreen.fit` on the resulting matrix, which conducts inference on the individual coefficients for each year in the model while accounting for the overall F-test.
 
 ```{r}
 do_year_comparison <- function(X, test_col, seed_val) {
@@ -150,5 +161,5 @@ do_year_comparison(X=cbind(bmd_men$Year_2005_2006,bmd_men$Year_2007_2008,
 
 ## Interpretation
 
-These analyses provide valid inference **conditional on passing the overall F-test**. The selective p-values and intervals are corrected for the selection step, avoiding overconfident inference that can arise from standard (naive) linear regression output. However, in this particular case, the selective p-values, estimates, and confidence intervals tend to coincide with their standard counterparts, indicating that selection did not have a large impact on the analysis. 
+These analyses provide valid inference **conditional on passing the overall F-test**. The selective p-values, point estimates, and intervals are corrected for the selection step, avoiding overconfident inference that can arise from standard (naive) linear regression output. However, in this particular case, the selective p-values, estimates, and confidence intervals tend to coincide with their standard counterparts, indicating that selection did not have a large impact on the analysis. 
 

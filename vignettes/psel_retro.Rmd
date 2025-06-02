@@ -7,7 +7,7 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-*Data used in this analysis was extracted from Table 1 of the paper ["Longitudinal Sleep Patterns and Cognitive Impairment in Older Adults"](https://jamanetwork-com.offcampus.lib.washington.edu/journals/jamanetworkopen/fullarticle/2812521).* This table reported means, standard deviations, and sample sizes for several variables across age groups. We use the `psel_retro()` function from the **lmFScreen** package to compute selective p-values for each pairwise comparison, conditional on rejection of the overall F-test (i.e., the omnibus ANOVA), since the table reports significant omnibus p-values for all outcomes.
+*Data used in this analysis was extracted from Table 1 of the paper ["Longitudinal Sleep Patterns and Cognitive Impairment in Older Adults"](https://jamanetwork-com.offcampus.lib.washington.edu/journals/jamanetworkopen/fullarticle/2812521).* This table reported means, standard deviations, and sample sizes for several variables across age groups. We use the `psel_retro()` function from the **lmFScreen** package to compute selective p-values for each pairwise comparison, conditional on rejection of the overall F-test (i.e., the omnibus ANOVA), since the table reports significant omnibus p-values for all outcomes. The results of this analysis can be found in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113).
 
 
 ```{r setup, include=FALSE}
@@ -155,7 +155,7 @@ cat("65–84 vs ≥85:", psel_retro(n, p, r_squared, rse, results_2_3$t_stat), "
 
 ## Summary
 
-In this analysis, we used selective inference techniques to revisit pairwise comparisons across age groups for four outcomes reported in the JAMA Network Open paper. While some selective p-values differ meaningfully from their naive counterparts (in the case of the CES-D outcome), others remain similar. The Sidak-corrected p-values reported in the original paper align with the Sidak-corrected naive p-values shown here.
+In this analysis, we used selective inference techniques to revisit pairwise comparisons across age groups for four outcomes reported in the JAMA Network Open paper ["Longitudinal Sleep Patterns and Cognitive Impairment in Older Adults"](https://jamanetwork-com.offcampus.lib.washington.edu/journals/jamanetworkopen/fullarticle/2812521). While some selective p-values differ meaningfully from their standard/naive counterparts (in the case of the CES-D outcome), others remain similar. The Sidak-corrected p-values reported in the original paper align with the Sidak-corrected naive p-values shown here.
 
-By conditioning on rejection of the overall F-test, the selective p-values provide a more principled post-hoc analysis while guarding against inflated Type I error.
+By conditioning on rejection of the overall F-test, the selective p-values provide a more principled post-hoc analysis by guarding against inflated Type I error.
 

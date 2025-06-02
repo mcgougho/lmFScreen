@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Olivia
 McGough</h4>
             
-            <h4 data-toc-skip class="date">2025-05-21</h4>
+            <h4 data-toc-skip class="date">2025-06-01</h4>
       
 
       <div class="d-none name"><code>lmFScreen.Rmd</code></div>
@@ -62,15 +62,19 @@ McGough</h4>
     
 <p><em>This analysis is meant to mimic the analysis in the paper <a href="https://pubmed.ncbi.nlm.nih.gov/30091065/" class="external-link">“Decreasing Trend of
 Bone Mineral Density in US Multiethnic Population: Analysis of
-Continuous NHANES 2005 - 2014”</a>.</em></p>
+Continuous NHANES 2005 - 2014”</a>. The results of this analysis can be
+found in <a href="https://arxiv.org/abs/2505.23113" class="external-link">“Valid F-screening
+in linear regression”</a>.</em></p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>In this analysis, we apply <strong>selective inference</strong> using
-the <code>lmFScreen</code> package to compare femur neck bone mineral
-density (BMD) across NHANES cycles for men over age 30. Selective
-inference methods adjust for the fact that inference is conditioned on
-passing a model selection step — in our case, an overall F-test.</p>
+<p>In this analysis we use the <code>lmFScreen</code> package to compare
+femur neck bone mineral density (BMD) across NHANES cycles for men over
+age 30. We first perform an overall F-test to test whether there is a
+change in BMD across all years. This test is rejected, so we conduct
+post-hoc tests for the individual coefficients for each year/cycle. We
+adjust for the fact that inference is conditioned on passing a model
+selection step — in our case, an overall F-test.</p>
 </div>
 <div class="section level2">
 <h2 id="load-required-libraries">Load Required Libraries<a class="anchor" aria-label="anchor" href="#load-required-libraries"></a>
@@ -131,6 +135,38 @@ remove missing values, and restrict to men older than 30.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="conduct-overall-f-test">Conduct overall F-test<a class="anchor" aria-label="anchor" href="#conduct-overall-f-test"></a>
+</h2>
+<p>We run an overall F-test to check if there are significant
+differences in BMD across the years.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Femur_Neck_BMD</span> <span class="op">~</span> <span class="va">Year</span> <span class="op">+</span> <span class="va">Age</span>, data <span class="op">=</span> <span class="va">bmd_men</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## lm(formula = Femur_Neck_BMD ~ Year + Age, data = bmd_men)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Residuals:</span></span>
+<span><span class="co">##      Min       1Q   Median       3Q      Max </span></span>
+<span><span class="co">## -0.37743 -0.09450 -0.00985  0.07919  0.70088 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Coefficients:</span></span>
+<span><span class="co">##                Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">## (Intercept)    1.039434   0.007076 146.891  &lt; 2e-16 ***</span></span>
+<span><span class="co">## Year2007-2008 -0.003687   0.004599  -0.802    0.423    </span></span>
+<span><span class="co">## Year2009-2010 -0.003280   0.004567  -0.718    0.473    </span></span>
+<span><span class="co">## Year2013-2014 -0.019821   0.004900  -4.045 5.29e-05 ***</span></span>
+<span><span class="co">## Age           -0.003448   0.000112 -30.801  &lt; 2e-16 ***</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Residual standard error: 0.1349 on 7130 degrees of freedom</span></span>
+<span><span class="co">## Multiple R-squared:  0.1235, Adjusted R-squared:  0.123 </span></span>
+<span><span class="co">## F-statistic: 251.1 on 4 and 7130 DF,  p-value: &lt; 2.2e-16</span></span></code></pre>
+<p>The overall F-statistic is significant, so we proceed with inference
+on the individual coefficients for each year/cycle.</p>
+</div>
+<div class="section level2">
 <h2 id="define-a-selective-inference-function-for-pairwise-year-comparisons">Define a Selective Inference Function for Pairwise Year
 Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-inference-function-for-pairwise-year-comparisons"></a>
 </h2>
@@ -138,9 +174,11 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <ul>
 <li><p>Constructs a contrast</p></li>
 <li><p>Projects out age</p></li>
-<li><p>Runs <code>lmFScreen.fit</code> on the resulting matrix</p></li>
+<li><p>Runs <code>lmFScreen.fit</code> on the resulting matrix, which
+conducts inference on the individual coefficients for each year in the
+model while accounting for the overall F-test.</p></li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">do_year_comparison</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">X</span>, <span class="va">test_col</span>, <span class="va">seed_val</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">seed_val</span><span class="op">)</span></span>
 <span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
@@ -157,7 +195,7 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <div class="section level2">
 <h2 id="run-pairwise-year-comparisons">Run Pairwise Year Comparisons<a class="anchor" aria-label="anchor" href="#run-pairwise-year-comparisons"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2005-2006 vs 2007-2008</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span> <span class="op">+</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
@@ -183,7 +221,7 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2005-2006 vs 2009-2010</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span> <span class="op">+</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
@@ -209,7 +247,7 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2005-2006 vs 2013-2014</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span> <span class="op">+</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
@@ -235,7 +273,7 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2007-2008 vs 2009-2010</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span><span class="op">+</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
@@ -261,7 +299,7 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2007-2008 vs 2013-2014</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span><span class="op">+</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span>,</span>
@@ -287,7 +325,7 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2009-2010 vs 2013-2014</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,<span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span><span class="op">+</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span>,</span>
@@ -318,12 +356,13 @@ Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-infer
 <h2 id="interpretation">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation"></a>
 </h2>
 <p>These analyses provide valid inference <strong>conditional on passing
-the overall F-test</strong>. The selective p-values and intervals are
-corrected for the selection step, avoiding overconfident inference that
-can arise from standard (naive) linear regression output. However, in
-this particular case, the selective p-values, estimates, and confidence
-intervals tend to coincide with their standard counterparts, indicating
-that selection did not have a large impact on the analysis.</p>
+the overall F-test</strong>. The selective p-values, point estimates,
+and intervals are corrected for the selection step, avoiding
+overconfident inference that can arise from standard (naive) linear
+regression output. However, in this particular case, the selective
+p-values, estimates, and confidence intervals tend to coincide with
+their standard counterparts, indicating that selection did not have a
+large impact on the analysis.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
