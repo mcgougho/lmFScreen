@@ -23,6 +23,19 @@
 #' If not, an empty or infinite interval may be returned, with a warning printed.
 #'
 get_CI <- function(pselb, point_est, naive_se_est, alpha){
+  # some checks
+  if (length(point_est) != 1 || length(naive_se_est) != 1) {
+    stop("point_est and naive_se_est must be single numeric values.")
+  }
+  if (naive_se_est <= 0) {
+    stop("naive_se_est must be positive.")
+  }
+  if (alpha <= 0 || alpha >= 1) {
+    stop("Significance level alpha must be between 0 and 1.")
+  }
+  if (!is.function(pselb)) {
+    stop("pselb must be a function that takes a single numeric argument and returns a numeric value.")
+  }
 
   pselb_deterministic <- memoise::memoise(pselb) # rerunning psel(b) with same b will give same output
   p_diff <- function(b) {

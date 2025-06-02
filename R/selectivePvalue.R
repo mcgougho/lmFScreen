@@ -22,6 +22,19 @@
 #' Sampling proceeds until at least min_select Monte Carlo draws satisfy the selection condition. If this cannot be achieved within the given sample limits, the function returns NA.
 #'
 get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B = 10000, min_select = B, B_max = 10e6, verbose = FALSE) {
+  # some checks
+  if (length(y) != nrow(X)) {
+    stop("Length of y must match the number of rows in X.")
+  }
+  if (any(is.na(y)) || any(is.na(X))) {
+    stop("Input data contains NA values. Please handle missing data before calling this function.")
+  }
+  if (alpha_ov <= 0 || alpha_ov >= 1) {
+    stop("Significance level alpha_ov must be between 0 and 1.")
+  }
+  if (!is.numeric(sigma_sq) || sigma_sq <= 0) {
+    stop("sigma_sq must be a positive numeric value.")
+  }
 
   n <- dim(X)[1]
   p <- dim(X)[2]
@@ -151,6 +164,22 @@ get_pselb <- function(X, y, sigma_sq, yPy = NULL, rss = NULL, alpha_ov = 0.05, B
 #'
 #' @export
 psel_retro <- function(n, p, R_squared, RSE, tstat, sigma_sq = NULL, alpha_ov=0.05, B=1000000, min_select = 1000, max_attempts = 100){
+  # some checks
+  if (n <= p) {
+    stop("Sample size n must be greater than number of predictors p.")
+  }
+  if (R_squared < 0 || R_squared > 1) {
+    stop("R-squared must be between 0 and 1.")
+  }
+  if (p < 1) {
+    stop("Number of predictors p must be at least 1.")
+  }
+  if (RSE <= 0) {
+    stop("Residual standard error RSE must be positive.")
+  }
+  if (alpha_ov <= 0 || alpha_ov >= 1) {
+    stop("Significance level alpha_ov must be between 0 and 1.")
+  }
   # compute needed quantities
   Fstat <- tstat^2
   a <- Fstat/(n-p-1)

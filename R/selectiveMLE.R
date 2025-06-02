@@ -18,6 +18,17 @@
 #' }
 #'
 compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 1000000) {
+  # some checks
+  if (length(y) != nrow(X)) {
+    stop("Length of y must match the number of rows in X.")
+  }
+  if (any(is.na(y)) || any(is.na(X))) {
+    stop("Input data contains NA values. Please handle missing data before calling this function.")
+  }
+  if (alpha_ov <= 0 || alpha_ov >= 1) {
+    stop("Significance level alpha_ov must be between 0 and 1.")
+  }
+
   # Create the likelihood function based on the current data and parameters.
   # Note: compute_likelihood_function returns a function that computes the likelihood for a given beta1.
   lik_fun <- compute_likelihood_function(X, y, sigma_sq = sigma_sq, alpha_ov = alpha_ov, B = B)
@@ -69,6 +80,20 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000) {
   n <- dim(X)[1]
   p <- dim(X)[2]
+
+  if (length(y) != nrow(X)) {
+    stop("Length of y must match the number of rows in X.")
+  }
+  if (any(is.na(y)) || any(is.na(X))) {
+    stop("Input data contains NA values. Please handle missing data before calling this function.")
+  }
+  if (alpha_ov <= 0 || alpha_ov >= 1) {
+    stop("Significance level alpha_ov must be between 0 and 1.")
+  }
+  if (sigma_sq <= 0) {
+    stop("Noise variance sigma_sq must be positive.")
+  }
+
   cc <- (p / (n - p)) * qf(1 - alpha_ov, df1 = p, df2 = (n - p))
 
   # Computing P_diff = P_X - P_{X_{-1}}

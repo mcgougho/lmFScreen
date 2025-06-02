@@ -64,6 +64,29 @@
 #'
 #' @export
 lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+  # some checks
+  if (!inherits(formula, "formula")) {
+    stop("The 'formula' argument must be a valid formula object.")
+  }
+  if (!is.numeric(alpha) || alpha <= 0 || alpha >= 1) {
+    stop("The 'alpha' argument must be a numeric value between 0 and 1.")
+  }
+  if (!is.numeric(alpha_ov) || alpha_ov <= 0 || alpha_ov >= 1) {
+    stop("The 'alpha_ov' argument must be a numeric value between 0 and 1.")
+  }
+  if (!is.numeric(B) || B <= 0) {
+    stop("The 'B' argument must be a positive integer representing the number of Monte Carlo samples.")
+  }
+  if (!is.logical(compute_CI) || !is.logical(compute_est)) {
+    stop("The 'compute_CI' and 'compute_est' arguments must be logical values (TRUE or FALSE).")
+  }
+  if (!missing(data) && !is.data.frame(data)) {
+    stop("The 'data' argument must be a data frame if provided.")
+  }
+  if (!is.null(sigma_sq) && (!is.numeric(sigma_sq) || sigma_sq <= 0)) {
+    stop("The 'sigma_sq' argument must be a positive numeric value if provided.")
+  }
+
   # Handle missing data argument (use parent frame like lm)
   mf <- model.frame(formula, data = if (missing(data)) parent.frame() else data)
 
@@ -75,6 +98,23 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 
   # Extract the response variable (y)
   y <- model.response(mf)
+
+  # more checks
+  if (is.null(y)) {
+    stop("The response variable is missing or not specified correctly in the formula.")
+  }
+  if (nrow(X) != length(y)) {
+    stop("The number of rows in the design matrix X must match the length of the response vector y.")
+  }
+  if (length(y) < ncol(X)) {
+    stop("The number of observations in y must be at least as large as the number of predictors in X.")
+  }
+  if (any(is.na(X)) || any(is.na(y))) {
+    stop("The design matrix X and response vector y must not contain NA values.")
+  }
+  if (!is.numeric(X) || !is.numeric(y)) {
+    stop("Both the design matrix X and response vector y must be numeric.")
+  }
 
   if(intercept==1) {
     X <- X[,-1, drop = FALSE]
@@ -133,6 +173,22 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 #'
 #' @export
 lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+  # some checks
+  if (is.null(y)) {
+    stop("The response variable is missing or not specified correctly in the formula.")
+  }
+  if (nrow(X) != length(y)) {
+    stop("The number of rows in the design matrix X must match the length of the response vector y.")
+  }
+  if (length(y) < ncol(X)) {
+    stop("The number of observations in y must be at least as large as the number of predictors in X.")
+  }
+  if (any(is.na(X)) || any(is.na(y))) {
+    stop("The design matrix X and response vector y must not contain NA values.")
+  }
+  if (!is.numeric(X) || !is.numeric(y)) {
+    stop("Both the design matrix X and response vector y must be numeric.")
+  }
 
   n <- dim(X)[1]
   p <- dim(X)[2]
