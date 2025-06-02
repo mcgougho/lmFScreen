@@ -22,12 +22,12 @@ compute_MLE(X, y, sigma_sq, alpha_ov, interval = c(-10, 10), B = 1e+06)
 \value{
 A list containing:
 \describe{
-\item{beta1}{The MLE of \code{beta1} under the selective likelihood.}
+\item{beta}{The MLE of \code{beta1} (a single coefficient) under the selective likelihood.}
 \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal \code{beta1}.}
 }
 }
 \description{
 This function numerically approximates the conditional maximum likelihood estimate (MLE) of a single regression
-coefficient (\code{beta1}) using a Monte Carlo approximation to the selective likelihood,
+coefficient using a Monte Carlo approximation to the selective likelihood,
 conditional on passing the overall F-test.
 }

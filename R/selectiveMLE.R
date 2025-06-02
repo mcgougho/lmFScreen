@@ -1,7 +1,7 @@
 #' Compute the Selective Maximum Likelihood Estimate for beta1
 #'
 #' This function numerically approximates the conditional maximum likelihood estimate (MLE) of a single regression
-#' coefficient (`beta1`) using a Monte Carlo approximation to the selective likelihood,
+#' coefficient using a Monte Carlo approximation to the selective likelihood,
 #' conditional on passing the overall F-test.
 #'
 #' @param X A numeric matrix of predictor variables (n x p), with the first column corresponding to `beta1`.
@@ -13,7 +13,7 @@
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{beta1}{The MLE of `beta1` under the selective likelihood.}
+#'   \item{beta}{The MLE of `beta1` (a single coefficient) under the selective likelihood.}
 #'   \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
 #' }
 #'
@@ -68,14 +68,6 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #'         log-likelihood, conditional on selection.
 #'         If the observed data fails the selection condition, the function returns `-Inf`.
 #'
-#' @details
-#' The likelihood is proportional to the conditional density of a test statistic
-#' (a linear projection of `y`) given that the observed F-statistic exceeds its
-#' critical value under the null. The selection region is defined using the
-#' F-test threshold and the orthogonal projection structure of the regression.
-#'
-#' Internally, the function generates samples from a noncentral and central chi-squared
-#' distribution to approximate the conditional probability of selection.
 #'
 compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000) {
   n <- dim(X)[1]

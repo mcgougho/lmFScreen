@@ -10,7 +10,7 @@ Description: F-screening a common two step procedure in the context of least squ
   conduct inference on individual coefficients in the model. If instead the null hypothesis is not rejected,
   no further inference is conducted. If step 2 in F-screening is conducted without accounting for step 1, 
   statistical guarantees such as type 1 error control and nominal confidence interval coverage
-  break down. As a solution, the paper "Valid F-screening in linear regression" develops p-values,
+  break down. As a solution, the paper ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113) develops p-values,
   confidence intervals, and point estimates to use in step 2 that condition on the rejection of the overall F-test 
   in step 1. This package provides functions to implement these methods.
 License: GPL-3

@@ -220,11 +220,7 @@ confint.lmFScreen <- function(object, ...) {
 #' @param object An object of class lmFScreen containing model results.
 #' @param ... Additional arguments (currently unused).
 #'
-#' @return Invisibly returns a list containing:
-#'
-#'   - Selective: A data frame with selective estimates
-#'
-#'   - Standard: A data frame with standard estimates
+#' @return Invisibly a data frame with selective estimates
 #'
 #' @examples
 #' data(mtcars)

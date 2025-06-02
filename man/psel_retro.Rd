@@ -43,7 +43,7 @@ A numeric value representing the estimated selective p-value.
 If no selected samples are obtained after max_attempts, the function returns NA and issues a warning.
 }
 \description{
-This function is useful for conducting valid retrospective F-screening.
+This function is useful for conducting valid retrospective F-screening as defined in \href{https://arxiv.org/abs/2505.23113}{"Valid F-screening in linear regression"}.
 Suppose that we have access to the outputs of a least squares linear regression model, such as from the output of summary(lm(y~X)),
 and we want to conduct a test of the significance of a single regression coefficient (beta_j) that accounts for the rejection of the overall F-test.
 Then this function can provide a selective p-value for beta_j based on of only a few summary statistics.
