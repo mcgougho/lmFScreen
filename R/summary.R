@@ -214,3 +214,50 @@ confint.lmFScreen <- function(object, ...) {
 
 
 
+
+#' Print an lmFScreen Fit
+#' @description print coefficients from lmFScreen model
+#' @param object An object of class lmFScreen containing model results.
+#' @param ... Additional arguments (currently unused).
+#'
+#' @return Invisibly returns a list containing:
+#'
+#'   - Selective: A data frame with selective estimates
+#'
+#'   - Standard: A data frame with standard estimates
+#'
+#' @examples
+#' data(mtcars)
+#' result <- lmFScreen(mpg ~ wt + hp, data = mtcars)
+#' print(result)
+#'
+#' @export
+print.lmFScreen <- function(object, ...) {
+  if (!inherits(object, "lmFScreen")) {
+    stop("summary.lmFScreen can only be used with objects of class 'lmFScreen'")
+  }
+
+  overall_Fstat <- object[["overall F-stat"]]
+
+  # Extract selective values
+  beta <- object[["selective coefficients"]]
+
+  # Print Selective Estimates
+  cat("Selective Estimates:\n")
+  cat("Predictor       Estimate \n")
+  cat("---------------------------\n")
+  for (i in seq_along(beta)) {
+    cat(sprintf(" %-12s %10.6f  \n",
+                names(beta)[i], beta[i]))
+  }
+  cat("\n")
+
+  invisible(NULL)
+}
+
+
+
+
+
+
+
