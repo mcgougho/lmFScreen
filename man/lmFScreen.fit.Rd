@@ -46,7 +46,7 @@ A list of class lmFScreen containing:
 \description{
 This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening by
 (1) testing the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test, and
-(2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model.
+(2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 }
 \examples{

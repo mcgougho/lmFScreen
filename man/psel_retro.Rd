@@ -45,9 +45,9 @@ If no selected samples are obtained after max_attempts, the function returns NA 
 \description{
 This function is useful for conducting valid retrospective F-screening.
 Suppose that we have access to the outputs of a least squares linear regression model, such as from the output of summary(lm(y~X)),
-and we want to conduct a test of the significance of a single regression coefficient (beta_j) that accounts for the rejection of an overall F-test.
+and we want to conduct a test of the significance of a single regression coefficient (beta_j) that accounts for the rejection of the overall F-test.
 Then this function can provide a selective p-value for beta_j based on of only a few summary statistics.
-The arguments of this function include R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_j.
+The arguments of this function include R-squared, residual standard error (RSE), and an F-statistic for the test of H_0: beta_j=0.
 This function is especially useful in settings where the raw data is unavailable, such as published studies.
 }
 \examples{
