@@ -68,13 +68,6 @@ based on a rescaled residual sum of squares from a linear regression model.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function estimates the variance of the error term under the assumption that
 inference is performed conditional on rejection of the overall F-test.</p>
-<p>The procedure includes:</p><ol><li><p>Simulating samples from chi-squared distributions to compute a correction factor
-that accounts for the selection event.</p></li>
-<li><p>Fitting a linear regression model of Y on X and computing the residual sum of squares.</p></li>
-<li><p>Adjusting the residual sum of squares using the correction factor to obtain
-a debiased estimate of the variance.</p></li>
-</ol><p>This estimate is useful when conducting selective inference with p-values and
-confidence intervals that condition on the overall model selection step.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

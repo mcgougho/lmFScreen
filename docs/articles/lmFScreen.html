@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Olivia
 McGough</h4>
             
-            <h4 data-toc-skip class="date">2025-06-01</h4>
+            <h4 data-toc-skip class="date">2025-06-02</h4>
       
 
       <div class="d-none name"><code>lmFScreen.Rmd</code></div>
@@ -69,12 +69,16 @@ in linear regression”</a>.</em></p>
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>In this analysis we use the <code>lmFScreen</code> package to compare
-femur neck bone mineral density (BMD) across NHANES cycles for men over
-age 30. We first perform an overall F-test to test whether there is a
-change in BMD across all years. This test is rejected, so we conduct
-post-hoc tests for the individual coefficients for each year/cycle. We
-adjust for the fact that inference is conditioned on passing a model
-selection step — in our case, an overall F-test.</p>
+femur neck bone mineral density (BMD) across National Health and
+Nutrition Examination Survey (NHANES) cycles for men over age 30. This
+is an annual survey that reports a series of health metrics in a large
+sample of people in the United States. To conduct this analysis, we
+first perform an overall F-test to test whether there is a change in BMD
+across all years. This test is rejected, so we subsequently conduct
+post-hoc tests for the individual coefficients that correspond to each
+year/cycle in the data. We adjust for the fact that inference is
+conditioned on passing a model selection step — in our case, an overall
+F-test.</p>
 </div>
 <div class="section level2">
 <h2 id="load-required-libraries">Load Required Libraries<a class="anchor" aria-label="anchor" href="#load-required-libraries"></a>

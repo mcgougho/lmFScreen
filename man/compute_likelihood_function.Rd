@@ -27,12 +27,3 @@ This function constructs a log-likelihood function for a single regression
 coefficient (\code{beta1}), conditional on selection via the overall F-test.
 The log-likelihood is approximated using Monte Carlo integration.
 }
-\details{
-The likelihood is proportional to the conditional density of a test statistic
-(a linear projection of \code{y}) given that the observed F-statistic exceeds its
-critical value under the null. The selection region is defined using the
-F-test threshold and the orthogonal projection structure of the regression.
-
-Internally, the function generates samples from a noncentral and central chi-squared
-distribution to approximate the conditional probability of selection.
-}

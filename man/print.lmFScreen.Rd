@@ -12,11 +12,7 @@
 \item{...}{Additional arguments (currently unused).}
 }
 \value{
-Invisibly returns a list containing:
-\itemize{
-\item Selective: A data frame with selective estimates
-\item Standard: A data frame with standard estimates
-}
+Invisibly a data frame with selective estimates
 }
 \description{
 print coefficients from lmFScreen model

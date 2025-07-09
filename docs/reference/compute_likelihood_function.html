@@ -77,15 +77,6 @@ The log-likelihood is approximated using Monte Carlo integration.</p>
 log-likelihood, conditional on selection.
 If the observed data fails the selection condition, the function returns <code>-Inf</code>.</p>
     </div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The likelihood is proportional to the conditional density of a test statistic
-(a linear projection of <code>y</code>) given that the observed F-statistic exceeds its
-critical value under the null. The selection region is defined using the
-F-test threshold and the orthogonal projection structure of the regression.</p>
-<p>Internally, the function generates samples from a noncentral and central chi-squared
-distribution to approximate the conditional probability of selection.</p>
-    </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

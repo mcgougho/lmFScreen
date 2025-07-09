@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ## Introduction
 
-In this analysis we use the `lmFScreen` package to compare femur neck bone mineral density (BMD) across NHANES cycles for men over age 30. We first perform an overall F-test to test whether there is a change in BMD across all years. This test is rejected, so we conduct post-hoc tests for the individual coefficients for each year/cycle. We adjust for the fact that inference is conditioned on passing a model selection step — in our case, an overall F-test.
+In this analysis we use the `lmFScreen` package to compare femur neck bone mineral density (BMD) across National Health and Nutrition Examination Survey (NHANES) cycles for men over age 30. This is an annual survey that reports a series of health metrics in a large sample of people in the United States. To conduct this analysis, we first perform an overall F-test to test whether there is a change in BMD across all years. This test is rejected, so we subsequently conduct post-hoc tests for the individual coefficients that correspond to each year/cycle in the data. We adjust for the fact that inference is conditioned on passing a model selection step — in our case, an overall F-test.
 
 ## Load Required Libraries
 

@@ -60,13 +60,14 @@
 <p><em>Data used in this analysis was extracted from Table 1 of the
 paper <a href="https://jamanetwork-com.offcampus.lib.washington.edu/journals/jamanetworkopen/fullarticle/2812521" class="external-link">“Longitudinal
 Sleep Patterns and Cognitive Impairment in Older Adults”</a>.</em> This
-table reported means, standard deviations, and sample sizes for several
-variables across age groups. We use the <code><a href="../reference/psel_retro.html">psel_retro()</a></code>
-function from the <strong>lmFScreen</strong> package to compute
-selective p-values for each pairwise comparison, conditional on
-rejection of the overall F-test (i.e., the omnibus ANOVA), since the
-table reports significant omnibus p-values for all outcomes. The results
-of this analysis can be found in <a href="https://arxiv.org/abs/2505.23113" class="external-link">“Valid F-screening in linear
+table reported means, standard deviations, and sample sizes for four
+outcome variables (CES-D, Sleep, MMSES, MDRS) across three age groups.
+The table reports significant omnibus p-values for all outcomes.
+Therefore, for each outcome variable, we use the
+<code><a href="../reference/psel_retro.html">psel_retro()</a></code> function from the <strong>lmFScreen</strong>
+package to compute selective p-values for each pairwise comparison
+across age groups, conditional on rejection of the overall F-test (i.e.,
+the omnibus ANOVA). The results of this analysis can be found in <a href="https://arxiv.org/abs/2505.23113" class="external-link">“Valid F-screening in linear
 regression”</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Function to calculate SE, t-statistic, and p-value for pairwise comparisons</span></span>

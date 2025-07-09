@@ -1,10 +1,11 @@
 #' lmFScreen: Valid F-screening
 #'
-#' This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model. It then conducts F-screening (via the function lmFScreen.fit) as follows:
-#' (1) it first tests the overall hypothesis that all coefficients (exlcuding the intercept) in the linear regression are zero using an F-test, and
-#' (2) if (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
+#' This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model.If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
+#' It then conducts F-screening (via the function lmFScreen.fit) as defined in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113) as follows:
+#' 1. First, it tests the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test.
+#' 2. If (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 #' If the overall test is not not rejected, this function returns the overall F-statistic and p-value and indicates that it is not significant.
-#' If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
+#'
 #'
 #'
 #' @param formula A formula specifying the linear model (e.g., y ~ x1 + x2).
@@ -131,9 +132,9 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 
 #' lmFScreen.fit: Valid F-screening
 #'
-#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening by
-#' (1) testing the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test, and
-#' (2) if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
+#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening as defined in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113) by
+#' 1. testing the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test, and
+#' 2. if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 #' If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 #'
 #'

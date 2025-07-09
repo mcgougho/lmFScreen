@@ -41,11 +41,13 @@ An object of class lmFScreen, which includes:
 }
 }
 \description{
-This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model. It then conducts F-screening (via the function lmFScreen.fit) as follows:
-(1) it first tests the overall hypothesis that all coefficients (exlcuding the intercept) in the linear regression are zero using an F-test, and
-(2) if (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
+This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model.If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
+It then conducts F-screening (via the function lmFScreen.fit) as defined in \href{https://arxiv.org/abs/2505.23113}{"Valid F-screening in linear regression"} as follows:
+\enumerate{
+\item First, it tests the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test.
+\item If (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 If the overall test is not not rejected, this function returns the overall F-statistic and p-value and indicates that it is not significant.
-If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
+}
 }
 \details{
 This function performs the following steps:
