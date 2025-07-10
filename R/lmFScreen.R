@@ -1,7 +1,8 @@
 #' lmFScreen: Valid F-screening
 #'
-#' This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model.If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
-#' It then conducts F-screening (via the function lmFScreen.fit) as defined in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113) as follows:
+#' This function takes as input a design matrix X and an output vector y and fits a least squares linear regression model.
+#' If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
+#' It then conducts F-screening (via the function lmFScreen.fit) as defined in the 2025 paper "Valid F-screening in linear regression" by McGough, Witten, and Kessler (arxiv preprint: [https://arxiv.org/abs/2505.23113](https://arxiv.org/abs/2505.23113)) as follows:
 #' 1. First, it tests the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test.
 #' 2. If (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 #' If the overall test is not not rejected, this function returns the overall F-statistic and p-value and indicates that it is not significant.
@@ -12,6 +13,7 @@
 #' @param data An optional data frame containing the variables in the model.
 #' @param alpha Significance level for confidence intervals and hypothesis tests (default: 0.05).
 #' @param alpha_ov Significance level for the overall F-test used for screening (default: 0.05).
+#' @param test_cols Indices of predictors to test (default: all columns of X).
 #' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
 #' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
 #' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
@@ -32,7 +34,7 @@
 #'
 #' 2. Projects out the intercept if one is included in the formula.
 #'
-#' 3. Calls lmFScreen.fit to compute selective inference results for all predictors.
+#' 3. Calls lmFScreen.fit to compute selective inference results for all predictors in test_cols.
 #'
 #'
 #' @examples
@@ -64,7 +66,7 @@
 #' # in Example 3, the selective p-values change significantly from the standard p-values
 #'
 #' @export
-lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
   # some checks
   if (!inherits(formula, "formula")) {
     stop("The 'formula' argument must be a valid formula object.")
@@ -124,7 +126,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
     y <- Xy_centered$y
   }
 
-  output <- lmFScreen.fit(X, y, alpha = alpha, alpha_ov = alpha_ov, test_cols = 1:ncol(X), sigma_sq = sigma_sq, compute_CI = compute_CI, compute_est = compute_est, B = B)
+  output <- lmFScreen.fit(X, y, alpha = alpha, alpha_ov = alpha_ov, test_cols = test_cols, sigma_sq = sigma_sq, compute_CI = compute_CI, compute_est = compute_est, B = B)
 
   return(output)
 }
@@ -132,8 +134,9 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 
 #' lmFScreen.fit: Valid F-screening
 #'
-#' This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening as defined in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113) by
-#' 1. testing the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test, and
+#' This function takes as input a design matrix X and output vector y and fits a linear regression model (**without an intercept -- X and y should be centered**).
+#' It then conducts F-screening as defined in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113) by
+#' 1. testing the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
 #' 2. if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 #' If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 #'
@@ -172,7 +175,6 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, sigma_sq = N
 #' coef(result)
 #' confint(result)
 #'
-#' @export
 lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
   # some checks
   if (is.null(y)) {

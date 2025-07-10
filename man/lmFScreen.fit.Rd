@@ -44,9 +44,10 @@ A list of class lmFScreen containing:
 }
 }
 \description{
-This function takes as input a design matrix X and output vector Y and fits a linear regression model. It then conducts F-screening as defined in \href{https://arxiv.org/abs/2505.23113}{"Valid F-screening in linear regression"} by
+This function takes as input a design matrix X and output vector y and fits a linear regression model (\strong{without an intercept -- X and y should be centered}).
+It then conducts F-screening as defined in \href{https://arxiv.org/abs/2505.23113}{"Valid F-screening in linear regression"} by
 \enumerate{
-\item testing the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test, and
+\item testing the overall hypothesis that all coefficients in the linear regression are zero using an F-test, and
 \item if this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
 If the overall test is not rejected, it returns the overall F-statistic and indicates that it is not significant.
 }

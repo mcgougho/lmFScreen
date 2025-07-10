@@ -13,7 +13,7 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
-*This analysis is meant to mimic the analysis in the paper ["Decreasing Trend of Bone Mineral Density in US Multiethnic Population: Analysis of Continuous NHANES 2005 - 2014"](https://pubmed.ncbi.nlm.nih.gov/30091065/). The results of this analysis can be found in ["Valid F-screening in linear regression"](https://arxiv.org/abs/2505.23113).* 
+*This analysis is meant to mimic the analysis in the paper ["Decreasing Trend of Bone Mineral Density in US Multiethnic Population: Analysis of Continuous NHANES 2005 - 2014"](https://pubmed.ncbi.nlm.nih.gov/30091065/). The results of this analysis can be found in the 2025 paper "Valid F-screening in linear regression" by McGough, Witten, and Kessler (arxiv preprint: [https://arxiv.org/abs/2505.23113](https://arxiv.org/abs/2505.23113)).* 
 
 
 ```{r setup, include=FALSE}
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ## Introduction
 
-In this analysis we use the `lmFScreen` package to compare femur neck bone mineral density (BMD) across National Health and Nutrition Examination Survey (NHANES) cycles for men over age 30. This is an annual survey that reports a series of health metrics in a large sample of people in the United States. To conduct this analysis, we first perform an overall F-test to test whether there is a change in BMD across all years. This test is rejected, so we subsequently conduct post-hoc tests for the individual coefficients that correspond to each year/cycle in the data. We adjust for the fact that inference is conditioned on passing a model selection step — in our case, an overall F-test.
+In this analysis we use the `lmFScreen` package to compare femur neck bone mineral density (BMD) across National Health and Nutrition Examination Survey (NHANES) cycles for men over age 30. NHANES is a biennial survey that reports a series of health metrics in a large sample of people in the United States. To conduct this analysis, we first perform an F-test of the "overall hypothesis of no change in BMD across cycles. This overall null hypothesis is rejected, so we subsequently conduct post hoc tests for the individual coefficients that correspond to each year/cycle in the data. We adjust for the fact that we would not have conducted the post-hoc tests if we had not rejected the overall null hypothesis.
 
 ## Load Required Libraries
 
@@ -94,13 +94,13 @@ summary(model)
 
 The overall F-statistic is significant, so we proceed with inference on the individual coefficients for each year/cycle.
 
-## Define a Selective Inference Function for Pairwise Year Comparisons
+## Prepare for Pairwise Year Comparisons
 
 We now define a function that:
 
 - Constructs a contrast
 
-- Projects out age 
+- Projects out age and the intercept  
 
 - Runs `lmFScreen.fit` on the resulting matrix, which conducts inference on the individual coefficients for each year in the model while accounting for the overall F-test.
 
@@ -119,47 +119,60 @@ do_year_comparison <- function(X, test_col, seed_val) {
 }
 ```
 
+```{r}
+do_year_comparison <- function(X, test_col, seed_val) {
+  set.seed(seed_val)
+  n <- nrow(X)
+  Y <- bmd_men$Femur_Neck_BMD
+  project_out <- cbind(bmd_men$Age, 1)
+  svdP <- svd(project_out, nu = nrow(project_out))
+  U_perp <- svdP$u[, (sum(svdP$d > .Machine$double.eps) + 1):ncol(svdP$u)]
+  X <- t(U_perp) %*% X
+  Y <- t(U_perp) %*% Y
+  result <- lmFScreen(Y~X+0, test_cols = test_col, alpha = 0.05, alpha_ov = 0.05)
+  summary(result)
+}
+```
+
 ## Run Pairwise Year Comparisons
 
 ```{r}
 # Compare 2005-2006 vs 2007-2008
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2007_2008,
-                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010,
-                           bmd_men$Year_2013_2014),
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010),
                    test_col = 2, seed_val = 5678)
 
 # Compare 2005-2006 vs 2009-2010
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2009_2010,
-                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010,
-                           bmd_men$Year_2013_2014),
+                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010),
                    test_col = 3, seed_val = 56910)
 
 # Compare 2005-2006 vs 2013-2014
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006 + bmd_men$Year_2013_2014,
-                           bmd_men$Year_2007_2008, bmd_men$Year_2009_2010,
+                           bmd_men$Year_2009_2010, 
                            bmd_men$Year_2013_2014),
-                   test_col = 4, seed_val = 561314)
+                   test_col = 3, seed_val = 561314)
 
 # Compare 2007-2008 vs 2009-2010
 do_year_comparison(X=cbind(bmd_men$Year_2005_2006,
                            bmd_men$Year_2007_2008+bmd_men$Year_2009_2010,
-                           bmd_men$Year_2009_2010, bmd_men$Year_2013_2014),
+                           bmd_men$Year_2009_2010),
                    test_col = 3, seed_val = 78910)
 
 # Compare 2007-2008 vs 2013-2014
-do_year_comparison(X=cbind(bmd_men$Year_2005_2006,
+do_year_comparison(X=cbind(bmd_men$Year_2009_2010,
                            bmd_men$Year_2007_2008+bmd_men$Year_2013_2014,
-                           bmd_men$Year_2009_2010, bmd_men$Year_2013_2014),
-                   test_col = 4, seed_val = 781314)
+                           bmd_men$Year_2013_2014),
+                   test_col = 3, seed_val = 781314)
 
 # Compare 2009-2010 vs 2013-2014
-do_year_comparison(X=cbind(bmd_men$Year_2005_2006,bmd_men$Year_2007_2008,
+do_year_comparison(X=cbind(bmd_men$Year_2005_2006,
                            bmd_men$Year_2009_2010+bmd_men$Year_2013_2014,
                            bmd_men$Year_2013_2014),
-                   test_col = 4, seed_val = 9101314)
+                   test_col = 3, seed_val = 9101314)
 ```
 
 ## Interpretation
 
-These analyses provide valid inference **conditional on passing the overall F-test**. The selective p-values, point estimates, and intervals are corrected for the selection step, avoiding overconfident inference that can arise from standard (naive) linear regression output. However, in this particular case, the selective p-values, estimates, and confidence intervals tend to coincide with their standard counterparts, indicating that selection did not have a large impact on the analysis. 
+Our selective p-values, point estimates, and intervals are valid **conditional on rejecting the overall null hypothesis**, in contrast to standard (naive) linear regression output. However, in this particular case, the selective p-values, estimates, and confidence intervals tend to coincide with their standard counterparts, indicating that selection (i.e. the face that the post hoc tests were conducted conditional on rejecing the overall null hypothesos) did not have a large impact on the analysis. 
 

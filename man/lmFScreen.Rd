@@ -9,6 +9,7 @@ lmFScreen(
   data,
   alpha = 0.05,
   alpha_ov = 0.05,
+  test_cols = 1:ncol(X),
   sigma_sq = NULL,
   compute_CI = TRUE,
   compute_est = TRUE,
@@ -23,6 +24,8 @@ lmFScreen(
 \item{alpha}{Significance level for confidence intervals and hypothesis tests (default: 0.05).}
 
 \item{alpha_ov}{Significance level for the overall F-test used for screening (default: 0.05).}
+
+\item{test_cols}{Indices of predictors to test (default: all columns of X).}
 
 \item{sigma_sq}{Optional noise variance. If NULL, it is estimated using a corrected residual variance.}
 
@@ -41,8 +44,9 @@ An object of class lmFScreen, which includes:
 }
 }
 \description{
-This function takes as input a design matrix X and an output vector Y and fits a least squares linear regression model.If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
-It then conducts F-screening (via the function lmFScreen.fit) as defined in \href{https://arxiv.org/abs/2505.23113}{"Valid F-screening in linear regression"} as follows:
+This function takes as input a design matrix X and an output vector y and fits a least squares linear regression model.
+If an intercept is present in the model, the data are projected to remove the intercept before conducting inference.
+It then conducts F-screening (via the function lmFScreen.fit) as defined in the 2025 paper "Valid F-screening in linear regression" by McGough, Witten, and Kessler (arxiv preprint: \url{https://arxiv.org/abs/2505.23113}) as follows:
 \enumerate{
 \item First, it tests the overall hypothesis that all coefficients (excluding the intercept) in the linear regression are zero using an F-test.
 \item If (and only if) this overall test is rejected, it outputs selective p-values, confidence intervals, and point estimates for the coefficients in the linear regression model that condition on the rejection of the overall F-test.
@@ -54,7 +58,7 @@ This function performs the following steps:
 \enumerate{
 \item Converts the formula into a model matrix and response vector.
 \item Projects out the intercept if one is included in the formula.
-\item Calls lmFScreen.fit to compute selective inference results for all predictors.
+\item Calls lmFScreen.fit to compute selective inference results for all predictors in test_cols.
 }
 }
 \examples{

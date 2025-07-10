@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Selective inference across NHANES cycles: lmFScreen example • lmFScreen</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Selective inference across NHANES cycles: lmFScreen example">
 </head>
 <body>
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Olivia
 McGough</h4>
             
-            <h4 data-toc-skip class="date">2025-06-02</h4>
+            <h4 data-toc-skip class="date">2025-07-10</h4>
       
 
       <div class="d-none name"><code>lmFScreen.Rmd</code></div>
@@ -63,22 +63,22 @@ McGough</h4>
 <p><em>This analysis is meant to mimic the analysis in the paper <a href="https://pubmed.ncbi.nlm.nih.gov/30091065/" class="external-link">“Decreasing Trend of
 Bone Mineral Density in US Multiethnic Population: Analysis of
 Continuous NHANES 2005 - 2014”</a>. The results of this analysis can be
-found in <a href="https://arxiv.org/abs/2505.23113" class="external-link">“Valid F-screening
-in linear regression”</a>.</em></p>
+found in the 2025 paper “Valid F-screening in linear regression” by
+McGough, Witten, and Kessler (arxiv preprint: <a href="https://arxiv.org/abs/2505.23113" class="external-link">https://arxiv.org/abs/2505.23113</a>).</em></p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>In this analysis we use the <code>lmFScreen</code> package to compare
 femur neck bone mineral density (BMD) across National Health and
-Nutrition Examination Survey (NHANES) cycles for men over age 30. This
-is an annual survey that reports a series of health metrics in a large
+Nutrition Examination Survey (NHANES) cycles for men over age 30. NHANES
+is a biennial survey that reports a series of health metrics in a large
 sample of people in the United States. To conduct this analysis, we
-first perform an overall F-test to test whether there is a change in BMD
-across all years. This test is rejected, so we subsequently conduct
-post-hoc tests for the individual coefficients that correspond to each
-year/cycle in the data. We adjust for the fact that inference is
-conditioned on passing a model selection step — in our case, an overall
-F-test.</p>
+first perform an F-test of the “overall hypothesis of no change in BMD
+across cycles. This overall null hypothesis is rejected, so we
+subsequently conduct post hoc tests for the individual coefficients that
+correspond to each year/cycle in the data. We adjust for the fact that
+we would not have conducted the post-hoc tests if we had not rejected
+the overall null hypothesis.</p>
 </div>
 <div class="section level2">
 <h2 id="load-required-libraries">Load Required Libraries<a class="anchor" aria-label="anchor" href="#load-required-libraries"></a>
@@ -171,13 +171,12 @@ differences in BMD across the years.</p>
 on the individual coefficients for each year/cycle.</p>
 </div>
 <div class="section level2">
-<h2 id="define-a-selective-inference-function-for-pairwise-year-comparisons">Define a Selective Inference Function for Pairwise Year
-Comparisons<a class="anchor" aria-label="anchor" href="#define-a-selective-inference-function-for-pairwise-year-comparisons"></a>
+<h2 id="prepare-for-pairwise-year-comparisons">Prepare for Pairwise Year Comparisons<a class="anchor" aria-label="anchor" href="#prepare-for-pairwise-year-comparisons"></a>
 </h2>
 <p>We now define a function that:</p>
 <ul>
 <li><p>Constructs a contrast</p></li>
-<li><p>Projects out age</p></li>
+<li><p>Projects out age and the intercept</p></li>
 <li><p>Runs <code>lmFScreen.fit</code> on the resulting matrix, which
 conducts inference on the individual coefficients for each year in the
 model while accounting for the overall F-test.</p></li>
@@ -195,19 +194,31 @@ model while accounting for the overall F-test.</p></li>
 <span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lmFScreen.fit.html">lmFScreen.fit</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, test_cols <span class="op">=</span> <span class="va">test_col</span>, alpha <span class="op">=</span> <span class="fl">0.05</span>, alpha_ov <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">do_year_comparison</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">X</span>, <span class="va">test_col</span>, <span class="va">seed_val</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">seed_val</span><span class="op">)</span></span>
+<span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
+<span>  <span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Femur_Neck_BMD</span></span>
+<span>  <span class="va">project_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Age</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">svdP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/svd.html" class="external-link">svd</a></span><span class="op">(</span><span class="va">project_out</span>, nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">project_out</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">U_perp</span> <span class="op">&lt;-</span> <span class="va">svdP</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>, <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">svdP</span><span class="op">$</span><span class="va">d</span> <span class="op">&gt;</span> <span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">svdP</span><span class="op">$</span><span class="va">u</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">U_perp</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">X</span></span>
+<span>  <span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">U_perp</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">Y</span></span>
+<span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lmFScreen.html">lmFScreen</a></span><span class="op">(</span><span class="va">Y</span><span class="op">~</span><span class="va">X</span><span class="op">+</span><span class="fl">0</span>, test_cols <span class="op">=</span> <span class="va">test_col</span>, alpha <span class="op">=</span> <span class="fl">0.05</span>, alpha_ov <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="run-pairwise-year-comparisons">Run Pairwise Year Comparisons<a class="anchor" aria-label="anchor" href="#run-pairwise-year-comparisons"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2005-2006 vs 2007-2008</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span> <span class="op">+</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
+<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span><span class="op">)</span>,</span>
 <span>                   test_col <span class="op">=</span> <span class="fl">2</span>, seed_val <span class="op">=</span> <span class="fl">5678</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## lmFScreen Model Summary </span></span>
 <span><span class="co">## --------------------------------------</span></span>
-<span><span class="co">## Overall F-statistic:   6477.6140</span></span>
+<span><span class="co">## Overall F-statistic:     6.8067</span></span>
 <span><span class="co">## --------------------------------------</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of post hoc tests: 1</span></span>
@@ -216,7 +227,7 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## Selective Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X2            -0.003686     -0.0127      0.0053      0.4224</span></span>
+<span><span class="co">##  X2            -0.003686     -0.0127      0.0053      0.4225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Standard Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
@@ -225,15 +236,14 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2005-2006 vs 2009-2010</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span> <span class="op">+</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
+<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span><span class="op">)</span>,</span>
 <span>                   test_col <span class="op">=</span> <span class="fl">3</span>, seed_val <span class="op">=</span> <span class="fl">56910</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## lmFScreen Model Summary </span></span>
 <span><span class="co">## --------------------------------------</span></span>
-<span><span class="co">## Overall F-statistic:   6477.6140</span></span>
+<span><span class="co">## Overall F-statistic:     6.8067</span></span>
 <span><span class="co">## --------------------------------------</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of post hoc tests: 1</span></span>
@@ -242,7 +252,7 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## Selective Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X3            -0.003280     -0.0122      0.0057      0.4740</span></span>
+<span><span class="co">##  X3            -0.003280     -0.0123      0.0057      0.4731</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Standard Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
@@ -251,15 +261,15 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2005-2006 vs 2013-2014</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span> <span class="op">+</span> <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
+<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>, </span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
-<span>                   test_col <span class="op">=</span> <span class="fl">4</span>, seed_val <span class="op">=</span> <span class="fl">561314</span><span class="op">)</span></span></code></pre></div>
+<span>                   test_col <span class="op">=</span> <span class="fl">3</span>, seed_val <span class="op">=</span> <span class="fl">561314</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## lmFScreen Model Summary </span></span>
 <span><span class="co">## --------------------------------------</span></span>
-<span><span class="co">## Overall F-statistic:   6477.6140</span></span>
+<span><span class="co">## Overall F-statistic:     6.8067</span></span>
 <span><span class="co">## --------------------------------------</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of post hoc tests: 1</span></span>
@@ -268,24 +278,24 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## Selective Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X4            -0.019821     -0.0294     -0.0102      0.0000***</span></span>
+<span><span class="co">##  X3            -0.018638     -0.0294     -0.0105      0.0010**</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Standard Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X4            -0.019821     -0.0294     -0.0102      0.0001***</span></span>
+<span><span class="co">##  X3            -0.019821     -0.0294     -0.0102      0.0001***</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2007-2008 vs 2009-2010</span></span>
 <span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span><span class="op">+</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
+<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span><span class="op">)</span>,</span>
 <span>                   test_col <span class="op">=</span> <span class="fl">3</span>, seed_val <span class="op">=</span> <span class="fl">78910</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## lmFScreen Model Summary </span></span>
 <span><span class="co">## --------------------------------------</span></span>
-<span><span class="co">## Overall F-statistic:   6477.6140</span></span>
+<span><span class="co">## Overall F-statistic:     6.8067</span></span>
 <span><span class="co">## --------------------------------------</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of post hoc tests: 1</span></span>
@@ -303,15 +313,15 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2007-2008 vs 2013-2014</span></span>
-<span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,</span>
+<span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span><span class="op">+</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span>,</span>
-<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span>, <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
-<span>                   test_col <span class="op">=</span> <span class="fl">4</span>, seed_val <span class="op">=</span> <span class="fl">781314</span><span class="op">)</span></span></code></pre></div>
+<span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
+<span>                   test_col <span class="op">=</span> <span class="fl">3</span>, seed_val <span class="op">=</span> <span class="fl">781314</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## lmFScreen Model Summary </span></span>
 <span><span class="co">## --------------------------------------</span></span>
-<span><span class="co">## Overall F-statistic:   6477.6140</span></span>
+<span><span class="co">## Overall F-statistic:     6.8067</span></span>
 <span><span class="co">## --------------------------------------</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of post hoc tests: 1</span></span>
@@ -320,24 +330,24 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## Selective Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X4            -0.016134     -0.0252     -0.0071      0.0004***</span></span>
+<span><span class="co">##  X3            -0.016130     -0.0251     -0.0071      0.0004***</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Standard Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X4            -0.016134     -0.0251     -0.0072      0.0004***</span></span>
+<span><span class="co">##  X3            -0.016134     -0.0251     -0.0072      0.0004***</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare 2009-2010 vs 2013-2014</span></span>
-<span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,<span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2007_2008</span>,</span>
+<span><span class="fu">do_year_comparison</span><span class="op">(</span>X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2005_2006</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2009_2010</span><span class="op">+</span><span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span>,</span>
 <span>                           <span class="va">bmd_men</span><span class="op">$</span><span class="va">Year_2013_2014</span><span class="op">)</span>,</span>
-<span>                   test_col <span class="op">=</span> <span class="fl">4</span>, seed_val <span class="op">=</span> <span class="fl">9101314</span><span class="op">)</span></span></code></pre></div>
+<span>                   test_col <span class="op">=</span> <span class="fl">3</span>, seed_val <span class="op">=</span> <span class="fl">9101314</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## lmFScreen Model Summary </span></span>
 <span><span class="co">## --------------------------------------</span></span>
-<span><span class="co">## Overall F-statistic:   6477.6140</span></span>
+<span><span class="co">## Overall F-statistic:     6.8067</span></span>
 <span><span class="co">## --------------------------------------</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of post hoc tests: 1</span></span>
@@ -346,12 +356,12 @@ model while accounting for the overall F-test.</p></li>
 <span><span class="co">## Selective Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X4            -0.016541     -0.0255     -0.0076      0.0003***</span></span>
+<span><span class="co">##  X3            -0.016300     -0.0255     -0.0085      0.0006***</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Standard Estimates:</span></span>
 <span><span class="co">## Predictor       Estimate     Lower.CI    Upper.CI    P-value</span></span>
 <span><span class="co">## -------------------------------------------------------------</span></span>
-<span><span class="co">##  X4            -0.016541     -0.0255     -0.0076      0.0003***</span></span>
+<span><span class="co">##  X3            -0.016541     -0.0255     -0.0076      0.0003***</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span></span></code></pre>
@@ -359,13 +369,13 @@ model while accounting for the overall F-test.</p></li>
 <div class="section level2">
 <h2 id="interpretation">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation"></a>
 </h2>
-<p>These analyses provide valid inference <strong>conditional on passing
-the overall F-test</strong>. The selective p-values, point estimates,
-and intervals are corrected for the selection step, avoiding
-overconfident inference that can arise from standard (naive) linear
-regression output. However, in this particular case, the selective
-p-values, estimates, and confidence intervals tend to coincide with
-their standard counterparts, indicating that selection did not have a
+<p>Our selective p-values, point estimates, and intervals are valid
+<strong>conditional on rejecting the overall null hypothesis</strong>,
+in contrast to standard (naive) linear regression output. However, in
+this particular case, the selective p-values, estimates, and confidence
+intervals tend to coincide with their standard counterparts, indicating
+that selection (i.e. the face that the post hoc tests were conducted
+conditional on rejecing the overall null hypothesos) did not have a
 large impact on the analysis.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
