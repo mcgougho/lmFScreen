@@ -133,7 +133,7 @@ compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 100
     # Compute the numerator as the log-density under the normal distribution.
     numerator <- dnorm(w_obs, mean = mean_w, sd = sqrt(sigma_sq), log = TRUE)
     # Generate Monte Carlo samples from a noncentral chi-squared distribution.
-    W_chi <- rchisq(B, df = 1, ncp = beta1^2 * term1)
+    W_chi <- rchisq(B, df = 1, ncp = beta1^2 * term1 / sigma_sq)
     # Generate samples from a central chi-squared distribution.
     Z_chi <- rchisq(B, df = n - p)
     # Evaluate the selection indicator based on the inequality condition.
