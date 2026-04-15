@@ -21,7 +21,7 @@ If the overall test is not not rejected, this function returns the overall F-sta
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,6 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  alpha_ov <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  test_cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
-<span>  sigma_sq <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compute_CI <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compute_est <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">1e+05</span></span>
@@ -91,10 +90,6 @@ If the overall test is not not rejected, this function returns the overall F-sta
 
 <dt id="arg-test-cols">test_cols<a class="anchor" aria-label="anchor" href="#arg-test-cols"></a></dt>
 <dd><p>Indices of predictors to test (default: all columns of X).</p></dd>
-
-
-<dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
-<dd><p>Optional noise variance. If NULL, it is estimated using a corrected residual variance.</p></dd>
 
 
 <dt id="arg-compute-ci">compute_CI<a class="anchor" aria-label="anchor" href="#arg-compute-ci"></a></dt>
@@ -140,8 +135,8 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selective Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  wt            -3.877831     -5.1727     -2.5851      0.0000***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  hp            -0.031773     -0.0502     -0.0133      0.0014**</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  wt            -3.878217     -5.1699     -2.5830      0.0000***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  hp            -0.031778     -0.0503     -0.0133      0.0014**</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Standard Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
@@ -156,8 +151,8 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients from lmFScreen</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Predictor Selective.Est   Naive.Est</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        wt   -3.87783074 -3.87783074</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        hp   -0.03177295 -0.03177295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        wt   -3.87821657 -3.87783074</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        hp   -0.03177807 -0.03177295</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> lmFScreen Model Confidence Intervals</span>
@@ -169,8 +164,8 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selective Confidence Intervals:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  wt                -5.1727       -2.5851</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  hp                -0.0502       -0.0133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  wt                -5.1699       -2.5830</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  hp                -0.0503       -0.0133</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Standard Confidence Intervals:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
@@ -208,11 +203,11 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selective Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X1             0.415839     -0.2833      1.3457      0.2362</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X2             0.532707     -0.1291      1.4702      0.1178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X3             0.188660     -0.2351      0.7115      0.3690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X4             0.034547     -0.5122      0.6010      0.8900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X5             0.133741     -0.3295      0.6239      0.5835</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1             0.586498     -0.3326      1.3361      0.1401</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2             0.761575     -0.2647      1.4804      0.1971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X3             0.266320     -0.2108      0.6987      0.1802</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X4             0.047620     -0.4588      0.5580      0.8351</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X5             0.162720     -0.2598      0.6015      0.4110</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Standard Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
@@ -230,11 +225,11 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients from lmFScreen</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Predictor Selective.Est  Naive.Est</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        X1    0.41583884 0.62940775</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        X2    0.53270730 0.82372146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        X3    0.18866028 0.27785611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        X4    0.03454731 0.05025831</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        X5    0.13374114 0.17069581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        X1    0.58649815 0.62940775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        X2    0.76157451 0.82372146</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        X3    0.26631993 0.27785611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        X4    0.04762001 0.05025831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        X5    0.16272036 0.17069581</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> lmFScreen Model Confidence Intervals</span>
@@ -246,11 +241,11 @@ If the overall test is not not rejected, this function returns the overall F-sta
 <span class="r-out co"><span class="r-pr">#&gt;</span> Selective Confidence Intervals:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X1                -0.2833        1.3457</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X2                -0.1291        1.4702</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X3                -0.2351        0.7115</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X4                -0.5122        0.6010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X5                -0.3295        0.6239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1                -0.3326        1.3361</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2                -0.2647        1.4804</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X3                -0.2108        0.6987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X4                -0.4588        0.5580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X5                -0.2598        0.6015</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Standard Confidence Intervals:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>

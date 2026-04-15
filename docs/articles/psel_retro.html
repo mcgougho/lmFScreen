@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,13 +118,13 @@ linear regression” by McGough, Witten, and Kessler (arxiv preprint: <a href="h
 <span><span class="co">## CES-D Selective p-values:</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"&lt;65 vs 65–84:"</span>, <span class="fu"><a href="../reference/psel_retro.html">psel_retro</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">r_squared</span>, <span class="va">rse</span>, <span class="op">(</span><span class="va">results_1_2</span><span class="op">$</span><span class="va">t_stat</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## &lt;65 vs 65–84: 0.1165976</span></span></code></pre>
+<pre><code><span><span class="co">## &lt;65 vs 65–84: 0.1178094</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"&lt;65 vs ≥85:"</span>, <span class="fu"><a href="../reference/psel_retro.html">psel_retro</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">r_squared</span>, <span class="va">rse</span>, <span class="op">(</span><span class="va">results_1_3</span><span class="op">$</span><span class="va">t_stat</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## &lt;65 vs ≥85: 0.397351</span></span></code></pre>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"65–84 vs ≥85:"</span>, <span class="fu"><a href="../reference/psel_retro.html">psel_retro</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">r_squared</span>, <span class="va">rse</span>, <span class="op">(</span><span class="va">results_2_3</span><span class="op">$</span><span class="va">t_stat</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 65–84 vs ≥85: 0.09905023</span></span></code></pre>
+<pre><code><span><span class="co">## 65–84 vs ≥85: 0.1007113</span></span></code></pre>
 <hr>
 </div>
 <div class="section level2">
@@ -164,10 +164,10 @@ linear regression” by McGough, Witten, and Kessler (arxiv preprint: <a href="h
 <span><span class="co">## Sleep Selective p-values:</span></span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"&lt;65 vs 65–84:"</span>, <span class="fu"><a href="../reference/psel_retro.html">psel_retro</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">r_squared</span>, <span class="va">rse</span>, <span class="op">(</span><span class="va">results_1_2</span><span class="op">$</span><span class="va">t_stat</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## &lt;65 vs 65–84: 0.001254953</span></span></code></pre>
+<pre><code><span><span class="co">## &lt;65 vs 65–84: 0.001246</span></span></code></pre>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"&lt;65 vs ≥85:"</span>, <span class="fu"><a href="../reference/psel_retro.html">psel_retro</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">r_squared</span>, <span class="va">rse</span>, <span class="op">(</span><span class="va">results_1_3</span><span class="op">$</span><span class="va">t_stat</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## &lt;65 vs ≥85: 0.00284495</span></span></code></pre>
+<pre><code><span><span class="co">## &lt;65 vs ≥85: 0.002850526</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"65–84 vs ≥85:"</span>, <span class="fu"><a href="../reference/psel_retro.html">psel_retro</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">r_squared</span>, <span class="va">rse</span>, <span class="op">(</span><span class="va">results_2_3</span><span class="op">$</span><span class="va">t_stat</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 65–84 vs ≥85: 0.06058</span></span></code></pre>

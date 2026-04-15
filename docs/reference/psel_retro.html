@@ -17,7 +17,7 @@ This function is especially useful in settings where the raw data is unavailable
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,11 +125,11 @@ If no selected samples are obtained after max_attempts, the function returns NA 
 <span class="r-in"><span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></span>
 <span class="r-in"><span><span class="va">t_hp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="st">"hp"</span>, <span class="st">"t value"</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu">psel_retro</span><span class="op">(</span>n<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span>, p<span class="op">=</span><span class="fl">2</span>, R_squared<span class="op">=</span><span class="va">r2</span>, RSE<span class="op">=</span><span class="va">rse</span>, tstat<span class="op">=</span><span class="va">t_hp</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.001473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.001465</span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="lmFScreen.html">lmFScreen</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="va">hp</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">result</span><span class="op">[[</span><span class="st">"selective pvalues"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       hp </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.001377 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      hp </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.00159 </span>
 <span class="r-in"><span><span class="co"># the retrospective and prospective p-values coincide (up to Monte Carlo error)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -11,7 +11,7 @@ conditional on passing the overall F-test."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,16 @@ conditional on passing the overall F-test.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_MLE</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">sigma_sq</span>, <span class="va">alpha_ov</span>, interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">1e+06</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_MLE</span><span class="op">(</span></span>
+<span>  <span class="va">X</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">beta_init</span>,</span>
+<span>  <span class="va">sigma_sq_init</span>,</span>
+<span>  <span class="va">alpha_ov</span>,</span>
+<span>  interval_beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  interval_sigma_sq <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">1e+06</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -59,20 +68,16 @@ conditional on passing the overall F-test.</p>
 <dd><p>A numeric response vector of length n.</p></dd>
 
 
-<dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
-<dd><p>The noise variance. If unknown, it should be estimated beforehand.</p></dd>
-
-
 <dt id="arg-alpha-ov">alpha_ov<a class="anchor" aria-label="anchor" href="#arg-alpha-ov"></a></dt>
 <dd><p>The significance level for the overall F-test (used in defining the selection region).</p></dd>
 
 
-<dt id="arg-interval">interval<a class="anchor" aria-label="anchor" href="#arg-interval"></a></dt>
-<dd><p>A numeric vector of length 2 giving the search interval for <code>beta1</code> (default: <code>c(-10, 10)</code>).</p></dd>
-
-
 <dt id="arg-b">B<a class="anchor" aria-label="anchor" href="#arg-b"></a></dt>
 <dd><p>The number of Monte Carlo samples used to approximate the likelihood (default: <code>1e6</code>).</p></dd>
+
+
+<dt id="arg-interval">interval<a class="anchor" aria-label="anchor" href="#arg-interval"></a></dt>
+<dd><p>A numeric vector of length 2 giving the search interval for <code>beta1</code> (default: <code>c(-10, 10)</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">

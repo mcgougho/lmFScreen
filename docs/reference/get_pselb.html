@@ -9,7 +9,7 @@ conditional on rejection of the overall F-test. The p-value is estimated via Mon
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,13 +44,10 @@ conditional on rejection of the overall F-test. The p-value is estimated via Mon
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_pselb</span><span class="op">(</span></span>
 <span>  <span class="va">X</span>,</span>
 <span>  <span class="va">y</span>,</span>
-<span>  <span class="va">sigma_sq</span>,</span>
-<span>  yPy <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rss <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  alpha_ov <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  min_select <span class="op">=</span> <span class="va">B</span>,</span>
-<span>  B_max <span class="op">=</span> <span class="fl">1e+07</span>,</span>
+<span>  max_draws <span class="op">=</span> <span class="fl">1e+07</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -67,18 +64,6 @@ conditional on rejection of the overall F-test. The p-value is estimated via Mon
 <dd><p>A numeric response vector of length n.</p></dd>
 
 
-<dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
-<dd><p>The variance of the error term. Must be specified in advance.</p></dd>
-
-
-<dt id="arg-ypy">yPy<a class="anchor" aria-label="anchor" href="#arg-ypy"></a></dt>
-<dd><p>Optional value of the quadratic form y' P_X y. If NULL, it is computed internally.</p></dd>
-
-
-<dt id="arg-rss">rss<a class="anchor" aria-label="anchor" href="#arg-rss"></a></dt>
-<dd><p>Optional residual sum of squares. If NULL, it is computed internally using y and yPy.</p></dd>
-
-
 <dt id="arg-alpha-ov">alpha_ov<a class="anchor" aria-label="anchor" href="#arg-alpha-ov"></a></dt>
 <dd><p>Significance level for the overall F-test. Default is 0.05.</p></dd>
 
@@ -91,12 +76,20 @@ conditional on rejection of the overall F-test. The p-value is estimated via Mon
 <dd><p>Minimum number of selected samples required to estimate the p-value. Default is equal to B.</p></dd>
 
 
-<dt id="arg-b-max">B_max<a class="anchor" aria-label="anchor" href="#arg-b-max"></a></dt>
-<dd><p>Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.</p></dd>
-
-
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical flag indicating whether to print progress messages during sampling.</p></dd>
+
+
+<dt id="arg-ypy">yPy<a class="anchor" aria-label="anchor" href="#arg-ypy"></a></dt>
+<dd><p>Optional value of the quadratic form y' P_X y. If NULL, it is computed internally.</p></dd>
+
+
+<dt id="arg-rss">rss<a class="anchor" aria-label="anchor" href="#arg-rss"></a></dt>
+<dd><p>Optional residual sum of squares. If NULL, it is computed internally using y and yPy.</p></dd>
+
+
+<dt id="arg-b-max">B_max<a class="anchor" aria-label="anchor" href="#arg-b-max"></a></dt>
+<dd><p>Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -11,7 +11,7 @@ The log-likelihood is approximated using Monte Carlo integration."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@ The log-likelihood is approximated using Monte Carlo integration.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_likelihood_function</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, <span class="va">sigma_sq</span>, alpha_ov <span class="op">=</span> <span class="fl">0.05</span>, B <span class="op">=</span> <span class="fl">1e+06</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compute_likelihood_function</span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, alpha_ov <span class="op">=</span> <span class="fl">0.05</span>, B <span class="op">=</span> <span class="fl">1e+06</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -57,10 +57,6 @@ The log-likelihood is approximated using Monte Carlo integration.</p>
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>A numeric response vector of length n.</p></dd>
-
-
-<dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
-<dd><p>The noise variance.</p></dd>
 
 
 <dt id="arg-alpha-ov">alpha_ov<a class="anchor" aria-label="anchor" href="#arg-alpha-ov"></a></dt>

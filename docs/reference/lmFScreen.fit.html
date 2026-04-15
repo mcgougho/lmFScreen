@@ -19,7 +19,7 @@ If the overall test is not rejected, it returns the overall F-statistic and indi
 
     <a class="navbar-brand me-2" href="../index.html">lmFScreen</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,10 +59,9 @@ If the overall test is not rejected, it returns the overall F-statistic and indi
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  alpha_ov <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  test_cols <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
-<span>  sigma_sq <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compute_CI <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compute_est <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">1e+05</span></span>
+<span>  B <span class="op">=</span> <span class="fl">10000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,10 +87,6 @@ If the overall test is not rejected, it returns the overall F-statistic and indi
 
 <dt id="arg-test-cols">test_cols<a class="anchor" aria-label="anchor" href="#arg-test-cols"></a></dt>
 <dd><p>Indices of predictors to test (default: all columns of X).</p></dd>
-
-
-<dt id="arg-sigma-sq">sigma_sq<a class="anchor" aria-label="anchor" href="#arg-sigma-sq"></a></dt>
-<dd><p>Optional noise variance. If NULL, it is estimated using a corrected residual variance.</p></dd>
 
 
 <dt id="arg-compute-ci">compute_CI<a class="anchor" aria-label="anchor" href="#arg-compute-ci"></a></dt>
@@ -125,14 +120,57 @@ If the overall test is not rejected, it returns the overall F-statistic and indi
 <span class="r-in"><span><span class="va">U_perp</span> <span class="op">&lt;-</span> <span class="va">U_full</span><span class="op">[</span>, <span class="op">(</span><span class="va">r</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">U_full</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">U_perp</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">X</span></span></span>
 <span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">U_perp</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">y</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">lmFScreen.fit</span><span class="op">(</span><span class="va">X</span>,<span class="va">y</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in lmFScreen.fit(X, y):</span> could not find function "lmFScreen.fit"</span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">lmFScreen</span><span class="fu">:::</span><span class="fu">lmFScreen.fit</span><span class="op">(</span><span class="va">X</span>,<span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lmFScreen Model Summary </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Overall F-statistic:    69.2112</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of post hoc tests: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Selective Estimates:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1            -3.878217     -5.1687     -2.5450      0.0001***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2            -0.031778     -0.0503     -0.0134      0.0011**</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Standard Estimates:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Estimate     Lower.CI    Upper.CI    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1            -3.877831     -5.1180     -2.6377      0.0000***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2            -0.031773     -0.0495     -0.0141      0.0015**</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Significance levels: * &lt; 0.05  ** &lt; 0.01  *** &lt; 0.001</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients from lmFScreen</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Predictor Selective.Est   Naive.Est</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        X1   -3.87821657 -3.87783074</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        X2   -0.03177807 -0.03177295</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lmFScreen Model Confidence Intervals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Confidence Level: 95.00%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of predictors: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Selective Confidence Intervals:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1                -5.1687       -2.5450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2                -0.0503       -0.0134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Standard Confidence Intervals:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictor       Lower.CI     Upper.CI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X1                -5.1180       -2.6377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  X2                -0.0495       -0.0141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

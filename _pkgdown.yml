@@ -47,7 +47,6 @@ reference:
       - get_CI
       - get_Xy_centered
       - get_pselb
-      - get_variance_estimate
       - psel_retro
     examples: false
 
