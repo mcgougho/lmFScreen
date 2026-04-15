@@ -10,7 +10,6 @@ lmFScreen(
   alpha = 0.05,
   alpha_ov = 0.05,
   test_cols = 1:ncol(X),
-  sigma_sq = NULL,
   compute_CI = TRUE,
   compute_est = TRUE,
   B = 1e+05
@@ -26,8 +25,6 @@ lmFScreen(
 \item{alpha_ov}{Significance level for the overall F-test used for screening (default: 0.05).}
 
 \item{test_cols}{Indices of predictors to test (default: all columns of X).}
-
-\item{sigma_sq}{Optional noise variance. If NULL, it is estimated using a corrected residual variance.}
 
 \item{compute_CI}{Logical; whether to compute selective confidence intervals (default: TRUE).}
 
