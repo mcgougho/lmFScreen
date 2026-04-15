@@ -6,7 +6,6 @@
 #'
 #' @param X A numeric matrix of predictor variables (n x p), with the first column corresponding to `beta1`.
 #' @param y A numeric response vector of length n.
-#' @param sigma_sq The noise variance. If unknown, it should be estimated beforehand.
 #' @param alpha_ov The significance level for the overall F-test (used in defining the selection region).
 #' @param interval A numeric vector of length 2 giving the search interval for `beta1` (default: `c(-10, 10)`).
 #' @param B The number of Monte Carlo samples used to approximate the likelihood (default: `1e6`).
@@ -17,7 +16,7 @@
 #'   \item{max_likelihood}{The maximum log-likelihood value achieved at the optimal `beta1`.}
 #' }
 #'
-compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 1000000) {
+compute_MLE <- function(X, y, beta_init, sigma_sq_init, alpha_ov, interval_beta = c(-10,10), interval_sigma_sq = c(-10,10), B = 1000000) {
   # some checks
   if (length(y) != nrow(X)) {
     stop("Length of y must match the number of rows in X.")
@@ -31,25 +30,30 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 
   # Create the likelihood function based on the current data and parameters.
   # Note: compute_likelihood_function returns a function that computes the likelihood for a given beta1.
-  lik_fun <- compute_likelihood_function(X, y, sigma_sq = sigma_sq, alpha_ov = alpha_ov, B = B)
+  lik_fun <- compute_likelihood_function(X, y, alpha_ov = alpha_ov, B = B)
 
   # Define a negative likelihood function to be minimized.
-  neg_likelihood <- function(beta1) {
-    -lik_fun(beta1)
+  neg_likelihood <- function(theta) {
+    beta1 <- theta[1]
+    log_sigma_sq <- theta[2]
+    if (beta1 < interval_beta[1] || beta1 > interval_beta[2]) return(Inf)
+    if (log_sigma_sq < log(interval_sigma_sq[1]) || log_sigma_sq > log(interval_sigma_sq[2])) return(Inf)
+    -lik_fun(theta)
   }
 
+  init <- c(beta1 = beta_init, log_sigma_sq = log(sigma_sq_init))
+
   # Use the optimize function to minimize the negative likelihood (thus maximizing the original likelihood).
-  opt_result <- optimize(neg_likelihood, interval = interval)
+  opt_result <- optim(init, neg_likelihood, method ="Nelder-Mead")
 
-  # Extract the best beta1 value from the optimization result.
-  best_beta1 <- opt_result$minimum
-
-  # Calculate the maximum likelihood value at the best beta1.
-  best_value <- lik_fun(best_beta1)
-
-  # Return the optimal beta1 and the corresponding maximum likelihood value.
-  return(list(beta1 = best_beta1, max_likelihood = best_value))
+  list(
+    beta1 = opt_result$par[1],
+    sigma_sq = exp(opt_result$par[2]),
+    max_likelihood = lik_fun(opt_result$par),
+    optim = opt_result
+  )
 }
+
 
 
 #' Construct the Selective Log-Likelihood Function for beta1
@@ -60,7 +64,6 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #'
 #' @param X A numeric matrix of predictors (n x p), with `beta1` corresponding to the first column.
 #' @param y A numeric response vector of length n.
-#' @param sigma_sq The noise variance.
 #' @param alpha_ov The significance level for the overall F-test (default: `0.05`).
 #' @param B The number of Monte Carlo samples (default: `1e6`).
 #'
@@ -69,7 +72,7 @@ compute_MLE <- function(X, y, sigma_sq,  alpha_ov, interval = c(-10,10), B = 100
 #'         If the observed data fails the selection condition, the function returns `-Inf`.
 #'
 #'
-compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 1000000) {
+compute_likelihood_function <- function(X, y, alpha_ov = 0.05, B = 1000000) {
   n <- dim(X)[1]
   p <- dim(X)[2]
 
@@ -81,9 +84,6 @@ compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 100
   }
   if (alpha_ov <= 0 || alpha_ov >= 1) {
     stop("Significance level alpha_ov must be between 0 and 1.")
-  }
-  if (sigma_sq <= 0) {
-    stop("Noise variance sigma_sq must be positive.")
   }
 
   cc <- (p / (n - p)) * qf(1 - alpha_ov, df1 = p, df2 = (n - p))
@@ -125,23 +125,29 @@ compute_likelihood_function <- function(X, y, sigma_sq, alpha_ov = 0.05, B = 100
 
   # Compute a term used in the noncentrality parameter for chi-squared sampling.
   term1 <- t(X[ , 1]) %*% P_diff %*% X[ , 1]
+  W0 <- rnorm(B)
+  Z_chi <- rchisq(B, df = n - p)
 
   # Define the likelihood function that depends on beta1.
-  lik_fun <- function(beta1) {
+  lik_fun <- function(theta) {
+    beta1 <- theta[1]
+    sigma_sq <- exp(theta[2])
     # Compute the mean of the projected beta1 effect.
     mean_w <- as.vector(t(U.1) %*% (X[ , 1] * beta1))
-    # Compute the numerator as the log-density under the normal distribution.
-    numerator <- dnorm(w_obs, mean = mean_w, sd = sqrt(sigma_sq), log = TRUE)
-    # Generate Monte Carlo samples from a noncentral chi-squared distribution.
-    W_chi <- rchisq(B, df = 1, ncp = beta1^2 * term1 / sigma_sq)
-    # Generate samples from a central chi-squared distribution.
-    Z_chi <- rchisq(B, df = n - p)
-    # Evaluate the selection indicator based on the inequality condition.
+    numerator <- dnorm(w_obs, mean = mean_w, sd = sqrt(sigma_sq), log = TRUE) + sum(dnorm(z_obs, mean = 0, sd = sqrt(sigma_sq), log = TRUE))
+    # denominator
+    ncp_sqrt <- beta1 * sqrt(as.numeric(term1) / sigma_sq)
+    W_chi <- (W0 + ncp_sqrt)^2
     select <- (W_chi - cc * Z_chi >= -d / sigma_sq)
-    # Compute the denominator by taking the logarithm of the mean of the selection indicator.
-    denominator <- log(mean(select))
+    denom <- mean(select)
+    denom <- pmax(denom, 1e-12)
+    log_denom <- log(denom)
+    if (!is.finite(denom) || denom <= 0) return(-Inf)
+    denominator <- log(denom)
     # Return the likelihood value as the difference between the numerator and denominator.
     return(numerator - denominator)
   }
   return(lik_fun)
 }
+
+
