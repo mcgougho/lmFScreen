@@ -168,7 +168,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
 #' U_perp <- U_full[, (r+1):ncol(U_full)]
 #' X <- t(U_perp) %*% X
 #' y <- t(U_perp) %*% y
-#' result <- lmFScreen.fit(X,y)
+#' result <- lmFScreen:::lmFScreen.fit(X,y)
 #' summary(result)
 #' coef(result)
 #' confint(result)
