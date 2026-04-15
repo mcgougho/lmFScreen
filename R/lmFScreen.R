@@ -173,6 +173,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
 #' coef(result)
 #' confint(result)
 #'
+#' @export
 lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), compute_CI = TRUE, compute_est = TRUE, B = 10000) {
   # some checks
   if (is.null(y)) {
