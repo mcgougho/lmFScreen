@@ -7,13 +7,10 @@
 get_pselb(
   X,
   y,
-  sigma_sq,
-  yPy = NULL,
-  rss = NULL,
   alpha_ov = 0.05,
-  B = 10000,
+  B = 1000,
   min_select = B,
-  B_max = 1e+07,
+  max_draws = 1e+07,
   verbose = FALSE
 )
 }
@@ -22,21 +19,19 @@ get_pselb(
 
 \item{y}{A numeric response vector of length n.}
 
-\item{sigma_sq}{The variance of the error term. Must be specified in advance.}
-
-\item{yPy}{Optional value of the quadratic form y' P_X y. If NULL, it is computed internally.}
-
-\item{rss}{Optional residual sum of squares. If NULL, it is computed internally using y and yPy.}
-
 \item{alpha_ov}{Significance level for the overall F-test. Default is 0.05.}
 
 \item{B}{Number of Monte Carlo samples drawn per iteration. Default is 10,000.}
 
 \item{min_select}{Minimum number of selected samples required to estimate the p-value. Default is equal to B.}
 
-\item{B_max}{Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.}
-
 \item{verbose}{Logical flag indicating whether to print progress messages during sampling.}
+
+\item{yPy}{Optional value of the quadratic form y' P_X y. If NULL, it is computed internally.}
+
+\item{rss}{Optional residual sum of squares. If NULL, it is computed internally using y and yPy.}
+
+\item{B_max}{Maximum number of Monte Carlo samples drawn in any iteration. Default is 10 million.}
 }
 \value{
 A function that takes a numeric argument b and returns the selective p-value corresponding to that value of beta1. If the selection condition

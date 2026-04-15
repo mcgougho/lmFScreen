@@ -4,20 +4,27 @@
 \alias{compute_MLE}
 \title{Compute the Selective Maximum Likelihood Estimate for beta1}
 \usage{
-compute_MLE(X, y, sigma_sq, alpha_ov, interval = c(-10, 10), B = 1e+06)
+compute_MLE(
+  X,
+  y,
+  beta_init,
+  sigma_sq_init,
+  alpha_ov,
+  interval_beta = c(-10, 10),
+  interval_sigma_sq = c(-10, 10),
+  B = 1e+06
+)
 }
 \arguments{
 \item{X}{A numeric matrix of predictor variables (n x p), with the first column corresponding to \code{beta1}.}
 
 \item{y}{A numeric response vector of length n.}
 
-\item{sigma_sq}{The noise variance. If unknown, it should be estimated beforehand.}
-
 \item{alpha_ov}{The significance level for the overall F-test (used in defining the selection region).}
 
-\item{interval}{A numeric vector of length 2 giving the search interval for \code{beta1} (default: \code{c(-10, 10)}).}
-
 \item{B}{The number of Monte Carlo samples used to approximate the likelihood (default: \code{1e6}).}
+
+\item{interval}{A numeric vector of length 2 giving the search interval for \code{beta1} (default: \code{c(-10, 10)}).}
 }
 \value{
 A list containing:

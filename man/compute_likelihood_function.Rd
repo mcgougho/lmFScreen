@@ -4,14 +4,12 @@
 \alias{compute_likelihood_function}
 \title{Construct the Selective Log-Likelihood Function for beta1}
 \usage{
-compute_likelihood_function(X, y, sigma_sq, alpha_ov = 0.05, B = 1e+06)
+compute_likelihood_function(X, y, alpha_ov = 0.05, B = 1e+06)
 }
 \arguments{
 \item{X}{A numeric matrix of predictors (n x p), with \code{beta1} corresponding to the first column.}
 
 \item{y}{A numeric response vector of length n.}
-
-\item{sigma_sq}{The noise variance.}
 
 \item{alpha_ov}{The significance level for the overall F-test (default: \code{0.05}).}
 
