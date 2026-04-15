@@ -14,7 +14,6 @@
 #' @param alpha Significance level for confidence intervals and hypothesis tests (default: 0.05).
 #' @param alpha_ov Significance level for the overall F-test used for screening (default: 0.05).
 #' @param test_cols Indices of predictors to test (default: all columns of X).
-#' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
 #' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
 #' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
 #' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
@@ -66,7 +65,7 @@
 #' # in Example 3, the selective p-values change significantly from the standard p-values
 #'
 #' @export
-lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), compute_CI = TRUE, compute_est = TRUE, B = 100000) {
   # some checks
   if (!inherits(formula, "formula")) {
     stop("The 'formula' argument must be a valid formula object.")
@@ -85,9 +84,6 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
   }
   if (!missing(data) && !is.data.frame(data)) {
     stop("The 'data' argument must be a data frame if provided.")
-  }
-  if (!is.null(sigma_sq) && (!is.numeric(sigma_sq) || sigma_sq <= 0)) {
-    stop("The 'sigma_sq' argument must be a positive numeric value if provided.")
   }
 
   # Handle missing data argument (use parent frame like lm)
@@ -126,7 +122,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
     y <- Xy_centered$y
   }
 
-  output <- lmFScreen.fit(X, y, alpha = alpha, alpha_ov = alpha_ov, test_cols = test_cols, sigma_sq = sigma_sq, compute_CI = compute_CI, compute_est = compute_est, B = B)
+  output <- lmFScreen.fit(X, y, alpha = alpha, alpha_ov = alpha_ov, test_cols = test_cols, compute_CI = compute_CI, compute_est = compute_est, B = B)
 
   return(output)
 }
