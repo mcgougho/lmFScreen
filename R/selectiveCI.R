@@ -51,10 +51,10 @@ get_CI <- function(pselb, point_est, naive_se_est, alpha){
     return(c(Inf, -Inf))
   }
 
-  while (p_diff(point_est - r * naive_se_est) >= 0 & r < 1000){
+  while (p_diff(point_est - r * naive_se_est) >= 0 & r < 100){
     cat("pval at lower (2): ", p_diff(point_est - r * naive_se_est), "\n")
     r <- r * 2
-    if (r >= 1000){
+    if (r >= 100){
       print("infinite CI!")
       return(c(-Inf, Inf))
     }
@@ -66,10 +66,10 @@ get_CI <- function(pselb, point_est, naive_se_est, alpha){
   # Find the upper bound of the confidence interval by finding the root of p_diff in a range.
   b_range_upper <- c(point_est, point_est + r * naive_se_est)
 
-  while (p_diff(point_est + r * naive_se_est) >= 0 & r < 1000){
+  while (p_diff(point_est + r * naive_se_est) >= 0 & r < 100){
     cat("pval at upper: ", p_diff(point_est + r * naive_se_est), "\n")
     r <- r * 2
-    if (r >= 1000){
+    if (r >= 100){
       print("infinite CI!")
       return(c(-Inf, Inf))
     }
@@ -90,4 +90,3 @@ get_CI <- function(pselb, point_est, naive_se_est, alpha){
   CI <- c(root_lower, root_upper)
   return(CI)
 }
-
