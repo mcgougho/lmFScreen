@@ -132,6 +132,9 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
 }
 
 
+
+
+
 #' lmFScreen.fit: Valid F-screening
 #'
 #' This function takes as input a design matrix X and output vector y and fits a linear regression model (**without an intercept -- X and y should be centered**).
@@ -146,7 +149,6 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
 #' @param alpha Significance level for confidence intervals and hypothesis tests (default: 0.05).
 #' @param alpha_ov Significance level for the overall F-test used for screening (default: 0.05).
 #' @param test_cols Indices of predictors to test (default: all columns of X).
-#' @param sigma_sq Optional noise variance. If NULL, it is estimated using a corrected residual variance.
 #' @param B Number of Monte Carlo samples used for selective inference (default: 100000).
 #' @param compute_CI Logical; whether to compute selective confidence intervals (default: TRUE).
 #' @param compute_est Logical; whether to compute selective point estimates (default: TRUE).
@@ -175,7 +177,7 @@ lmFScreen <- function(formula, data, alpha = 0.05, alpha_ov = 0.05, test_cols = 
 #' coef(result)
 #' confint(result)
 #'
-lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), sigma_sq = NULL, compute_CI = TRUE, compute_est = TRUE, B = 100000) {
+lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:ncol(X), compute_CI = TRUE, compute_est = TRUE, B = 10000) {
   # some checks
   if (is.null(y)) {
     stop("The response variable is missing or not specified correctly in the formula.")
@@ -210,11 +212,6 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
   }
 
 
-  # Compute debiased estimate if estimate of sigma is not given
-  if(is.null(sigma_sq)) {
-    sigma_sq <- get_variance_estimate(X,y,alpha_ov)
-  }
-
   # Allocate empty vectors/matrices for coefficient estimates, confidence intervals, and pvalues
   beta <- pvalues <- rep(NA, length(test_cols))
   CIs  <- naive_CIs <- matrix(NA, nrow = length(test_cols), ncol=2)
@@ -229,7 +226,8 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
   }
 
   # Get naive estimates of coefficients, confidence intervals, and pvalues using standard OLS output from lm
-  naive_lm_coefs <- summary(lm(y ~ X + 0))$coefficients[test_cols, , drop = FALSE]
+  naive_fit <- lm(y ~ X + 0)
+  naive_lm_coefs <- summary(naive_fit)$coefficients[test_cols, , drop = FALSE]
   X_orig <- X
   for(col in test_cols){
 
@@ -248,6 +246,7 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
       naive_point_est <- naive_lm_coefs[i, 1]
       naive_estimates[i] <- naive_point_est
       naive_se_est <- naive_lm_coefs[i, 2]
+      naive_sigma_sq <- sum(resid(naive_fit)^2) / (nrow(X)-ncol(X))
 
       # If compute_CI == TRUE, save naive confidence intervals
       if (compute_CI){
@@ -260,22 +259,23 @@ lmFScreen.fit <- function(X, y, alpha = 0.05, alpha_ov = 0.05, test_cols = 1:nco
 
       # Obtain the point estimate for beta1 using maximum likelihood.
       # interval uses naive estimates to get an interval to look for conditional MLE in
-      interval <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
-      point_est <- as.numeric(compute_MLE(X, y, sigma_sq = sigma_sq, interval = interval, alpha_ov = alpha_ov, B = B)[[1]])
+      interval_beta <- c(naive_point_est - 10 * naive_se_est, naive_point_est + 10 * naive_se_est)
+      interval_sigma_sq <- c(naive_sigma_sq / 10, naive_sigma_sq * 10)
+      point_est <- as.numeric(compute_MLE(X, y, beta_init = naive_point_est, sigma_sq_init = naive_sigma_sq,
+                                          interval_beta = interval_beta, interval_sigma_sq = interval_sigma_sq, alpha_ov = alpha_ov, B = B)[[1]])
       beta[i] <- point_est
 
       # Get selective confidence intervals if compute_CI == TRUE
-      pselb <- get_pselb(X, y, sigma_sq = sigma_sq, yPy = yPy, rss = rss, alpha_ov = alpha_ov, B = B, verbose = FALSE)
+      pselb <- get_pselb(X, y, alpha_ov = alpha_ov, B = B, verbose = FALSE)
       if (compute_CI){
         CI <- get_CI(pselb=pselb, point_est=point_est, naive_se_est=naive_se_est, alpha=alpha)
         CIs[i,1] <- CI[1]
         CIs[i,2] <- CI[2]
       }
     }
-
     # Get pvalue for test of H_0:\beta_1 = 0.
-    B_max <- B * 10
-    pselb <- get_pselb(X, y, sigma_sq = sigma_sq, yPy = yPy, rss = rss, alpha_ov = alpha_ov, B = B_max, verbose = FALSE)
+    B_max <- B
+    pselb <- get_pselb(X, y, alpha_ov = alpha_ov, B = B_max)
     P_value <- max(pselb(0), 1/B_max) # return 1/B instead of zero
     pvalues[i] <- P_value
   }
