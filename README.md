@@ -23,7 +23,7 @@ While F-screening is intuitive and widely used, carrying out Step 2 using a “s
 
 The `lmFScreen` package provides a valid inferential toolbox for conducting Step 2 in the F-screening procedure, by accounting for the fact that we conduct inference on $\beta_j$ in Step 2 only if we reject the overall null hypothesis in Step 1. This inferential toolbox falls under the larger umbrella of “conditional selective inference”, where the “selection event” that we are conditioning on is rejection of the overall null hypothesis in Step 1. 
 
-This package is based off of the 2025 paper "Valid F-screening in linear regression" by McGough, Witten, and Kessler (arxiv preprint: [https://arxiv.org/abs/2505.23113](https://arxiv.org/abs/2505.23113)). See [https://github.com/mcgougho/lmFScreen-paper](https://github.com/mcgougho/lmFScreen-paper) for code to replicate figures in the paper.
+This package is based off of the 2025 paper "Conditional inference for F-screening in linear regression" by McGough, Witten, and Kessler (arxiv preprint: [https://arxiv.org/abs/2505.23113](https://arxiv.org/abs/2505.23113)). See [https://github.com/mcgougho/lmFScreen-paper](https://github.com/mcgougho/lmFScreen-paper) for code to replicate figures in the paper.
 
 
 ---
